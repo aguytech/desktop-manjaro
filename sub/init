@@ -55,12 +55,6 @@ done
 _echot "------------------ root user"
 _ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
 
-_echot "------------------ conf user"
-sudo adduser ${USER} users
-sudo adduser ${USER} www-data
-sudo adduser ${USER} audio
-sudo adduser ${USER} video
-
 _echot "------------------  .bash_aliases"
 file=${HOME}/.bash_aliases
 file_from=${_PATH_BS}/conf/.bash_aliases
@@ -81,10 +75,10 @@ _eval "sed -i 's|^\(HISTSIZE\)=.*$|\1=20000|' ${file}"
 _eval "sed -i 's|^\(HISTFILESIZE\)=.*$|\1=20000|' ${file}"
 _eval "sed -i '/^#force_color_prompt/ s|^#||' ${file}"
 
-color='\\[\\033[01;32m\\]' # '\\[\\033[01;34m\\]'
 # PS1
-sed -i 's|^\( *PS1=\).*00m.*$|\1"\${debian_chroot:+(\$debian_chroot)}'${color}'\\u@\\h\\[\\033[1;37m\\]:\\W'${color}'\\$\\[\\033[00m\\] \"|' ${file}
-sed -i 's|^#\?\(force_color_prompt\).*$|\1=yes|' ${file}
+color='\\[\\033[01;32m\\]' # '\\[\\033[01;34m\\]'
+sed -i 's|^\(\s*PS1=\).*32m.*$|\1"'${color}'\\u@\\h\\[\\033[01;37m\\] \\W'${color}'\\$\\[\\033[00m\\] "|' ${file}
+sed -i "/^\s*PS1=.*32m/ s|\"|'|g" ${file}
 
 # env
 grep -q ".bash_env" ${file} || echo "
@@ -92,20 +86,13 @@ grep -q ".bash_env" ${file} || echo "
 [ -f \${HOME}/.bash_env ] && . \${HOME}/.bash_env
 
 # functions
-[ -f \${HOME}/.bash_functions ] && . \${HOME}/.bash_functions
-" >> ${file}
+[ -f \${HOME}/.bash_functions ] && . \${HOME}/.bash_functions" >> ${file}
 # aliases
 grep -q ". \${HOME}/.bash_aliases" ${file} || echo "
 # bash_aliases
-[ -f \${HOME}/.bash_aliases ] && . \${HOME}/.bash_aliases
-"  >> ${file}
+[ -f \${HOME}/.bash_aliases ] && . \${HOME}/.bash_aliases"  >> ${file}
 
 . ${file}
-
-_echot "------------------ conf mirror sources"
-file=/etc/apt/sources.list
-_keepcp ${file}
-sudo sed -i '/# deb .*partner$/ s|# *||' ${file}
 
 ########################  END
 

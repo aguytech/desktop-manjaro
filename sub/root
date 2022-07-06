@@ -24,9 +24,10 @@ _keepcp ${file}
 
 # force color
 sudo sed -i '/^#force_color_prompt=/ s|#||' ${file}
-color='\\[\\033[01;31m\\]' # '\\[\\033[01;34m\\]'
 # PS1
-sudo sed -i 's|^\( *PS1=\).*00m.*$|\1"\${debian_chroot:+(\$debian_chroot)}'${color}'\\h\\[\\033[00m\\]:\\W\\[\\033[00m\\]\\$ "|' ${file}
+color='\\[\\033[01;31m\\]' # '\\[\\033[01;34m\\]'
+sudo sed -i 's|^\(\s*PS1=\).*31m.*$|\1"'${color}'\\h\\[\\033[00m\\] \\W'${color}'#\\[\\033[00m\\] "|' ${file}
+sudo sed -i "/^\s*PS1=.*31m/ s|\"|'|g" ${file}
 
 sudo grep -q ".bash_env" ${file} || sudo sh -c "echo '
 # global variables
