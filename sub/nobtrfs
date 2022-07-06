@@ -79,7 +79,7 @@ _echot "------------------ create paths"
 for path in /save /ext /vm; do
 	path=${path_sys}${path}
 	[ -d "${path}" ] || sudo mkdir -p "${path}"
-	sudo chown :1001 "${path}"
+	sudo chown :1000 "${path}"
 	sudo chmod g+rw "${path}"
 done
 
@@ -126,7 +126,7 @@ path="${path_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
 _keepmv ${path}
 [ -d "${path}" ] || sudo mkdir -p ${path}
 sudo cp -r ${_PATH_CONF}/* ${path}/
-sudo chown 1000:1001 -R ${path_home}/${_USERNAME}
+sudo chown 1000:1000 -R ${path_home}/${_USERNAME}
 
 _echot "------------------ copy log"
 [ -d ${path_sys}/var/log ] && path="${path_sys}/var/log/desktop-install"
