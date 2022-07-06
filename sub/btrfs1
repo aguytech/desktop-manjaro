@@ -70,6 +70,10 @@ sudo mount "${_DEVICE_SYS}" /mnt || _exite "Unable to mount ${_DEVICE_SYS} in /m
 cd /mnt
 sudo btrfs subvolume list .
 
+# user
+user_uid=$( grep ^${_USERNAME} '@/etc/passwd' | cut -d: -f3 )
+user_gid=$( grep ^${_USERNAME} '@/etc/group' | cut -d: -f3 )
+
 # mv system
 [ -d "${_SYSNAME}" ] && ! [ -d "${_SYSNAME}.keep" ] && sudo mv "${_SYSNAME}" "${_SYSNAME}.keep"
 [ -d "${_SYSNAME}" ] && sudo btrfs subvolume delete "${_SYSNAME}"
@@ -86,7 +90,7 @@ sudo sh -c "mv @home/${_USERNAME}/* user-${_SYSNAME}/ 2>/dev/null"
 sudo sh -c "mv @home/${_USERNAME}/.??* user-${_SYSNAME}/ 2>/dev/null"
 # create path for binding user-${user}
 [ -d "home/${_USERNAME}" ] || sudo mkdir home/${_USERNAME}
-sudo chown 1000.1000 -R home/${_USERNAME} user-${_SYSNAME}
+sudo chown ${user_uid}:${user_gid} -R home/${_USERNAME} user-${_SYSNAME}
 
 _echot "------------------ btrfs & path delete"
 
@@ -182,14 +186,14 @@ path="/mnt/user-${_SYSNAME}/${_PATH_CONF#/home/*/}"
 _keepmv ${path}
 [ -d "${path}" ] || sudo mkdir -p ${path}
 sudo cp -r ${_PATH_CONF}/* ${path}/
-sudo chown 1000:1000 -R /mnt/user-${_SYSNAME}
+sudo chown ${user_uid}:${user_gid} -R /mnt/user-${_SYSNAME}
 
 _echot "------------------ copy desktop-install log"
 path="/mnt/${_SYSNAME}/var/log/desktop-install"
 _keepmv ${path}
 [ -d "${path}" ] || sudo mkdir -p ${path}
 sudo cp -a /var/log/desktop-install/* ${path}/
-sudo chown 1000:0 -R ${path}
+sudo chown ${user_uid}:0 -R ${path}
 sudo chmod 664 ${path}/*
 
 _echot "------------------ umount $_DEVICE_SYS"
