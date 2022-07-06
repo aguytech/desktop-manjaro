@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# write by Aguy
+
+_echoT "\n==========================================  ${_PART}"
+
+########################  REPOSITORIES
+
+_echot "------------------ apt repository"
+file=/etc/apt/sources.list
+_keepcpts ${file}
+
+sudo add-apt-repository -yn ppa:mozillateam/ppa # mozilla
+#sudo add-apt-repository -yn ppa:ubuntuhandbook1/audacity # audacity # wait version
+sudo add-apt-repository -yn ppa:tomtomtom/gmusicbrowser # gmusicbrowser
+sudo apt-add-repository -yn ppa:vincent-vandevyvre/vvv # qarte
+sudo add-apt-repository -yn ppa:alex-p/aegisub # aegisub
+#sudo apt-add-repository -yn ppa:yannubuntu/boot-repair # boot-repair
+#sudo apt-add-repository -yn ppa:nilarimogard/webupd8 # youtube-dl, pulseaudio-equalizer & more
+#sudo apt-add-repository -yn ppa:webupd8team/y-ppa-manager # y-ppa-manager
+#sudo apt-add-repository -yn ppa:mc3man/mpv-tests # mpv
+#sudo apt-add-repository -yn ppa:otto-kesselgulasch/gimp # gimp gmic
+
+#_echot "------------------ firefox"
+#echo '                                        
+#Package: *
+#Pin: release o=LP-PPA-mozillateam
+#Pin-Priority: 1001
+#' | sudo tee /etc/apt/preferences.d/mozilla-firefox
+
+sudo apt update
+
+########################  MAIN
+
+part_install=system
+_echot "------------------  ${part_install}"
+packages="curl gdebi gnupg2 gparted hfsprogs htop kpartx most pv testdisk tmux tree"
+packages+=" p7zip-full p7zip-rar zip unzip rar unrar"
+# oracle-java7-installer ntfsprogs grsync gtk2-engines-pixbuf libnss-myhostname atop fslint dstat icedtea-8-plugin
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+part_install=tools
+_echot "------------------ ${part_install}"
+packages="baobab dconf-editor font-manager gnome-sushi meld qt5ct"
+packages+="  gnome-system-monitor gnome-system-tools gnome-tweaks"
+# gnome-activity-journal boot-repair backintime-gnome y-ppa-manager numlockx multisystem
+packages+=" easytag-nautilus nautilus-image-converter nautilus-script-audio-convert nautilus-sendto"
+
+# nautilus-columns nautilus-image-manipulator filemanager-actions nautilus-emblems
+packages+=" gedit-plugins gedit-source-code-browser-plugin stopwatch"
+# gedit-developer-plugins
+# uget-chrome-wrapper nautilus-dropbox nautilus-filename-repairer nautilus-image-converter nautilus-terminal
+# compiz-fusion-plugins-extra compizconfig-settings-manager exfat-utils exfat-fuse freefilesync qshutdown solaar unetbootin
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+part_install=libreoffice
+_echot "------------------ ${part_install}"
+packages="libreoffice libreoffice-calc libreoffice-draw libreoffice-gnome libreoffice-impress libreoffice-math"
+packages+=" libreoffice-mysql-connector libreoffice-pdfimport libreoffice-templates libreoffice-wiki-publisher libreoffice-writer"
+# scribus scribus-template
+# libreoffice-dmaths libreoffice-librelogo libreoffice-style-breeze libreoffice-style-elementary libreoffice-style-sifr
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+part_install=python
+_echot "------------------ ${part_install}"
+packages="python3 python3-pip"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+packages="pip yt-dlp"
+python3 -m pip install -U ${packages} \
+	|| { _echoE "Unable to install pip: ${packages}"; return 1; }
+
+part_install=media
+_echot "------------------ ${part_install}"
+packages="audacity cheese easytag gmusicbrowser pulseaudio-equalizer qarte simplescreenrecorder soundconverter sound-juicer"
+# flashplugin-installer chrome-gnome-shell mozplugger isomaster mixxx tesseract-ocr-fra lightzone darktable vlc tangerine amule amule-gnome-support gnome-xcf-thumbnailer chromium-browser
+packages+=" gstreamer1.0-plugins-bad libavcodec-extra libdvdnav4 libdvd-pkg libdvdread8 ubuntu-restricted-extras"
+# gmusicbrowser gmusicbrowser-art gstreamer1.0-plugins-bad-faad gpodder goobox kid3-cli cdrdao cue2toc bchunk ccd2iso mdf2iso nrg2iso clipgrab lollypop
+packages+=" aegisub gnome-subtitles gnome-video-effects-extra handbrake mkvtoolnix-gui mpv totem totem-plugins"
+# gnome-do gnome-do-plugins totem-plugins-extra dpluzz
+#packages+=" pidgin pidgin-awayonlock pidgin-bot-sentry pidgin-encryption pidgin-gnome-keyring pidgin-hotkeys pidgin-libnotify pidgin-openpgp pidgin-plugin-pack pidgin-skype pidgin-themes" # pidgin-microblog
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+# pidgin-blinklight pidgin-extprefs pidgin-twitter # skype gtk2-engines-murrine:i386 gtk2-engines-pixbuf:i386 gimp-dcraw gimp-gluas gimp-plugin-registry gegldropbox mkv-extractor-qt5 xia
+# d4x easymp3gain-gtk mp3splt-gtk vlc-plugin-sdl vlc-plugin-pulse gnome-media-profiles pitivi ffmpeg gimp-dcraw gimp-plugin-registry pidgin-audacious
+# ogmrip
+#${_CMD_INS} ogmrip ogmrip-ac3 ogmrip-plugins ogmrip-video-copy ogmtools ogmrip-dirac ogmrip-oggz
+
+########################  END
+
+_echoT "===================== ${_PART} end"
+_partadd "${_PART}" "${_FILE_DONE}"

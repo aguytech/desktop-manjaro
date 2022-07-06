@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# write by Aguy
+
+_echoT "\n==========================================  ${_PART}"
+
+_echot "------------------ apt repository"
+sudo apt-add-repository -yn ppa:kdenlive/kdenlive-stable
+sudo apt-add-repository -yn https://cinelerra-gg.org/download/pkgs/ub20
+file=/etc/apt/sources.list
+file2=/etc/apt/sources.list.d/cinelerra.list
+_keepcpts ${file}
+sudo sh -c "echo '$( grep cinelerra-gg.org ${file} )' > ${file2}"
+sudo sed -i "/cinelerra-gg.org/d" ${file}
+sudo sed -i '/^deb http.*cinelerra-gg.org/ s|^deb |deb [trusted=yes] |' ${file2}
+sudo apt update
+
+_echot "------------------ install"
+packages=" kdenlive cin" 
+# flowblade lightworks Natron shotcut DaVinci Resolve
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+########################  END
+
+_echoT "===================== ${_PART} end"
+_partadd "${_PART}" "${_FILE_DONE}"

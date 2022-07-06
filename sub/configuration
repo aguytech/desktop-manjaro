@@ -1,0 +1,183 @@
+#!/bin/bash
+#
+# write by Aguy
+
+_echoT "\n==========================================  ${_PART}"
+
+grep -q "^# ${_PART}" "${_FILE_CONF}" || echo -e "# ${_PART}" >> "${_FILE_CONF}"
+
+########################  MAIN
+
+_echot "------------------ create path"
+paths="${HOME}/.local/share/gedit/plugins"
+for path in ${paths}; do
+	[ -d "${path}" ] || mkdir -p "${path}"
+done
+_echot "------------------ grub"
+file=/etc/default/grub
+_keepcpts ${file}
+sudo sed -i "/^GRUB_TIMEOUT=/ s|=.*|=2|" ${file}
+sudo sed -i "/^GRUB_TIMEOUT_STYLE=hidden/ s|^|#|" ${file}
+sudo sed -i "/^GRUB_HIDDEN_TIMEOUT_QUIET=/ s|=.*|=false|" ${file}
+sudo sed -i "/^GRUB_HIDDEN_TIMEOUT_QUIET=/ s/^/#/" ${file}
+
+file=/etc/grub.d/00_header
+sudo sed -i "s|30|2|g" ${file}
+sudo update-grub
+
+_echot "------------------  bash-completion"
+_evalr "cp -a ${_PATH_BASE}/xtra/bash-completion/* /usr/share/bash-completion/completions/"
+
+_echot "------------------  icons"
+path=${HOME}/.local/share/icons
+cp ${_PATH_BASE}/icons/* ${path}/
+path=/usr/share/icons/Foralyse
+[ -d "${path}" ] || sudo mkdir -p ${path}
+sudo cp ${_PATH_BASE}/icons/* ${path}/
+
+_echot "------------------  vim links edit"
+for file in /usr/bin/edit /usr/bin/editor; do
+	[ -e ${file} ] && _evalr rm ${file}
+	_evalr ln -sv /usr/bin/vim ${file}
+done
+
+_echot "------------------ vim colors"
+sudo cp ${_PATH_BASE}/conf/vim/* /usr/share/vim/vim*/colors/
+
+_echot "----------  vim conf"
+file=/etc/vim/vimrc
+sudo sed -i "s|^\"\(syntax\).*|\1 on|" ${file}
+opts="background=dark showmatch"
+# uncomment
+for opt in ${opts}; do
+	sudo sed -i "s|^\"\(set ${opt}.*\)$|\1|" ${file}
+done
+
+_echot "------------------  /usr/local/bs/conf links"
+for file in .nanorc .tmux.conf .vimrc; do
+	path_from="${_PATH_BS}/conf/${file}"
+	path=${HOME}/${file}
+	_keepmv "${path}"
+	ln -s "${path_from}" "${path}"
+done
+
+_echot "------------------ tmux"
+tar xzf ${_PATH_BASE}/conf/user.tmux.tar.gz -C ${HOME}/
+cp ${_PATH_BASE}/xtra/org.gnome.Terminal-tmux.desktop ${HOME}/.local/share/applications/
+
+_echot "------------------ nano"
+for str in conf install; do
+	sudo cp -a /usr/share/nano/sh.nanorc /usr/share/nano/${str}.nanorc
+	sudo sed -i 's|^\(syntax \).*|\1"'${str}'" "\.'${str}'$"|' /usr/share/nano/${str}.nanorc
+done
+file=/etc/nanorc
+_keepcpts ${file}
+sudo sed -i 's|^.*\(set tabsize\).*|\1 4|' ${file}
+sudo sed -i 's|^\(set cut.*\)$|# \1|' ${file}
+sudo sed -i 's|^\(set linenumbers.*\)$|# \1|' ${file}
+sudo sed -i '/^# *include/ s/^# //' ${file}
+# uncomment
+opts="constantshow historylog matchbrackets multibuffer nohelp softwrap " # various
+opts+="errorcolor functioncolor keycolor numbercolor selectedcolor statuscolor stripecolor titlecolor" # color
+for opt in ${opts}; do
+	sudo sed -i "s|^.*\(set $opt .*\)$|\1|"  ${file}
+done
+
+_echot "------------------  QT5"
+sudo sh -c "echo '
+#  PATH
+export PATH="${PATH}:${_PATH_BS}"
+# QT
+export QT_QPA_PLATFORMTHEME=qt5ct' >> /etc/profile"
+
+_echot "------------------ meld style"
+sudo cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/meld-dark.xml
+
+_echot "------------------ language-specs conf"
+sudo cp ${_PATH_BASE}/conf/gtk/*.lang /usr/share/gtksourceview-3.0/language-specs/
+
+_echot "------------------ aegisub"
+path=${HOME}/.aegisub/
+[ -d "${path}" ] || mkdir -p ${path}
+cp ${_PATH_BASE}/conf/aegisub-config.json ${path}
+
+#_echot "------------------ dvd"
+#sudo dpkg-reconfigure libdvd-pkg
+
+_echot "------------------ gtk styles"
+path=${HOME}/.local/share/gtksourceview-3.0
+[ -d "${path}" ] || mkdir -p ${path}
+path=${HOME}/.local/share/gtksourceview-3.0/styles
+# link or copy
+path_repo=/home/shared/.local/share/gtksourceview-3.0/styles
+if [ -d "${path_repo}" ]; then
+	[ -d "${path}" ] && rm -fR ${path}
+	ln -sv "${path_repo}" ${path}
+else
+	[ -d "${path}" ] || mkdir -p ${path}
+	cp ${_PATH_BASE}/conf/styles/* ${path}/
+fi
+# gtk 4
+cd ${HOME}/.local/share
+path=gtksourceview-4
+[ -e "${path}" ] || ln -sv gtksourceview-3.0 ${path}
+
+_echot "------------------ gedit settings"
+#dconf write /org/nemo/extensions/nemo-terminal/default-visible false
+#gsettings set org.gnome.gedit.preferences.ui max-recents 30
+gsettings set org.gnome.gedit.preferences.ui side-panel-visible true
+gsettings set org.gnome.gedit.preferences.editor display-line-numbers true
+gsettings set org.gnome.gedit.preferences.editor tabs-size 4
+dconf write /org/gnome/gedit/plugins/sourcecodebrowser/show-line-numbers true
+dconf write /org/gnome/gedit/plugins/filebrowser/enable-remote true
+
+# plugins
+path_plug=${HOME}/.local/share/gedit/plugins
+
+_echot "------------------ gedit / restore-tabs"
+path=restore-tabs
+cd ${path_plug}
+_keepmvts ${path}
+curl -o master.zip https://codeload.github.com/raelgc/gedit-restore-tabs/zip/master
+unzip master.zip
+rm master.zip
+mv gedit-restore-tabs-master ${path}
+rm ${path}/.gitignore
+sudo cp ${path}/org.gnome.gedit.plugins.restoretabs.gschema.xml /usr/share/glib-2.0/schemas/
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+_echot "------------------ gedit / duplicate-line"
+path=duplicate-line
+cd ${path_plug}
+_keepmvts ${path}
+curl -o master.zip https://codeload.github.com/hardpixel/gedit-duplicate-line/zip/master
+unzip master.zip
+rm master.zip
+mv gedit-duplicate-line-master ${path}
+sed -i 's|^\(\s*modifiers = event.state.*\)|#\1|' ${path}/duplicate_line.py
+sed -i 's|^\(\s*\)\(if modifiers ==.*\)|#\1\2\n\1if event.state \& Gdk.ModifierType.CONTROL_MASK and event.state \& Gdk.ModifierType.SHIFT_MASK:|' ${path}/duplicate_line.py
+#if event.state & Gdk.ModifierType.CONTROL_MASK and event.state & Gdk.ModifierType.SHIFT_MASK:
+
+_echot "------------------ gedit / gedit-markdown"
+path=markdown_preview
+cd ${path_plug}
+_keepmvts ${path}
+curl -o master.zip https://codeload.github.com/maoschanz/gedit-plugin-markdown_preview/zip/master
+unzip master.zip
+rm master.zip
+mv gedit-plugin-markdown_preview-master ${path}
+
+_echot "------------------ firefox tweaks"
+path=${HOME}/.mozilla/firefox/${USER}
+if [ -d "${path}" ]; then
+	ln -sv "${_PATH_BASE}/conf/user.js" ${path}
+	chown 1000:1000 ${path}
+fi
+
+_echot "------------------ wp"
+sudo cp -a ${_PATH_BASE}/xtra/wp/* /usr/share/backgrounds/
+
+########################  END
+
+_echoT "===================== ${_PART} end"
+_partadd ${_PART} ${_FILE_DONE}

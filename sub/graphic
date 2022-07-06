@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# write by Aguy
+
+_echoT "\n==========================================  ${_PART}"
+
+_echot "------------------ apt repository"
+sudo apt-add-repository -yn ppa:inkscape.dev/stable # inkscape
+#sudo apt-add-repository -yn ppa:lightzone-team/lightzone # lightzone
+
+_echot "------------------ ${part_install}"
+packages=" gimp gimp-gap gimp-cbmplugs gimp-gluas gimp-data gimp-gmic gimp-texturize"
+packages+=" gimp-data-extras gimp-gutenprint gimp-dds gimp-lensfun gtkam-gimp create-resources"
+packages+=" inkscape ink-generator"
+packages+=" scribus"
+#packages+=" lightzone"
+# ijsgutenprint gimp-save-for-web gimp-normal-map gimp-plugin-registry gimp-dbg gimp-ufraw sozi pandora xsane
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+########################  END
+
+_echoT "===================== ${_PART} end"
+_partadd "${_PART}" "${_FILE_DONE}"

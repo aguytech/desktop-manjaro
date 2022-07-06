@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# write by Aguy
+
+_echoT "\n==========================================  ${_PART}"
+
+_echot "------------------ apt repository"
+sudo apt-add-repository -yn ppa:freecad-maintainers/freecad-stable # freecad
+sudo apt-add-repository -yn ppa:freecad-community/ppa # freecad addons
+
+_echot "------------------ ${part_install}"
+packages="freecad freecad-extras-drawing-dimensioning freecad-extras-lattice2 freecad-extras-eaglepcb2freecad"
+ packages+=" freecad-extras-macroparttovrml freecad-doc freecad-extras-fasteners freecad-extras-sheetmetal"
+ packages+=" freecad-extras-animation freecad-extras-idfimporter freecad-extras-timber freecad-extras-assembly2"
+ packages+=" freecad-extras-kicadstepuptools freecad-extras-workfeature freecad-extras-bolts freecad-extras-kicadstepuptools-wb"
+ packages+=" freecad-extras-cadquery freecad-extras-lattice"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+    || { _echoE "Unable to install: ${packages}"; return 1; }
+
+########################  END
+
+_echoT "===================== ${_PART} end"
+_partadd "${_PART}" "${_FILE_DONE}"

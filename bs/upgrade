@@ -1,0 +1,83 @@
+#!/bin/sh
+#
+# Provides:             upgrade
+# Short-Description:    Upgrade & clean packages
+# Description:          Upgrade & clean packages
+
+color='\e[1;96m'; cclear='\e[0;0m'
+
+file_release="/etc/os-release"
+[ ${USER} != root ] && pre="sudo"
+
+########################  MANJARO
+if grep -qi manjaro "${file_release}"; then
+	cmd="${pre} pacman"
+
+	echo -e "${color}pacman update${cclear}"
+	${_CMD_INS} -Syu  --noconfirm
+
+	echo -e "${color}pacman clean orphans${cclear}"
+	${_CMD_INS} -R $(pacman -Qdtq)
+
+	echo -e "${color}pacman clear cache${cclear}"
+	${_CMD_INS} -Sc --noconfirm
+
+	echo -e "${color}yay update${cclear}"
+	yay -Syu
+
+	echo -e "${color}yay clean orphans${cclear}"
+	yay -R  $(yay -Qdt)
+
+	echo -e "${color}pacman clear cache${cclear}"
+	yay -Sc --noconfirm
+	rm -fR ~/.cache/yay
+
+########################  UBUNTU / DEBIAN
+elif grep -qiE 'debian|ubuntu' "${file_release}"; then
+
+	cmd="${pre} apt"
+
+	echo "${color}update${cclear}"
+	${_CMD_INS} update
+
+	echo "${color}upgrade${cclear}"
+	${_CMD_INS} -y upgrade
+
+	echo "${color}autoremove${cclear}"
+	${_CMD_INS} -y autoremove
+
+	echo "${color}clean${cclear}"
+	${_CMD_INS} -y clean
+
+	echo "${color}autoclean${cclear}"
+	${_CMD_INS} -y autoclean
+
+########################  ALPINE
+elif grep -qiE 'alpine' "${file_release}"; then
+
+	cmd="apk"
+
+	echo -e "${color}update${cclear}"
+	${_CMD_INS} update
+
+	echo -e "${color}upgrade${cclear}"
+	${_CMD_INS} upgrade
+
+	#echo -e "${color}clean${cclear}"
+	#${_CMD_INS} cache clean
+
+########################  CENTOS
+elif grep -qiE 'centos' "${file_release}"; then
+
+	cmd+="yum"
+
+	echo -e "${color}update${cclear}"
+	${_CMD_INS} -y update
+
+	echo -e "${color}upgrade${cclear}"
+	${_CMD_INS} -y upgrade
+
+	echo -e "${color}clean${cclear}"
+	${_CMD_INS} -y clean all
+
+fi

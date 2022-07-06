@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# write by Aguy
+
+_echoT "\n==========================================  ${_PART}"
+
+########################  MAIN
+
+_echot "------------------ install"
+packages="cython3 python3-pip"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------------------ pip"
+packages="pip grip"
+python3 -m pip install -U ${packages} \
+	|| { _echoE "Unable to install pip: ${packages}"; return 1; }
+
+########################  END
+
+_echoT "===================== ${_PART} end"
+_partadd "${_PART}" "${_FILE_DONE}"
