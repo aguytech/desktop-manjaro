@@ -176,6 +176,11 @@ done
 
 sudo umount /mnt
 
+########################  END
+
+_echoT "===================== ${_PART} end"
+_partadd "${_PART}" "${_FILE_DONE}"
+
 ########################  EXPORT
 
 _echot "------------------ mount $_DEVICE_SYS"
@@ -198,11 +203,6 @@ sudo chmod 664 ${path}/*
 
 _echot "------------------ umount $_DEVICE_SYS"
 sudo umount /mnt
-
-########################  END
-
-_echoT "===================== ${_PART} end"
-_partadd "${_PART}" "${_FILE_DONE}"
 
 _echot "------------------ reboot $_DEVICE_SYS"
 _echoA "You have to start the global installation script after the reboot"
