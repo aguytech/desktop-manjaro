@@ -19,6 +19,14 @@ _confset _DESKTOP "${_DESKTOP}"
 
 ########################  MAIN
 
+_echot "------------------ conf mirror sources"
+# Change the mirror of software sources
+_evalr pacman-mirrors --country-list
+_evalr pacman-mirrors -c France
+
+_echot "------------------ timeshift"
+type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
+
 _echot "------------------ create /btrfs paths"
 paths=" /btrfs/sys /btrfs/ext"
 paths+=" ext/backup ext/ovh ext/shared"
