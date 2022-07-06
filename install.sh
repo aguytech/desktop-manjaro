@@ -30,7 +30,7 @@ fi
 
 ########################  MANDATORY
 
-_PARTS_MAN="${part_fs} init ssh upgrade global configuration root end"
+_PARTS_MAN="${part_fs} init ssh upgrade global aur configuration root end"
 
 for _PART in ${_PARTS_MAN}; do
 	if ! _parthave ${_PART} ${_FILE_DONE}; then
