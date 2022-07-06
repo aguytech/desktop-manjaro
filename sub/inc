@@ -513,7 +513,7 @@ for path in ${_PATH_CONF} ${_PATH_LOG}; do
 	sudo mkdir -p ${path}
 	sudo chown ${USER}:${USER} ${path}
 done
-sudo chown :syslog ${_PATH_LOG}
+sudo chown :root ${_PATH_LOG}
 
 for file in ${_FILE_CONF} ${_FILE_DONE}; do
 	[ -f "${file}" ] || touch ${file}
