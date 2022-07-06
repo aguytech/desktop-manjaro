@@ -19,13 +19,13 @@ _confset _DESKTOP "${_DESKTOP}"
 
 ########################  MAIN
 
+_echot "------------------ timeshift"
+type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
+
 _echot "------------------ conf mirror sources"
 # Change the mirror of software sources
 _evalr pacman-mirrors --country-list
 _evalr pacman-mirrors -c France
-
-_echot "------------------ timeshift"
-type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
 
 _echot "------------------ create /btrfs paths"
 paths=" /btrfs/sys /btrfs/ext"
@@ -33,14 +33,14 @@ paths+=" ext/backup ext/ovh ext/shared"
 paths+=" /home/shared"
 for path in ${paths}; do
 	[ -d "${path}" ] || sudo mkdir -p ${path}
-	sudo chown :1000 ${path}
+	sudo chown :${USER} ${path}
 	sudo chmod g+rwx ${path}
 done
 
 _echot "------------------ create /ext paths"
 paths="ext/backup ext/ovh ext/shared /home/shared"
 for path in ${paths}; do
-	sudo chown 1000:1000 ${path}
+	sudo chown ${USER}:${USER} ${path}
 done
 
 _echot "------------------ create user paths"

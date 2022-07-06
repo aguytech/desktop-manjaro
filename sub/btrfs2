@@ -81,7 +81,7 @@ _echot "------------------ mount ${device_ext}"
 sudo mount ${device_ext} /mnt || _exite "Unable to mount ${device_ext} in /mnt"
 
 _echot "------------------ rights ${device_ext}"
-sudo chown 1000:1000 -R /mnt${sub_ext}
+sudo chown ${USER}:${USER} -R /mnt${sub_ext}
 
 _echot "------------------ umount ${device_ext}"
 sudo umount /mnt
