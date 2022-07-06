@@ -75,11 +75,15 @@ else
 	path_home=${path_sys}/home
 fi
 
+# user
+user_uid=$( grep ^${_USERNAME} ${path_sys}/etc/passwd | cut -d: -f3 )
+user_gid=$( grep ^${_USERNAME} ${path_sys}/etc/group | cut -d: -f3 )
+
 _echot "------------------ create paths"
 for path in /save /ext /vm; do
 	path=${path_sys}${path}
 	[ -d "${path}" ] || sudo mkdir -p "${path}"
-	sudo chown :1000 "${path}"
+	sudo chown 0:${user_gid} "${path}"
 	sudo chmod g+rw "${path}"
 done
 
@@ -126,14 +130,14 @@ path="${path_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
 _keepmv ${path}
 [ -d "${path}" ] || sudo mkdir -p ${path}
 sudo cp -r ${_PATH_CONF}/* ${path}/
-sudo chown 1000:1000 -R ${path_home}/${_USERNAME}
+sudo chown ${user_uid}:${user_gid} -R ${path_home}/${_USERNAME}
 
 _echot "------------------ copy log"
 [ -d ${path_sys}/var/log ] && path="${path_sys}/var/log/desktop-install"
 _keepmv ${path}
 [ -d "${path}" ] || sudo mkdir -p ${path}
 sudo cp -a /var/log/desktop-install/* ${path}/
-sudo chown 1000:0 -R ${path}
+sudo chown ${user_uid}:0 -R ${path}
 sudo chmod 664 ${path}/*
 
 if grep -q "${_DEVICE_SYS} */mnt" /proc/mounts; then
