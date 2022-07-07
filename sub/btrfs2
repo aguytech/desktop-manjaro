@@ -27,7 +27,7 @@ _confset _SSD "${_SSD}"
 if [ -z ${_MEM+x} ]; then
 	anstmp=2G
 	_askno "Give the size of memory used for /tmp dir (${anstmp})"
-	_MEM=${_ANSWER:-${anstmp}}
+	_MEM=${_ANSWER:-${anstmp%%0*}}
 fi
 _confset _MEM "${_MEM}"
 
@@ -124,11 +124,13 @@ UUID=${uuidsys}   /btrfs/sys        btrfs   defaults,noauto,noatime,space_cache=
 
 [ "${_SSD}" ] && sudo sed -i '/btrfs/ s|noatime,|noatime,ssd,|' ${file}
 
-if grep -q '^tmp.*\/tmp' /etc/fstab; then
-	[ "${_MEM:0:1}" != 0 ] && sudo sed -i "/tmpfs/ s|mode=1777|mode=1777,size=${_MEM}|" ${file}
-else
-	sudo sh -c "echo '
+if [ "${_MEM}" ]; then
+	if grep -q '^tmp.*\/tmp' /etc/fstab; then
+		sudo sed -i "/tmpfs/ s|mode=1777|mode=1777,size=${_MEM}|" ${file}
+	else
+		sudo sh -c "echo '
 tmpfs                                       /tmp              tmpfs   defaults,noatime,mode=1777,size=${_MEM}     0 0' >> ${file}"
+	fi
 fi
 
 [ "${_DEVICE_EXT}" ] && sudo sh -c "echo '
