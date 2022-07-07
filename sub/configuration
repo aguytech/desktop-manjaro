@@ -83,12 +83,12 @@ for opt in ${opts}; do
 	sudo sed -i "s|^.*\(set $opt .*\)$|\1|"  ${file}
 done
 
-_echot "------------------  QT5"
+_echot "------------------  profile"
 sudo sh -c "echo '
 #  PATH
-export PATH="${PATH}:${_PATH_BS}"
+export PATH=${PATH}:${_PATH_BS}
 # QT
-export QT_QPA_PLATFORMTHEME=qt5ct' >> /etc/profile"
+export QT_QPA_PLATFORMTHEME=qt5ct' >> /etc/profile.d/desktop.sh"
 
 _echot "------------------ meld style"
 sudo cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/meld-dark.xml

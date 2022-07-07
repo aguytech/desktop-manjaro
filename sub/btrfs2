@@ -12,7 +12,6 @@ _askyn "This part have to be launched AFTER installation and AFTER reboot\nConfi
 
 _echot "------------------ Data"
 
-[ "${S_HOST_TYPE}" = lxd ] && _LXD=y
 if [ -z ${_LXD+x} ]; then
 	_askyn "Do you want to configure computer for lxd ? "
 	_LXD=${_ANSWER/n/}

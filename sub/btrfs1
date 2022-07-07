@@ -183,7 +183,7 @@ _partadd "${_PART}" "${_FILE_DONE}"
 
 ########################  EXPORT
 
-_echot "------------------ mount $_DEVICE_SYS"
+_echot "------------------ mount ${_DEVICE_SYS}"
 sudo mount "${_DEVICE_SYS}" /mnt || _exite "Unable to mount ${_DEVICE_SYS} in /mnt"
 
 _echot "------------------ copy desktop-install config"
@@ -201,10 +201,10 @@ sudo cp -a /var/log/desktop-install/* ${path}/
 sudo chown ${user_uid}:0 -R ${path}
 sudo chmod 664 ${path}/*
 
-_echot "------------------ umount $_DEVICE_SYS"
+_echot "------------------ umount ${_DEVICE_SYS}"
 sudo umount /mnt
 
-_echot "------------------ reboot $_DEVICE_SYS"
+_echot "------------------ reboot ${_DEVICE_SYS}"
 _echoA "You have to start the global installation script after the reboot"
 _echoa "The computer now will reboot"
 _askno "Valid to continue"

@@ -141,11 +141,11 @@ sudo chown ${user_uid}:0 -R ${path}
 sudo chmod 664 ${path}/*
 
 if grep -q "${_DEVICE_SYS} */mnt" /proc/mounts; then
-	_echot "------------------ umount $_DEVICE_SYS"
+	_echot "------------------ umount ${_DEVICE_SYS}"
 	sudo umount /mnt
 fi
 
-_echot "------------------ reboot $_DEVICE_SYS"
+_echot "------------------ reboot ${_DEVICE_SYS}"
 _echoA "You have to start the global installation script after the reboot"
 _echoa "The computer now will reboot"
 _askno "Valid to continue"
