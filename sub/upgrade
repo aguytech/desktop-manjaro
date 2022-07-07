@@ -7,18 +7,18 @@
 _echoT "\n==========================================  ${_PART}"
 
 _echot "------------------ update"
-sudo apt update
+${_CMD} -Sy
 
-_echot "------------------ dist-upgrade"
-sudo apt -y dist-upgrade
+_echot "------------------ upgrade"
+${_CMD} -Su
 
-_echot "------------------ clean"
-sudo apt autoremove -y
-sudo apt clean
-sudo apt autoclean
+_echot "------------------ clean orphans"
+${_CMD} -R $(pacman -Qdtq)
+
+_echot "------------------ clear cache"
+${_CMD} -Sc
 
 ########################  END
 
 _echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"
-
