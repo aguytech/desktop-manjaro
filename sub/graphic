@@ -8,7 +8,7 @@ _echot "------------------ apt repository"
 sudo apt-add-repository -yn ppa:inkscape.dev/stable # inkscape
 #sudo apt-add-repository -yn ppa:lightzone-team/lightzone # lightzone
 
-_echot "------------------ ${part_install}"
+_echot "------------------ install"
 packages=" gimp gimp-gap gimp-cbmplugs gimp-gluas gimp-data gimp-gmic gimp-texturize"
 packages+=" gimp-data-extras gimp-gutenprint gimp-dds gimp-lensfun gtkam-gimp create-resources"
 packages+=" inkscape ink-generator scribus scribus-template"

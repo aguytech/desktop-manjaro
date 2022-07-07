@@ -4,7 +4,7 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ ${part_install}"
+_echot "------------------ install"
 packages="virtualbox"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }

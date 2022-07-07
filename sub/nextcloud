@@ -4,7 +4,7 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ ${part_install}"
+_echot "------------------ install"
 packages="nextcloud-desktop nextcloud-desktop-cmd nautilus-nextcloud"
 # csync-owncloud
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
