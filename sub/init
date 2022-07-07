@@ -22,7 +22,7 @@ _confset _DESKTOP "${_DESKTOP}"
 _echot "------------------ timeshift"
 type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
 
-_echot "------------------ conf mirror sources"
+_echot "------------------ conf sources"
 # Change the mirror of software sources
 _evalr pacman-mirrors --country-list
 _evalr pacman-mirrors -c France
