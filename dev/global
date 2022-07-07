@@ -8,16 +8,9 @@ _echoT "\n==========================================  ${_PART}"
 
 _echot "------------------  install"
 packages="geany git gitg gitk gtkhash openssh-server"
-packages+=" lnav mkisofs net-tools pv xsysinfo"
-packages+=" openjdk-18-jre"
+packages+=" lnav mkisofs pv squashfs-tools xsysinfo"
+packages+=" jre-openjdk"
 # sysstat
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
-
-_echot "------------------  install nautilus"
-packages="nautilus-admin nautilus-gtkhash nautilus-hide nautilus-ideviceinfo"
-packages+=" nautilus-script-debug nautilus-scripts-manager nautilus-wipe seahorse-nautilus"
-# pgadmin4 percona-toolkit mytop
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
