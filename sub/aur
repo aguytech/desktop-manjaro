@@ -4,32 +4,30 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-cmd_aur=
-
-_echot "------------------ libreoffice"
-packages="bibus libreoffice-extension-grammalecte-fr "
+# libreoffice
+packages="libreoffice-extension-grammalecte-fr"
+# bibus # with a valid package
 # libreoffice-extension-languagetool papirus-libreoffice-theme 
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-
-_echot "------------------ media"
-packages=" gmusicbrowser qarte" # webcamoid
+# media
+packages+=" gmusicbrowser qarte" # webcamoid
 
 if [ "${_DESKTOP}" = xfce  ]; then
-	 _echot "------------------ xfce"
+	 # xfce
 	packages+=" radiotray-ng zuki-themes"
 fi
 if [ "${_DESKTOP}" = gnome  ]; then
-	_echot "------------------ gnome"
+	# gnome
 	packages+=" nautilus-compare"
 fi
 
-_echot "------------------ yay"
+# yay
 for package in ${packages}; do
 	if ! yay -Qe ${package} >/dev/null 2>&1; then
 		_echot "------------------ install ${package}"
 		yay -S --noconfirm --needed ${package} || _exite "Unable to install: ${package}"
+	else
+		_echot "------------------ already installed ${package}"
 	fi
 done
 
