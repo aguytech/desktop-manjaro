@@ -15,9 +15,6 @@ ${_CMD} -Su
 _echot "------------------ clean orphans"
 ${_CMD} -R $(pacman -Qdtq)
 
-_echot "------------------ clear cache"
-${_CMD} -Sc
-
 ########################  END
 
 _echoT "===================== ${_PART} end"
