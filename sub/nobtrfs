@@ -51,6 +51,13 @@ if [ -z ${_USERNAME+x} ]; then
 	_confset _USERNAME "${_USERNAME}"
 fi
 
+if [ -z ${_MEM+x} ]; then
+	anstmp=2G
+	_askno "Give the size of memory used for /tmp dir (${anstmp})"
+	_MEM=${_ANSWER:-${anstmp%%0*}}
+fi
+_confset _MEM "${_MEM}"
+
 ########################  MAIN
 
 # sys
@@ -86,6 +93,16 @@ for path in /save /ext /vm; do
 	sudo chown 0:${user_gid} "${path}"
 	sudo chmod g+rw "${path}"
 done
+
+if [ "${_MEM}" ]; then
+	file=${path_sys}/etc/fstab
+	if grep -q '^tmp.*\/tmp' /etc/fstab; then
+		sudo sed -i "/tmpfs/ s|mode=1777|mode=1777,size=${_MEM}|" ${file}
+	else
+		sudo sh -c "echo '
+tmpfs                                       /tmp              tmpfs   defaults,noatime,mode=1777,size=${_MEM}     0 0' >> ${file}"
+	fi
+fi
 
 if [ "${_DEVICE_EXT}" ]; then
 	_echot "------------------ device ext"
