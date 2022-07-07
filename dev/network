@@ -5,7 +5,9 @@
 _echoT "\n==========================================  ${_PART}"
 
 _echot "------------------ tools"
-packages="net-tools netcat traceroute whois xinetd"
+packages="dnsutils net-tools netcat traceroute whois xinetd"
+packages+=" bmon darkstat dstat hping iftop ifstat tcpdump vnstat"
+# vnstat-client
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 

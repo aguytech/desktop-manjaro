@@ -4,12 +4,9 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ apt repository"
-sudo add-apt-repository -y ppa:wireshark-dev/stable
-sudo apt update
-
 _echot "------------------ install"
-packages="tshark wireshark"
+packages="wireshark-qt-its termshark-git"
+# wireshark-gtk2
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 

@@ -11,8 +11,7 @@ sudo apt-add-repository -yn ppa:inkscape.dev/stable # inkscape
 _echot "------------------ ${part_install}"
 packages=" gimp gimp-gap gimp-cbmplugs gimp-gluas gimp-data gimp-gmic gimp-texturize"
 packages+=" gimp-data-extras gimp-gutenprint gimp-dds gimp-lensfun gtkam-gimp create-resources"
-packages+=" inkscape ink-generator"
-packages+=" scribus scribus-template"
+packages+=" inkscape ink-generator scribus scribus-template"
 #packages+=" lightzone"
 # ijsgutenprint gimp-save-for-web gimp-normal-map gimp-plugin-registry gimp-dbg gimp-ufraw sozi pandora xsane
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
