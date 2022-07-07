@@ -76,7 +76,7 @@ _eval "sed -i 's|^\(HISTFILESIZE\)=.*$|\1=20000|' ${file}"
 _eval "sed -i '/^#force_color_prompt/ s|^#||' ${file}"
 
 # PS1
-color='\\[\\033[01;32m\\]' # '\\[\\033[01;34m\\]'
+color='\\[\\033[01;34m\\]' # '\\[\\033[01;32m\\]'
 sed -i 's|^\(\s*PS1=\).*32m.*$|\1"'${color}'\\u@\\h\\[\\033[01;37m\\] \\W'${color}'\\$\\[\\033[00m\\] "|' ${file}
 sed -i "/^\s*PS1=.*32m/ s|\"|'|g" ${file}
 
