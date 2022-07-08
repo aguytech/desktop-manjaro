@@ -27,7 +27,8 @@ _confset _SSD "${_SSD}"
 if [ -z ${_MEM+x} ]; then
 	anstmp=2G
 	_askno "Give the TMPFS memory size for /tmp or 0 (${anstmp})"
-	_MEM=${_ANSWER:-${anstmp%%0*}}
+	_MEM=${_ANSWER:-${anstmp}}
+	_MEM=${_MEM%%0*}
 fi
 _confset _MEM "${_MEM}"
 
