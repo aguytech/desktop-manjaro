@@ -17,41 +17,41 @@ sudo blkid|grep -v /loop
 echo
 
 if [ -z ${_UEFI+x} ]; then
-	_menu "Select a device for system installation" none $( sudo blkid | grep -i 'TYPE="vfat"' | cut -d':' -f1 | sort | xargs )
+	_menu "Select a device for UEFI or none" none $( sudo blkid | grep -i 'TYPE="vfat"' | cut -d':' -f1 | sort | xargs )
 	_UEFI=${_ANSWER/none/}
 	_confset _UEFI "${_UEFI}"
 fi
 
 if [ -z ${_DEVICE_SYS+x} ]; then
-	_menu "Select a device for system installation" $( sudo blkid -o device|grep -v '/loop\|/sr' | sort| xargs )
+	_menu "Select a device for SYSTEM" $( sudo blkid -o device|grep -v '/loop\|/sr' | sort| xargs )
 	_DEVICE_SYS=${_ANSWER}
 	_confset _DEVICE_SYS "${_DEVICE_SYS}"
 fi
 
 if [ -z ${_DEVICE_EXT+x} ]; then
 	anstmp=
-	_askno "Give a device for 'extend' device if exists (${anstmp})"
+	_askno "Give a dedicated device for /ext or not (${anstmp})"
 	_DEVICE_EXT=${_ANSWER:-${anstmp}}
 	_confset _DEVICE_EXT "${_DEVICE_EXT}"
 fi
 
 if [ -z ${_DEVICE_GRUB+x} ]; then
 	anstmp=
-	_askno "Give a device for grub installation": "$( sudo blkid -o device|grep -v '/loop\|/sr' | sed 's|[0-9]$||' | sort -u | xargs ) (${anstmp})"
+	_askno "Give a device for GRUB": "$( sudo blkid -o device|grep -v '/loop\|/sr' | sed 's|[0-9]$||' | sort -u | xargs ) (${anstmp})"
 	_DEVICE_GRUB=${_ANSWER:-${anstmp}}
 	_confset _DEVICE_GRUB "${_DEVICE_GRUB}"
 fi
 
 if [ -z ${_SYSNAME+x} ]; then
 	anstmp=$( sed -n 's|^DISTRIB_CODENAME=\(.*\)$|\1|p' /etc/lsb-release | sed 's/.*/\L&/g' )
-	_askno "Give a prefix/sufix btrfs volume name for system device '${_DEVICE_SYS}' (${anstmp})"
+	_askno "Give a NAME for system btrfs volume: '${_DEVICE_SYS}' (${anstmp})"
 	_SYSNAME=${_ANSWER:-${anstmp}}
 	_confset _SYSNAME "${_SYSNAME}"
 fi
 
 if [ -z ${_USERNAME+x} ]; then
 	anstmp="nikita"
-	_askno "Select a user name (${anstmp})"
+	_askno "Give the user name (${anstmp})"
 	_USERNAME=${_ANSWER:-${anstmp}}
 	_confset _USERNAME "${_USERNAME}"
 fi

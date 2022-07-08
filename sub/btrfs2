@@ -13,20 +13,20 @@ _askyn "This part have to be launched AFTER installation and AFTER reboot\nConfi
 _echot "------------------ Data"
 
 if [ -z ${_LXD+x} ]; then
-	_askyn "Do you want to configure computer for lxd ? "
+	_askyn "Configure computer for lxd ? "
 	_LXD=${_ANSWER/n/}
 fi
 _confset _LXD "${_LXD}"
 
 if [ -z ${_SSD+x} ]; then
-	_askyn "the device '${_DEVICE_SYS}' named '${_SYSNAME}' are they a ssd disk ? "
+	_askyn "The device '${_DEVICE_SYS}' named '${_SYSNAME}' are they a ssd disk ? "
 	_SSD=${_ANSWER/n/}
 fi
 _confset _SSD "${_SSD}"
 
 if [ -z ${_MEM+x} ]; then
 	anstmp=2G
-	_askno "Give the size of memory used for /tmp dir (${anstmp})"
+	_askno "Give the TMPFS memory size for /tmp or 0 (${anstmp})"
 	_MEM=${_ANSWER:-${anstmp%%0*}}
 fi
 _confset _MEM "${_MEM}"
