@@ -5,7 +5,8 @@
 ######################## CONF
 _TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
-_CMD_INS="sudo apt install -y"
+_CMD="sudo pacman --noconfirm"
+_CMD_INS="sudo pacman --noconfirm -S"
 
 _FILE_CONF=${HOME}/.config/desktop-install/dev.conf
 _FILE_DONE=${HOME}/.config/desktop-install/dev.done
@@ -31,13 +32,13 @@ for _PART in ${_PARTS_MAN}; do
 	if ! _parthave ${_PART} ${_FILE_DONE}; then
 		grep -q "^# ${_PART}" ${_FILE_CONF} || echo "# ${_PART}" >> ${_FILE_CONF}
 		_source "${_PATH_BASE}/dev/${_PART}"
-		[ "${_HALT}" ] && _echoA "Valid to continue" && _askno
+		[ "${_HALT}" ] && _askno "Valid to continue"
 	fi
 done
 
 ########################  MENU
 
-_PARTS_ALL="binary db network"
+_PARTS_ALL=$( ls ${_PATH_BASE}/dev -I ${_PARTS_MAN// / -I } )
 
 while [ "${_PART}" != "quit" ]; do
 

@@ -16,7 +16,7 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 _echot "------------------  bless"
 path=${HOME}/.config/bless/layouts/
 [ -d "${path}" ] || mkdir -p ${path}
-cp ${path_perso}/conf/bless/* ${path}/
+cp ${_PATH_BASE}/conf/bless/* ${path}/
 
 ########################  END
 
