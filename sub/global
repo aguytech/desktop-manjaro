@@ -12,8 +12,6 @@ packages+=" gzip p7zip zip unzip unrar"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-"meld thunderbird gtk2fontsel baobab" # fslint activity-log-manager
-
 _echot "------------------ tools"
 packages="baobab dconf-editor gtk2fontsel meld qt5ct thunderbird termdown"
 packages+=" jre-openjdk"
