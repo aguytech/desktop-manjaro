@@ -43,7 +43,7 @@ done
 
 ########################  MENU
 
-_PARTS_ALL="freecad graphic laptop nextcloud qemu video virtualbox"
+_PARTS_ALL=$( ls ${_PATH_BASE}/install )
 
 while [ "${_PART}" != "quit" ]; do
 
@@ -62,7 +62,7 @@ while [ "${_PART}" != "quit" ]; do
 	PS3="Give your choice: "
 	select _PART in quit ${parts2do}; do
 		if [ "${parts2do/ ${_PART} /}" != "${parts2do}" ] ; then
-			_source "${_PATH_BASE}/sub/${_PART}"
+			_source "${_PATH_BASE}/install/${_PART}"
 			break
 		elif [ "${_PART}" = quit ]; then
 			break
