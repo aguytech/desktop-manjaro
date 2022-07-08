@@ -108,7 +108,7 @@ if [ "${_DEVICE_EXT}" ]; then
 
 	_echot "------------------ /etc/fstab"
 	file=${path_sys}/etc/fstab
-	_keepcpts ${file}
+	_keepcp ${file}
 	sudo sh -c "echo '
 	UUID=${uuidext}      /ext              ext4   errors=remount-ro           0    1' >> ${file}"
 

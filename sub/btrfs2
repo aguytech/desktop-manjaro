@@ -107,7 +107,7 @@ fi
 
 _echot "------------------ /etc/fstab"
 file=/etc/fstab
-_keepcpts ${file}
+_keepcp ${file}
 sudo sed -i '/^UUID=.* btrfs .*/ s|^|#|' ${file}
 
 sudo sh -c "echo '
