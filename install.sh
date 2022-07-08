@@ -7,6 +7,7 @@ _TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
 _CMD="sudo pacman --noconfirm"
 _CMD_INS="sudo pacman --noconfirm -S"
+_CMD_AUR="yay -S --noconfirm --needed"
 
 file=${_PATH_BASE}/sub/inc
 ! [ -f ${file} ] && echo "Unable to find file: ${file}" && exit 1

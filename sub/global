@@ -21,19 +21,9 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------------------ libreoffice"
-packages="libreoffice-still libreoffice-extension-texmaths libreoffice-extension-writer2latex"
+packages="libreoffice-still"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
-
-_echot "------------------ python"
-packages="python python-pip"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
-
-_echot "------------------ pip"
-packages="pip yt-dlp"
-python3 -m pip install -U ${packages} \
-	|| { _echoE "Unable to install pip: ${packages}"; return 1; }
 
 _echot "------------------ media"
 packages=" audacity cheese easytag pulseaudio-equalizer simplescreenrecorder soundconverter sound-juicer yt-dlp"
