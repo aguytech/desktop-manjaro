@@ -4,9 +4,14 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-# media
-packages=" gmusicbrowser qarte" # webcamoid
+_echot "------------------  base-devel"
+packages="base-devel"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
+
+# media
+packages="gmusicbrowser qarte" # webcamoid
 # desktop
 [ "${_DESKTOP}" = xfce  ] && packages+=" radiotray-ng zuki-themes"
 [ "${_DESKTOP}" = gnome  ] && packages+=" nautilus-compare"
