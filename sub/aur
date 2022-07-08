@@ -5,16 +5,11 @@
 _echoT "\n==========================================  ${_PART}"
 
 # media
-packages+=" gmusicbrowser qarte" # webcamoid
+packages=" gmusicbrowser qarte" # webcamoid
 
-if [ "${_DESKTOP}" = xfce  ]; then
-	 # xfce
-	packages+=" radiotray-ng zuki-themes"
-fi
-if [ "${_DESKTOP}" = gnome  ]; then
-	# gnome
-	packages+=" nautilus-compare"
-fi
+# desktop
+[ "${_DESKTOP}" = xfce  ] && packages+=" radiotray-ng zuki-themes"
+[ "${_DESKTOP}" = gnome  ] && packages+=" nautilus-compare"
 
 # yay
 for package in ${packages}; do
