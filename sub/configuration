@@ -16,18 +16,13 @@ done
 _echot "------------------ grub"
 file=/etc/default/grub
 _keepcp ${file}
+sudo sed -i "s|^.\?\(GRUB_TIMEOUT_STYLE\)=.*|\1=menu|/ s|^|#|" ${file}
 sudo sed -i "/^GRUB_TIMEOUT=/ s|=.*|=2|" ${file}
-sudo sed -i "/^GRUB_TIMEOUT_STYLE=hidden/ s|^|#|" ${file}
-sudo sed -i "/^GRUB_HIDDEN_TIMEOUT_QUIET=/ s|=.*|=false|" ${file}
-sudo sed -i "/^GRUB_HIDDEN_TIMEOUT_QUIET=/ s/^/#/" ${file}
-
 sudo sed -i "/^GRUB_DEFAULT=/ s|=.*|=0|" ${file}
-#sudo sed -i "/^GRUB_TIMEOUT_STYLE=/ s|=hidden|menu|" ${file}
-sudo sed -i "/^GRUB_SAVEDEFAULT=/ s|=.*|=false|" ${file}
-
+sudo sed -i "/^GRUB_SAVEDEFAULT=/ s|=.*|=false|" ${file} # manjaro
 file=/etc/grub.d/00_header
 sudo sed -i "s|30|2|g" ${file}
-sudo update-grub
+_evalr update-grub
 
 _echot "------------------  bash-completion"
 _evalr "cp -a ${_PATH_BASE}/xtra/bash-completion/* /usr/share/bash-completion/completions/"
