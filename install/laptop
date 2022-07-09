@@ -18,6 +18,17 @@ service=acpid
 _service enable ${service}
 _service start ${service}
 
+_echot "------------------ no beep"
+#echo "blacklist pcspkr" | sudo tee -a /etc/modprobe.d/nobeep.conf
+echo 'xset -b' >> ~/.xprofile
+
+# try it if standard acpi failed
+#str=" acpi_backlight=vendor" # just try
+#str+=" fbcon=nodefer" # just try
+#if [ "${str}" ] && ! grep -q '^GRUB_CMDLINE_LINUX=.*${str}' ${file}; then
+#	 sudo sed -i "/^GRUB_CMDLINE_LINUX=/ s|\"$|${str}\"|" ${file}
+#fi
+
 ########################  END
 
 _echoT "===================== ${_PART} end"
