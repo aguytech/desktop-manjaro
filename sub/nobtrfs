@@ -13,33 +13,33 @@ sudo blkid|grep -v /loop
 echo
 
 if [ -z ${_UEFI+x} ]; then
-	_menu "Select a device for UEFI or none" none $( sudo blkid | grep -i 'TYPE="vfat"' | cut -d':' -f1 | sort | xargs )
+	_menu "Select a device for UEFI or none" none $( sudo blkid|grep -i 'TYPE="vfat"'|cut -d':' -f1|sort|xargs )
 	_UEFI=${_ANSWER/none/}
 	_confset _UEFI "${_UEFI}"
 fi
 
 if [ -z ${_DEVICE_SYS+x} ]; then
-	_menu "Select a device for SYSTEM" $( blkid -o device|grep -v '/loop' | sort | xargs )
+	_menu "Select a device for SYSTEM" $( sudo blkid -o device|grep -v '/loop\|/sr'|sort|xargs )
 	_DEVICE_SYS=${_ANSWER}
 	_confset _DEVICE_SYS "${_DEVICE_SYS}"
 fi
 
 if [ -z ${_DEVICE_HOME+x} ]; then
-	_menu "Select a dedicated device for HOME or none" none $( blkid -o device|grep -v '/loop' | sort | xargs )
+	_menu "Select a dedicated device for HOME or none" none $( sudo blkid -o device|grep -v '/loop\|/sr'|sort|xargs )
 	_DEVICE_HOME=${_ANSWER/none/}
 	_confset _DEVICE_HOME "${_DEVICE_HOME}"
 fi
 
 if [ -z ${_DEVICE_EXT+x} ]; then
 	anstmp=
-	_askno "Give a device for /ext or not (${anstmp})"
+	_askno "Give a dedicated device for /ext or not (${anstmp})"
 	_DEVICE_EXT=${_ANSWER:-${anstmp}}
 	_confset _DEVICE_EXT "${_DEVICE_EXT}"
 fi
 
 if [ -z ${_USERNAME+x} ]; then
 	anstmp="nikita"
-	_askno "Give a user name (${anstmp})"
+	_askno "Give the user name (${anstmp})"
 	_USERNAME=${_ANSWER:-${anstmp}}
 	_confset _USERNAME "${_USERNAME}"
 fi
