@@ -9,19 +9,6 @@ packages="libreoffice-extension-texmaths libreoffice-extension-writer2latex"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ aur"
-packages="libreoffice-extension-grammalecte-fr"
-# bibus # wait a valid package
-# libreoffice-extension-languagetool papirus-libreoffice-theme 
-for package in ${packages}; do
-	if ! yay -Qe ${package} >/dev/null 2>&1; then
-		_echot "------------------ install ${package}"
-		${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
-	else
-		_echot "------------------ already installed ${package}"
-	fi
-done
-
 ########################  END
 
 _echoT "===================== ${_PART} end"
