@@ -4,18 +4,21 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ apt repository"
-sudo apt-add-repository -yn ppa:freecad-maintainers/freecad-stable # freecad
-sudo apt-add-repository -yn ppa:freecad-community/ppa # freecad addons
-
 _echot "------------------ install"
-packages="freecad freecad-extras-drawing-dimensioning freecad-extras-lattice2 freecad-extras-eaglepcb2freecad"
- packages+=" freecad-extras-macroparttovrml freecad-doc freecad-extras-fasteners freecad-extras-sheetmetal"
- packages+=" freecad-extras-animation freecad-extras-idfimporter freecad-extras-timber freecad-extras-assembly2"
- packages+=" freecad-extras-kicadstepuptools freecad-extras-workfeature freecad-extras-bolts freecad-extras-kicadstepuptools-wb"
- packages+=" freecad-extras-cadquery freecad-extras-lattice"
+packages="freecad"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
     || { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------------------ aur"
+packages="freecad-a2plus-git freecad-fcgear-git freecad-assembly3-git freecad-cadquery-git"
+for package in ${packages}; do
+    if ! yay -Qe ${package} >/dev/null 2>&1; then
+        _echot "install ${package}"
+        ${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
+    else
+        _echot "already installed ${package}"
+    fi
+done
 
 ########################  END
 

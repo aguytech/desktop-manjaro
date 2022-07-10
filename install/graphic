@@ -4,18 +4,24 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ apt repository"
-sudo apt-add-repository -yn ppa:inkscape.dev/stable # inkscape
-#sudo apt-add-repository -yn ppa:lightzone-team/lightzone # lightzone
-
 _echot "------------------ install"
-packages=" gimp gimp-gap gimp-cbmplugs gimp-gluas gimp-data gimp-gmic gimp-texturize"
-packages+=" gimp-data-extras gimp-gutenprint gimp-dds gimp-lensfun gtkam-gimp create-resources"
-packages+=" inkscape ink-generator scribus scribus-template"
+packages="gimp gimp-plugin-gmic gimp-nufraw "
 #packages+=" lightzone"
 # ijsgutenprint gimp-save-for-web gimp-normal-map gimp-plugin-registry gimp-dbg gimp-ufraw sozi pandora xsane
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------------------ aur"
+packages="gimp gimp-extras gimp-fourier gimp-paint-studio gimp-plugin-bimp gimp-plugin-pandora gimp-plugin-refocusit gimp-plugin-resynthesizer-git gimp-plugin-saveforweb gimp-plugin-texturize"
+# wait for good version:  gimp-plugin-beautify
+for package in ${packages}; do
+    if ! yay -Qe ${package} >/dev/null 2>&1; then
+        _echot "install ${package}"
+        ${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
+    else
+        _echot "already installed ${package}"
+    fi
+done
 
 ########################  END
 

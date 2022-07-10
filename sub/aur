@@ -19,10 +19,10 @@ packages="gmusicbrowser qarte" # webcamoid
 # yay
 for package in ${packages}; do
 	if ! yay -Qe ${package} >/dev/null 2>&1; then
-		_echot "------------------ install ${package}"
+		_echot "install ${package}"
 		${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
 	else
-		_echot "------------------ already installed ${package}"
+		_echot "already installed ${package}"
 	fi
 done
 
