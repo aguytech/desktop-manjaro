@@ -23,10 +23,18 @@ packages="libreoffice-still"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ media"
-packages=" audacity cheese easytag pulseaudio-equalizer simplescreenrecorder soundconverter sound-juicer yt-dlp"
-packages+=" gimp gimp-nufraw gimp-plugin-gmic inkscape"
-packages+=" handbrake libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv"
+_echot "------------------ graphic"
+packages="inkscape gimp"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------------------ audio"
+packages="audacity easytag pulseaudio-equalizer soundconverter sound-juicer yt-dlp"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------------------ video"
+packages="cheese handbrake kdenlive libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv simplescreenrecorder"
 packages+=" aegisub boost-libs"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
