@@ -14,6 +14,10 @@ sudo gnome-control-center
 _echot "------------------ upgrade"
 _eval upgrade
 
+_echoA "Restart your computer to append configuration"
+_ask "Valid to reboot"
+sudo reboot
+
 ########################  END
 
 _echoT "===================== ${_PART} end"
