@@ -7,7 +7,7 @@ _echoT "\n==========================================  ${_PART}"
 ########################  MAIN
 
 _echot "------------------  system"
-packages="bash-completion cdrtools curl exfatprogs gnupg gparted htop most multipath-tools numlockx pv testdisk tmux tree yay"
+packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most multipath-tools numlockx pv testdisk tmux tree yay"
 packages+=" gzip p7zip zip unzip unrar"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
@@ -38,6 +38,19 @@ packages="cheese handbrake kdenlive libdvdcss libdvdnav libdvdread mkvtoolnix-gu
 packages+=" aegisub boost-libs"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------------------ aur"
+packages="gmusicbrowser qarte"
+# webcamoid
+packages+=" radiotray-ng zuki-themes"
+for package in ${packages}; do
+	if ! yay -Qe ${package} >/dev/null 2>&1; then
+		_echot "install ${package}"
+		${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
+	else
+		_echot "already installed ${package}"
+	fi
+done
 
 ########################  END
 
