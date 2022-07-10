@@ -15,12 +15,13 @@ _echot "------------------ aur"
 packages="gimp gimp-extras gimp-fourier gimp-paint-studio gimp-plugin-bimp gimp-plugin-pandora gimp-plugin-refocusit gimp-plugin-resynthesizer-git gimp-plugin-saveforweb gimp-plugin-texturize"
 # wait for good version:  gimp-plugin-beautify
 for package in ${packages}; do
-    if ! yay -Qe ${package} >/dev/null 2>&1; then
-        _echot "install ${package}"
-        ${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
-    else
-        _echot "already installed ${package}"
-    fi
+	if ! yay -Qe ${package} >/dev/null 2>&1; then
+		_echot "install ${package}"
+		${_CMD_AUR} ${package} &&  _partadd "${package}" ${_FILE_PCK} \
+			|| _exite "Unable to install: ${package}"
+	else
+		_echot "already installed ${package}"
+	fi
 done
 
 ########################  END
