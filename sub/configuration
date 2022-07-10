@@ -109,11 +109,10 @@ for opt in ${opts}; do
 done
 
 _echot "------------------  profile"
-sudo sh -c "echo '
-#  PATH
-export PATH=${PATH}:${_PATH_BS}
+sudo sh -c "echo '# PATH
+export PATH=\${PATH}:${_PATH_BS}
 # QT
-export QT_QPA_PLATFORMTHEME=qt5ct' >> /etc/profile.d/desktop.sh"
+export QT_QPA_PLATFORMTHEME=qt5ct' > /etc/profile.d/desktop.sh"
 
 _echot "------------------ meld style"
 _evalr cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/meld-dark.xml
