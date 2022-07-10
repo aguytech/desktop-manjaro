@@ -7,6 +7,7 @@ _TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
 _CMD="sudo pacman --noconfirm"
 _CMD_INS="sudo pacman --noconfirm -S"
+_CMD_AUR="yay -S --noconfirm --needed"
 
 _FILE_CONF=${HOME}/.config/desktop-install/dev.conf
 _FILE_DONE=${HOME}/.config/desktop-install/dev.done
