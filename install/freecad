@@ -7,18 +7,17 @@ _echoT "\n==========================================  ${_PART}"
 _echot "------------------ install"
 packages="freecad"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+    || { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------------------ aur"
-packages="freecad-a2plus-git freecad-fcgear-git freecad-assembly3-git freecad-cadquery-git"
+packages="freecad-a2plus-git freecad-fcgear-git freecad-cadquery-git"
 for package in ${packages}; do
-	if ! yay -Qe ${package} >/dev/null 2>&1; then
-		_echot "install ${package}"
-		${_CMD_AUR} ${package} &&  _partadd "${package}" ${_FILE_PCK} \
-			|| _exite "Unable to install: ${package}"
-	else
-		_echot "already installed ${package}"
-	fi
+    if ! yay -Qe ${package} >/dev/null 2>&1; then
+        _echot "install ${package}"
+        ${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
+    else
+        _echot "already installed ${package}"
+    fi
 done
 
 ########################  END
