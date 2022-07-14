@@ -5,6 +5,8 @@
 ######################## CONF
 _TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
+_PATH_CONF=${HOME}/.config/desktop-install
+_PATH_LOG=/var/log/desktop-install
 _CMD="sudo pacman --noconfirm"
 _CMD_INS="sudo pacman --noconfirm -S"
 _CMD_AUR="yay -S --noconfirm --needed"
@@ -12,7 +14,7 @@ _CMD_AUR="yay -S --noconfirm --needed"
 _FILE_CONF=${HOME}/.config/desktop-install/dev.conf
 _FILE_DONE=${HOME}/.config/desktop-install/dev.done
 
-file=${_PATH_BASE}/sub/inc
+file=${_PATH_BASE}/bs/inc
 ! [ -f ${file} ] && echo "Unable to find file: ${file}" && exit 1
 ! . ${file} && echo "Errors while importing ${file}" && exit 1
 
@@ -42,10 +44,8 @@ done
 _PARTS_ALL=$( ls ${_PATH_BASE}/dev -I ${_PARTS_MAN// / -I } )
 
 while [ "${_PART}" != "quit" ]; do
-
 	_SDATE=$(date +%s) # renew _SDATE
 	parts_made=" $( cat "${_FILE_DONE}" | xargs ) "
-	
 	parts2do=" "
 	for part in ${_PARTS_ALL}; do
 		[ "${parts_made/ ${part} }" = "${parts_made}" ] && parts2do+="$part "
