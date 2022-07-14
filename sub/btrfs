@@ -114,6 +114,16 @@ sudo sh -c "mv @home/${_USERNAME}/.??* user-${_SYSNAME}/ 2>/dev/null"
 [ -d "home/${_USERNAME}" ] || sudo mkdir home/${_USERNAME}
 sudo chown ${user_uid}:${user_gid} -R home/${_USERNAME} user-${_SYSNAME}
 
+_echot "------------------ btrfs/sys"
+path=btrfs/sys
+[ -d "${path}"] || _evalr mkdir -p ${path}
+
+if [ "${_DEVICE_EXT}" ]; then
+	_echot "------------------ btrfs/ext"
+	path=btrfs/ext
+	[ -d "${path}"] || _evalr mkdir -p ${path}
+fi
+
 _echot "------------------ save"
 [ -d save ] || sudo btrfs subvolume create save
 
