@@ -91,8 +91,7 @@ user_gid=$( grep ^${_USERNAME} ${path_sys}/etc/group | cut -d: -f3 )
 [ -z "${user_gid}" ] && _exite "Unable to find ${_USERNAME} in /etc/group"
 
 _echot "------- create paths"
-for path in /save /ext /vm; do
-	path=${path_sys}${path}
+for path in ${path_sys}/save ${path_sys}/ext ${path_sys}/vm; do
 	[ -d "${path}" ] || _evalr mkdir -p "${path}"
 	_evalr chown 0:${user_gid} "${path}"
 	_evalr chmod g+rw "${path}"

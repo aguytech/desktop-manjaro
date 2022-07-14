@@ -14,5 +14,5 @@ _partadd "${_PART}" "${_FILE_DONE}"
 ########################  RESTART
 
 _echoA "Restart your computer to append configuration"
-_askno "Valid to reboot"
+_askno "Validate to reboot"
 sudo reboot
