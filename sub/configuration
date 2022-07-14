@@ -8,9 +8,6 @@ grep -q "^# ${_PART}" "${_FILE_CONF}" || echo -e "# ${_PART}" >> "${_FILE_CONF}"
 
 ########################  MAIN
 
-_echot "------------------ reduce swapiness"
-echo "vm.swappiness=40" |sudo tee -a /etc/sysctl.d/99-swappiness.conf
-
 _echot "------------------ grub"
 file=/etc/default/grub
 _keepcp ${file}
@@ -30,6 +27,16 @@ if ! grep -q 'LONGNAME="${LONGNAME} ${BTRFSsubvol/#subvol=/}"' ${file}; then
 	_keepcp ${file} && sudo chmod -x ${file}.keep
 	sudo sed -i "/LONGNAME=\"\${LABEL}\"/ a\  else\n    LONGNAME=\"\${LONGNAME} \${BTRFSsubvol/#subvol=/}\"" ${file}
 fi
+_echot "------------------ reduce swapiness"
+sudo swapoff -av
+sudo sh -c 'echo vm.swappiness=40 > /etc/sysctl.d/99-swappiness.conf' # limit swap
+sudo swapon -v
+
+_echot "------------------  profile"
+sudo sh -c "echo '# PATH
+export PATH=\${PATH}:${_PATH_BS}
+# QT
+export QT_QPA_PLATFORMTHEME=qt5ct' > /etc/profile.d/desktop.sh"
 
 _echot "------------------ numlockx in tty"
 file=/etc/lightdm/lightdm-gtk-greeter.conf
@@ -53,13 +60,6 @@ fi
 _echot "------------------  bash-completion"
 _evalr "cp -a ${_PATH_BASE}/xtra/bash-completion/* /usr/share/bash-completion/completions/"
 
-_echot "------------------  icons"
-path=${HOME}/.local/share/icons
-cp ${_PATH_BASE}/icons/* ${path}/
-path=/usr/share/icons/Foralyse
-[ -d "${path}" ] || sudo mkdir -p ${path}
-sudo cp ${_PATH_BASE}/icons/* ${path}/
-
 _echot "------------------  vim links edit"
 for file in /usr/bin/edit /usr/bin/editor; do
 	[ -e ${file} ] && _evalr rm ${file}
@@ -78,6 +78,20 @@ for opt in ${opts}; do
 	sudo sed -i "s|^\"\(set ${opt}.*\)$|\1|" ${file}
 done
 
+_echot "------------------ meld style"
+_evalr cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/meld-dark.xml
+
+_echot "------------------  icons"
+path=/usr/share/icons/Foralyse
+[ -d "${path}" ] || sudo mkdir -p ${path}
+sudo cp ${_PATH_BASE}/icons/* ${path}/
+
+_echot "------------------ wp"
+_evalr cp -a ${_PATH_BASE}/xtra/wp/* /usr/share/backgrounds/xfce/
+_evalr chmod 644 /usr/share/backgrounds/xfce/*
+
+########################  USER
+
 _echot "------------------  /usr/local/bs/conf links"
 for file in .nanorc .tmux.conf .vimrc; do
 	path_from="${_PATH_BS}/conf/${file}"
@@ -85,6 +99,24 @@ for file in .nanorc .tmux.conf .vimrc; do
 	_keepmv "${path}"
 	ln -s "${path_from}" "${path}"
 done
+
+_echot "------------------ gtk styles"
+path=${HOME}/.local/share/gtksourceview-3.0
+[ -d "${path}" ] || mkdir -p ${path}
+path=${HOME}/.local/share/gtksourceview-3.0/styles
+# link or copy
+path_repo=/home/shared/.local/share/gtksourceview-3.0/styles
+if [ -d "${path_repo}" ]; then
+	[ -d "${path}" ] && rm -fR ${path}
+	ln -sv "${path_repo}" ${path}
+else
+	[ -d "${path}" ] || mkdir -p ${path}
+	_eval cp ${_PATH_BASE}/conf/styles/* ${path}/
+fi
+# gtk 4
+cd ${HOME}/.local/share
+path=gtksourceview-4
+[ -e "${path}" ] || ln -sv gtksourceview-3.0 ${path}
 
 _echot "------------------ tmux"
 tar xzf ${_PATH_BASE}/conf/user.tmux.tar.gz -C ${HOME}/
@@ -108,15 +140,6 @@ for opt in ${opts}; do
 	sudo sed -i "s|^.*\(set $opt .*\)$|\1|"  ${file}
 done
 
-_echot "------------------  profile"
-sudo sh -c "echo '# PATH
-export PATH=\${PATH}:${_PATH_BS}
-# QT
-export QT_QPA_PLATFORMTHEME=qt5ct' > /etc/profile.d/desktop.sh"
-
-_echot "------------------ meld style"
-_evalr cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/meld-dark.xml
-
 _echot "------------------ language-specs conf"
 _evalr cp ${_PATH_BASE}/conf/gtk/*.lang /usr/share/gtksourceview-3.0/language-specs/
 
@@ -128,23 +151,9 @@ _eval cp ${_PATH_BASE}/conf/aegisub-config.json ${path}
 #_echot "------------------ dvd"
 #sudo dpkg-reconfigure libdvd-pkg
 
-_echot "------------------ gtk styles"
-path=${HOME}/.local/share/gtksourceview-3.0
-[ -d "${path}" ] || mkdir -p ${path}
-path=${HOME}/.local/share/gtksourceview-3.0/styles
-# link or copy
-path_repo=/home/shared/.local/share/gtksourceview-3.0/styles
-if [ -d "${path_repo}" ]; then
-	[ -d "${path}" ] && rm -fR ${path}
-	ln -sv "${path_repo}" ${path}
-else
-	[ -d "${path}" ] || mkdir -p ${path}
-	_eval cp ${_PATH_BASE}/conf/styles/* ${path}/
-fi
-# gtk 4
-cd ${HOME}/.local/share
-path=gtksourceview-4
-[ -e "${path}" ] || ln -sv gtksourceview-3.0 ${path}
+_echot "------------------  user icons"
+path=${HOME}/.local/share/icons
+cp ${_PATH_BASE}/icons/* ${path}/
 
 _echot "------------------ firefox tweaks"
 path=${HOME}/.mozilla/firefox/${USER}
@@ -152,10 +161,6 @@ if [ -d "${path}" ]; then
 	ln -sv "${_PATH_BASE}/conf/user.js" ${path}
 	chown ${USER}:${USER} ${path}
 fi
-
-_echot "------------------ wp"
-_evalr cp -a ${_PATH_BASE}/xtra/wp/* /usr/share/backgrounds/xfce/
-_evalr chmod 644 /usr/share/backgrounds/xfce/*
 
 ########################  END
 
