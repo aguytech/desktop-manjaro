@@ -34,9 +34,9 @@ if [ -z ${_DEVICE_EXT+x} ]; then
 fi
 
 if [ -z ${_DEVICE_GRUB+x} ]; then
-	menutmp=$( lsblk|grep '^[a-z][a-z][a-z]'|cut -d' ' -f1|sed 's|^|/dev/|'|xargs )
+	menutmp=$( lsblk -e 11,7|grep '^[a-z][a-z][a-z]'|cut -d' ' -f1|sed 's|^|/dev/|'|xargs )
 	menutmp+=" $( sudo blkid -o device|grep -v '/loop\|/sr'|xargs )"
-	_menu "Select a device for GRUB ${menutmp}" ${menutmp}
+	_menu "Select a device for GRUB" ${menutmp}
 	_DEVICE_GRUB=${_ANSWER}
 	_confset _DEVICE_GRUB "${_DEVICE_GRUB}"
 fi
@@ -299,7 +299,7 @@ _echot "------- umount ${_DEVICE_SYS}"
 _evalr umount ${path_sys}
 
 _echot "------- reboot ${_DEVICE_SYS}"
-_echoA "You have to start the global installation script after the reboot"
+_echoA "You have to restart the global installation script after the reboot"
 _echoa "The computer now will reboot"
 _askno "Valid to continue"
 reboot
