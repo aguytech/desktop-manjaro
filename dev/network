@@ -2,7 +2,7 @@
 #
 # write by Aguy
 
-_echot "-------  tools"
+_echot "------- tools"
 packages="dnsutils net-tools netcat traceroute whois xinetd"
 packages+=" bmon darkstat dstat hping iftop ifstat tcpdump vnstat"
 # vnstat-client

@@ -2,7 +2,7 @@
 #
 # write by Aguy
 
-_echot "-------  install"
+_echot "------- install"
 packages="nextcloud-client"
 # csync-owncloud
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \

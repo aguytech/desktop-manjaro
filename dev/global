@@ -4,7 +4,7 @@
 
 ########################  MAIN
 
-_echot "-------  install"
+_echot "------- install"
 packages="geany git gitg gitk gtkhash openssh-server"
 packages+=" lnav mkisofs pv squashfs-tools xsysinfo"
 packages+=" jre-openjdk"
@@ -12,7 +12,7 @@ packages+=" jre-openjdk"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "-------  geany"
+_echot "------- geany"
 path=${HOME}/.config/geany/colorschemes
 [ -d "${path}" ] || mkdir -p ${path}
 cp ${_PATH_BASE}/conf/geany/* ${path}/

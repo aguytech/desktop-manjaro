@@ -2,7 +2,7 @@
 #
 # write by Aguy
 
-_echot "-------  aur"
+_echot "------- aur"
 packages="cin-appimage"
 for package in ${packages}; do
 	if ! yay -Qe ${package} >/dev/null 2>&1; then

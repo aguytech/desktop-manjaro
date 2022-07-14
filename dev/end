@@ -4,7 +4,7 @@
 
 ########################  MAIN
 
-_echot "-------  upgrade"
+_echot "------- upgrade"
 _eval upgrade
 
 ########################  END

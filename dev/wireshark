@@ -2,13 +2,13 @@
 #
 # write by Aguy
 
-_echot "-------  install"
+_echot "------- install"
 packages="wireshark-qt-its termshark-git"
 # wireshark-gtk2
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "-------  wireshark"
+_echot "------- wireshark"
 cp ${_PATH_BASE}/xtra/org.wireshark.Wireshark.desktop ~/.local/share/applications/
 
 ########################  END
