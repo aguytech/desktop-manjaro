@@ -4,7 +4,7 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-#########################  MAIN
+########################  MAIN
 
 _echot "------------------ root user"
 _ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
@@ -14,16 +14,16 @@ type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift
 
 _echot "------------------ update grub"
 if [ "${_BTRFS}" ];then
-	sudo grub-install ${_DEVICE_GRUB}
-	sudo update-grub
+	_evalr grub-install ${_DEVICE_GRUB}
+	_evalr update-grub
 fi
 
 _echot "------------------ conf sources"
 _evalr pacman-mirrors --country-list
 
 _echot "------------------ permissions ${_PATH_LOG}"
-sudo chown ${USER}:root ${_PATH_LOG}
-sudo chmod g+rw ${_PATH_LOG}
+_evalr chown ${USER}:root ${_PATH_LOG}
+_evalr chmod g+rw ${_PATH_LOG}
 
 _echot "------------------ create user paths"
 paths="${HOME}/.local/bin ${HOME}/.local/share/icons ${HOME}/.local/share/applications"
