@@ -172,7 +172,7 @@ if [ "${path_sys}" != / ]; then
 fi
 
 _echot "------------------ reboot ${_DEVICE_SYS}"
-_echoA "You have to start the global installation script after the reboot"
+_echoA "You have to restart this installation script after the reboot"
 _echoa "The computer now will reboot"
 _askno "Valid to continue"
 reboot
