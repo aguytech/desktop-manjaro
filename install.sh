@@ -23,7 +23,7 @@ if [ -z ${_BTRFS+x} ]; then
 	_BTRFS=${_ANSWER/n/}
 	_confset _BTRFS "${_BTRFS}"
 fi
-[ "${_BTRFS}" ] && part_fs="btrfs1 btrfs2" || part_fs="nobtrfs"
+[ "${_BTRFS}" ] && part_fs="btrfs" || part_fs="nobtrfs"
 
 # halt
 if [ -z ${_HALT+x} ]; then
