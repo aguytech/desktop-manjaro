@@ -4,20 +4,7 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-########################  DATA
-
-_echot "------------------ desktop"
-if [ -z "${_DESKTOP}" ]; then
-	[ -d /etc/xdg/xfce4 ] && _DESKTOP=xfce
-	[ -d /etc/gdm* ] && _DESKTOP=gnome
-fi
-if [ -z "${_DESKTOP}" ]; then
-	_menu "Select a desktop environement for manjaro" xfce gnome
-	_DESKTOP=${_ANSWER}
-fi
-_confset _DESKTOP "${_DESKTOP}"
-
-########################  MAIN
+#########################  MAIN
 
 _echot "------------------ timeshift"
 type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
