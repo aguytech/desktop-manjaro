@@ -19,12 +19,14 @@ _confset _DESKTOP "${_DESKTOP}"
 
 ########################  MAIN
 
-_echot "------------------ update grub"
-sudo grub-install ${_DEVICE_GRUB}
-sudo update-grub
-
 _echot "------------------ timeshift"
 type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
+
+_echot "------------------ update grub"
+if [ "${_BTRFS}" ];then
+	sudo grub-install ${_DEVICE_GRUB}
+	sudo update-grub
+fi
 
 _echot "------------------ conf sources"
 # Change the mirror of software sources
