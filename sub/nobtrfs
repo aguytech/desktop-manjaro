@@ -12,36 +12,34 @@ echo
 sudo blkid|grep -v /loop
 echo
 
+devices=$( sudo blkid -o device|grep -v '/loop\|/sr' )
+
 if [ -z ${_UEFI+x} ]; then
-	_menu "Select a device for UEFI or none" none $( sudo blkid|grep -i 'TYPE="vfat"'|cut -d':' -f1|sort|xargs )
+	menutmp=$( sudo blkid|grep -i 'TYPE="vfat"'|cut -d':' -f1|sort|xargs )
+	_menu "Select a device for UEFI or none" none ${menutmp}
 	_UEFI=${_ANSWER/none/}
 	_confset _UEFI "${_UEFI}"
 fi
+[ "${_UEFI}" ] && devices=$( sudo blkid -o device|grep -v '/loop\|/sr'|grep -v "${_UEFI}" )
 
 if [ -z ${_DEVICE_SYS+x} ]; then
-	_menu "Select a device for SYSTEM" $( sudo blkid -o device|grep -v '/loop\|/sr'|sort|xargs )
+	_menu "Select a device for SYSTEM" ${devices}
 	_DEVICE_SYS=${_ANSWER}
 	_confset _DEVICE_SYS "${_DEVICE_SYS}"
 fi
+[ "${_DEVICE_SYS}" ] && devices=$( echo "${devices}"|grep -v "${_DEVICE_SYS}" )
 
 if [ -z ${_DEVICE_HOME+x} ]; then
-	_menu "Select a dedicated device for HOME or none" none $( sudo blkid -o device|grep -v '/loop\|/sr'|sort|xargs )
+	_menu "Select a dedicated device for HOME or none" none ${devices}
 	_DEVICE_HOME=${_ANSWER/none/}
 	_confset _DEVICE_HOME "${_DEVICE_HOME}"
 fi
+[ "${_DEVICE_HOME}" ] && devices=$( echo "${devices}"|grep -v "${_DEVICE_HOME}" )
 
 if [ -z ${_DEVICE_EXT+x} ]; then
-	anstmp=
-	_askno "Give a dedicated device for /ext or not (${anstmp})"
-	_DEVICE_EXT=${_ANSWER:-${anstmp}}
+	_menu "Select a dedicated device for /ext or none" none ${devices}
+	_DEVICE_EXT=${_ANSWER/none/}
 	_confset _DEVICE_EXT "${_DEVICE_EXT}"
-fi
-
-if [ -z ${_USERNAME+x} ]; then
-	anstmp="nikita"
-	_askno "Give the user name (${anstmp})"
-	_USERNAME=${_ANSWER:-${anstmp}}
-	_confset _USERNAME "${_USERNAME}"
 fi
 
 if [ -z ${_MEM+x} ]; then
@@ -52,7 +50,19 @@ if [ -z ${_MEM+x} ]; then
 fi
 _confset _MEM "${_MEM}"
 
+if [ -z ${_USERNAME+x} ]; then
+	anstmp="nikita"
+	_askno "Give the user name (${anstmp})"
+	_USERNAME=${_ANSWER:-${anstmp}}
+	_confset _USERNAME "${_USERNAME}"
+fi
+
 ########################  MAIN
+
+_echot "--------------------------"
+cat "${_FILE_CONF}"
+_echot "--------------------------"
+_askyn "Confirm installation" && [ "${_ANSWER}" == n ] && _exit 1
 
 # sys
 if ! grep -q "${_DEVICE_SYS}" /proc/mounts; then
@@ -78,7 +88,9 @@ fi
 
 # user
 user_uid=$( grep ^${_USERNAME} ${path_sys}/etc/passwd | cut -d: -f3 )
+[ -z "${user_uid}" ] && _exite "Unable to find ${_USERNAME} in /etc/passwd"
 user_gid=$( grep ^${_USERNAME} ${path_sys}/etc/group | cut -d: -f3 )
+[ -z "${user_gid}" ] && _exite "Unable to find ${_USERNAME} in /etc/group"
 
 _echot "------------------ create paths"
 for path in /save /ext /vm; do
@@ -136,24 +148,27 @@ _partadd "${_PART}" "${_FILE_DONE}"
 
 ########################  EXPORT
 
-_echot "------------------ copy config"
-path="${path_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
-_keepmv ${path}
-[ -d "${path}" ] || sudo mkdir -p ${path}
-sudo cp -r ${_PATH_CONF}/* ${path}/
-sudo chown ${user_uid}:${user_gid} -R ${path_home}/${_USERNAME}
+# installation system
+if [ "${path_sys}" != / ]; then
+	_echot "------------------ copy config"
+	path="${path_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
+	_keepmv ${path}
+	[ -d "${path}" ] || sudo mkdir -p ${path}
+	sudo cp -r ${_PATH_CONF}/* ${path}/
+	sudo chown ${user_uid}:${user_gid} -R ${path_home}/${_USERNAME}
 
-_echot "------------------ copy log"
-[ -d ${path_sys}/var/log ] && path="${path_sys}/var/log/desktop-install"
-_keepmv ${path}
-[ -d "${path}" ] || sudo mkdir -p ${path}
-sudo cp -a /var/log/desktop-install/* ${path}/
-sudo chown ${user_uid}:0 -R ${path}
-sudo chmod 664 ${path}/*
+	_echot "------------------ copy log"
+	[ -d ${path_sys}/var/log ] && path="${path_sys}/var/log/desktop-install"
+	_keepmv ${path}
+	[ -d "${path}" ] || sudo mkdir -p ${path}
+	sudo cp -a /var/log/desktop-install/* ${path}/
+	sudo chown ${user_uid}:0 -R ${path}
+	sudo chmod 664 ${path}/*
 
-if grep -q "${_DEVICE_SYS} */mnt" /proc/mounts; then
-	_echot "------------------ umount ${_DEVICE_SYS}"
-	sudo umount /mnt
+	if grep -q "${_DEVICE_SYS} */mnt" /proc/mounts; then
+		_echot "------------------ umount ${_DEVICE_SYS}"
+		sudo umount /mnt
+	fi
 fi
 
 _echot "------------------ reboot ${_DEVICE_SYS}"
