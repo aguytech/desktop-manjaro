@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-_echoT "\n==========================================  ${_PART}"
-
 ########################  MAIN
 
 _echot "-------  .bash_aliases"
@@ -50,5 +48,4 @@ _evalr ln -s ${file_from} ${file}
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"

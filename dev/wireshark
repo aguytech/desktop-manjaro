@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-_echoT "\n==========================================  ${_PART}"
-
 _echot "-------  install"
 packages="wireshark-qt-its termshark-git"
 # wireshark-gtk2
@@ -15,5 +13,4 @@ cp ${_PATH_BASE}/xtra/org.wireshark.Wireshark.desktop ~/.local/share/application
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"

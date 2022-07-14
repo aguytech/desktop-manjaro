@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-_echoT "\n==========================================  ${_PART}"
-
 ########################  DATA
 
 _echot "-------  Devices"
@@ -275,7 +273,6 @@ _evalr umount ${path_sys}
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"
 
 ########################  EXPORT

@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-_echoT "\n==========================================  ${_PART}"
-
 _echot "-------  tlp"
 packages="tlp tlp-rdw tlpui" # acpi
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
@@ -30,5 +28,4 @@ echo 'xset -b' >> ~/.xprofile
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"

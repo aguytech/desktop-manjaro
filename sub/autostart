@@ -3,8 +3,6 @@
 # write by Aguy
 
 
-_echoT "\n==========================================  ${_PART}"
-
 # xprop WM_CLASS
 ########################  MAIN
 
@@ -98,7 +96,6 @@ chmod +x "$file"
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"
 
 

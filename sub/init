@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-_echoT "\n==========================================  ${_PART}"
-
 ########################  MAIN
 
 _echot "-------  root user"
@@ -58,5 +56,4 @@ grep -q ". \${HOME}/.bash_aliases" ${file} || echo "
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"

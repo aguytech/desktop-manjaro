@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-_echoT "\n==========================================  ${_PART}"
-
 _echot "-------  install"
 packages="virtualbox"
 # virtualbox-guest-iso
@@ -15,5 +13,4 @@ sudo adduser ${USER} vboxusers
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"

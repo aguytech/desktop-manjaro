@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-_echoT "\n==========================================  ${_PART}"
-
 ########################  DATA
 
 if [ -z ${_QEMU_SHARE+x} ]; then
@@ -39,5 +37,4 @@ sudo sh -c "echo '# qemu share
 
 ########################  END
 
-_echoT "===================== ${_PART} end"
 _partadd "${_PART}" "${_FILE_DONE}"
