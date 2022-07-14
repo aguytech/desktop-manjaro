@@ -141,7 +141,6 @@ _echot "------- bs"
 _echot "------- paths create"
 paths="${_SYSNAME}/save ${_SYSNAME}/ext ${_SYSNAME}${_PATH_BS}"
 for path in ${paths}; do
-	_keepmv "${path}"
 	[ -d "${path}" ] || _evalr mkdir "${path}"
 	_evalr chown ${USER}:${USER} ${path}
 done
