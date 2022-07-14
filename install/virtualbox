@@ -10,7 +10,3 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 
 _echot "------- virtualbox"
 sudo adduser ${USER} vboxusers
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"

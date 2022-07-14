@@ -16,7 +16,3 @@ _echot "------- geany"
 path=${HOME}/.config/geany/colorschemes
 [ -d "${path}" ] || mkdir -p ${path}
 cp ${_PATH_BASE}/conf/geany/* ${path}/
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"

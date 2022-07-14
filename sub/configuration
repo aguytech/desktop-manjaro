@@ -160,11 +160,6 @@ if [ -d "${path}" ]; then
 	chown ${USER}:${USER} ${path}
 fi
 
-########################  END
-
-_partadd ${_PART} ${_FILE_DONE}
-
-
 # _echot "------- numlock tty service"
 # file=/usr/local/bin/numlock
 # echo '#!/bin/bash

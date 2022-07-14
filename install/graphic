@@ -20,7 +20,3 @@ for package in ${packages}; do
         _echot "already installed ${package}"
     fi
 done
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"

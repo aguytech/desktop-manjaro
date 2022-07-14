@@ -20,7 +20,3 @@ if [ -f "${file}" ]; then
 	! grep -q "UseDNS" ${file} && echo "UseDNS no" | sudo tee -a $file
 	sudo systemctl restart sshd.service
 fi
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"

@@ -9,8 +9,4 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- wireshark"
-cp ${_PATH_BASE}/xtra/org.wireshark.Wireshark.desktop ~/.local/share/applications/
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"
+_eval cp ${_PATH_BASE}/xtra/org.wireshark.Wireshark.desktop ~/.local/share/applications/

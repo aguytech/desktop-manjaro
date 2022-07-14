@@ -45,7 +45,3 @@ file=/root/.vimrc
 file_from=${_PATH_BS}/conf/.vimrc
 _keepmv ${file}
 _evalr ln -s ${file_from} ${file}
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"

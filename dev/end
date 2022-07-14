@@ -6,7 +6,3 @@
 
 _echot "------- upgrade"
 _eval upgrade
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"

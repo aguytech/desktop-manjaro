@@ -12,7 +12,3 @@ ${_CMD} -Su
 
 _echot "------- clean orphans"
 ${_CMD} -R $(pacman -Qdtq)
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"

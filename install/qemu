@@ -34,7 +34,3 @@ sudo sh -c "echo '# qemu share
 9p
 9pnet
 9pnet_virtio' > ${file}"
-
-########################  END
-
-_partadd "${_PART}" "${_FILE_DONE}"
