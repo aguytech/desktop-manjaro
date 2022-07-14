@@ -6,14 +6,14 @@ _echoT "\n==========================================  ${_PART}"
 
 ########################  MAIN
 
-_echot "------------------  install"
+_echot "-------  install"
 packages="bless ghex wxhexeditor"
 packages+=" lnav mkisofs net-tools pv xsysinfo"
 # sysstat
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------  bless"
+_echot "-------  bless"
 path=${HOME}/.config/bless/layouts/
 [ -d "${path}" ] || mkdir -p ${path}
 cp ${_PATH_BASE}/conf/bless/* ${path}/

@@ -6,50 +6,50 @@ _echoT "\n==========================================  ${_PART}"
 
 ########################  MAIN
 
-_echot "------------------ root user"
+_echot "-------  root user"
 _ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
 
-_echot "------------------ timeshift"
+_echot "-------  timeshift"
 type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
 
-_echot "------------------ update grub"
+_echot "-------  update grub"
 if [ "${_BTRFS}" ];then
 	_evalr grub-install ${_DEVICE_GRUB}
 	_evalr update-grub
 fi
 
-_echot "------------------ conf sources"
+_echot "-------  conf sources"
 _evalr pacman-mirrors --country-list
 
-_echot "------------------ permissions ${_PATH_LOG}"
+_echot "-------  permissions ${_PATH_LOG}"
 _evalr chown ${USER}:root ${_PATH_LOG}
 _evalr chmod g+rw ${_PATH_LOG}
 
-_echot "------------------ create user paths"
+_echot "-------  create user paths"
 paths="${HOME}/.local/bin ${HOME}/.local/share/icons ${HOME}/.local/share/applications"
 for path in ${paths}; do
 	[ -d "${path}" ] || mkdir -p ${path}
 done
 
-_echot "------------------  .bash_aliases"
+_echot "-------  .bash_aliases"
 file=${HOME}/.bash_aliases
 file_from=${_PATH_BS}/conf/.bash_aliases
 _keepmv ${file}
 _eval ln -s ${file_from} ${file}
 
-_echot "------------------  .bashrc"
+_echot "-------  .bashrc"
 file=${HOME}/.bashrc
 _keepcp ${file}
 _eval "sed -i 's|^\(HISTSIZE\)=.*$|\1=20000|' ${file}"
 _eval "sed -i 's|^\(HISTFILESIZE\)=.*$|\1=20000|' ${file}"
 _eval "sed -i '/^#force_color_prompt/ s|^#||' ${file}"
 
-_echot "------------------  .bashrc PS1"
+_echot "-------  .bashrc PS1"
 color='\\[\\033[01;34m\\]' # '\\[\\033[01;32m\\]'
 sed -i 's|^\(\s*PS1=\).*32m.*$|\1"'${color}'\\u@\\h\\[\\033[00m\\] \\W'${color}'\\$\\[\\033[00m\\] "|' ${file}
 sed -i "/^\s*PS1=.*01;34m/ s|\"|'|g" ${file}
 
-_echot "------------------  .bashrc aliases"
+_echot "-------  .bashrc aliases"
 grep -q ". \${HOME}/.bash_aliases" ${file} || echo "
 # bash_aliases
 [ -f \${HOME}/.bash_aliases ] && . \${HOME}/.bash_aliases"  >> ${file}

@@ -4,13 +4,13 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ install"
+_echot "-------  install"
 packages="virtualbox"
 # virtualbox-guest-iso
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ virtualbox"
+_echot "-------  virtualbox"
 sudo adduser ${USER} vboxusers
 
 ########################  END

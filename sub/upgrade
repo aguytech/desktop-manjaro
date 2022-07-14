@@ -6,13 +6,13 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ update"
+_echot "-------  update"
 ${_CMD} -Sy
 
-_echot "------------------ upgrade"
+_echot "-------  upgrade"
 ${_CMD} -Su
 
-_echot "------------------ clean orphans"
+_echot "-------  clean orphans"
 ${_CMD} -R $(pacman -Qdtq)
 
 ########################  END

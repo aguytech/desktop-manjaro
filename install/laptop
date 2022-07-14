@@ -4,20 +4,20 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ tlp"
+_echot "-------  tlp"
 packages="tlp tlp-rdw tlpui" # acpi
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ tlp"
+_echot "-------  tlp"
 _service enable tlp
 
-_echot "------------------ enable acpid"
+_echot "-------  enable acpid"
 service=acpid
 _service enable ${service}
 _service start ${service}
 
-_echot "------------------ no beep"
+_echot "-------  no beep"
 #echo "blacklist pcspkr" | sudo tee -a /etc/modprobe.d/nobeep.conf
 echo 'xset -b' >> ~/.xprofile
 

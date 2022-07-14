@@ -4,14 +4,14 @@
 
 _echoT "\n==========================================  ${_PART}"
 
-_echot "------------------ install"
+_echot "-------  install"
 packages="inkscape gimp gimp-nufraw gimp-plugin-gmic"
 packages+=" darktable krita"
 # darkroom shotwell
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ aur"
+_echot "-------  aur"
 packages="gimp-extras gimp-fourier gimp-paint-studio gimp-plugin-bimp gimp-plugin-pandora gimp-plugin-refocusit gimp-plugin-resynthesizer-git gimp-plugin-saveforweb"
 # wait for good version:  gimp-plugin-beautify gimp-plugin-texturize
 for package in ${packages}; do

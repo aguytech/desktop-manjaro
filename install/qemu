@@ -20,17 +20,17 @@ if [ -z ${_GUEST_SHARE+x} ]; then
 	_confset _GUEST_SHARE "${_GUEST_SHARE}"
 fi
 
-_echot "------------------ fstab"
+_echot "-------  fstab"
 grep -q "^${_QEMU_SHARE}" /etc/fstab || sudo sh -c "echo '
 # qemu share
 ${_QEMU_SHARE}                                ${_GUEST_SHARE}        9p     trans=virtio,version=9p2000.L,rw,umask=002    0 0' >> /etc/fstab"
 
-_echot "------------------ mod 9p"
+_echot "-------  mod 9p"
 sudo modprobe 9p
 [ -d "${_GUEST_SHARE}" ] || sudo mkdir "${_GUEST_SHARE}"
 grep -q "^${_QEMU_SHARE}" /proc/mounts || sudo mount "${_GUEST_SHARE}"
 
-_echot "------------------ autoload 9p"
+_echot "-------  autoload 9p"
 file=/etc/modprobe.d/9p
 sudo sh -c "echo '# qemu share 
 9p

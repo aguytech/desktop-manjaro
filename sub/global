@@ -6,40 +6,40 @@ _echoT "\n==========================================  ${_PART}"
 
 ########################  MAIN
 
-_echot "------------------  system"
+_echot "-------  system"
 packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most multipath-tools numlockx pv testdisk tmux tree yay"
 packages+=" gzip p7zip zip unzip unrar"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ tools"
+_echot "-------  tools"
 packages="baobab dconf-editor gtk2fontsel meld qt5ct thunderbird termdown"
 packages+=" jre-openjdk"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ libreoffice"
+_echot "-------  libreoffice"
 packages="libreoffice-still"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ graphic"
+_echot "-------  graphic"
 packages="inkscape gimp"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ audio"
+_echot "-------  audio"
 packages="audacity easytag pulseaudio-equalizer soundconverter sound-juicer yt-dlp"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ video"
+_echot "-------  video"
 packages="cheese handbrake kdenlive libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv simplescreenrecorder"
 packages+=" aegisub boost-libs"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------------------ aur"
+_echot "-------  aur"
 packages="gmusicbrowser qarte"
 # webcamoid
 packages+=" radiotray-ng zuki-themes"
