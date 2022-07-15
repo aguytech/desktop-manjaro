@@ -32,11 +32,7 @@ fi
 _PARTS_MAN="global python"
 
 for _PART in ${_PARTS_MAN}; do
-	if ! _parthave ${_PART} ${_FILE_DONE}; then
-		grep -q "^# ${_PART}" ${_FILE_CONF} || echo "# ${_PART}" >> ${_FILE_CONF}
-		_source "${_PATH_BASE}/dev/${_PART}"
-		[ "${_HALT}" ] && _askno "Valid to continue"
-	fi
+	_source_sub "${_PART}"
 done
 
 ########################  MENU
