@@ -34,7 +34,7 @@ fi
 
 ########################  MANDATORY
 
-_PARTS_MAN="${part_fs} init ssh upgrade global configuration root end"
+_PARTS_MAN="${part_fs} init ssh upgrade global conf root end"
 
 for _PART in ${_PARTS_MAN}; do
 	_source_sub "${_PART}"
