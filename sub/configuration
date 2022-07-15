@@ -153,13 +153,6 @@ _echot "------- user icons"
 path=${HOME}/.local/share/icons
 cp ${_PATH_BASE}/icons/* ${path}/
 
-_echot "------- firefox tweaks"
-path=${HOME}/.mozilla/firefox/${USER}
-if [ -d "${path}" ]; then
-	ln -sv "${_PATH_BASE}/conf/user.js" ${path}
-	chown ${USER}:${USER} ${path}
-fi
-
 # _echot "------- numlock tty service"
 # file=/usr/local/bin/numlock
 # echo '#!/bin/bash
