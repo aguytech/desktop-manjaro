@@ -5,13 +5,13 @@
 ########################  MAIN
 
 _echot "------- system"
-packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most multipath-tools numlockx pv testdisk tmux tree yay"
+packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree yay"
 packages+=" gzip p7zip zip unzip unrar"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- tools"
-packages="baobab dconf-editor gtk2fontsel meld qt5ct thunderbird termdown"
+packages="dconf-editor gtk2fontsel meld qt5ct thunderbird termdown"
 packages+=" jre-openjdk"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
