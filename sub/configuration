@@ -67,7 +67,7 @@ done
 _echot "------- vim colors"
 sudo cp ${_PATH_BASE}/conf/vim/* /usr/share/vim/vim*/colors/
 
-_echot "----------  vim conf"
+_echot "------- vim conf"
 file=/etc/vimrc
 sudo sed -i "s|^\"\(syntax\).*|\1 on|" ${file}
 opts="background=dark showmatch"

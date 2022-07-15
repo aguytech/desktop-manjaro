@@ -300,6 +300,6 @@ _evalr umount ${path_sys}
 _echot "------- reboot ${_DEVICE_SYS}"
 _echoA "You have to restart the global installation script after the reboot"
 _echoa "The computer now will reboot"
-_askno "Valid to continue"
+_askno "Validate to continue"
 reboot
 exit

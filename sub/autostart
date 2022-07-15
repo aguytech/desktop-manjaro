@@ -2,9 +2,8 @@
 #
 # write by Aguy
 
-
-# xprop WM_CLASS
 ########################  MAIN
+# xprop WM_CLASS
 
 dir=~/.config/autostart
 ! [ -d $dir ] && mkdir $dir

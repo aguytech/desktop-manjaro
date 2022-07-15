@@ -170,6 +170,6 @@ fi
 _echot "------- reboot ${_DEVICE_SYS}"
 _echoA "You have to restart this installation script after the reboot"
 _echoa "The computer now will reboot"
-_askno "Valid to continue"
+_askno "Validate to continue"
 reboot
 exit
