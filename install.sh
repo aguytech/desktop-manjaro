@@ -1,8 +1,7 @@
 #!/bin/bash
-#
-# write by Aguy
 
 ######################## CONF
+
 _TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
 _PATH_CONF=${HOME}/.config/desktop-install
