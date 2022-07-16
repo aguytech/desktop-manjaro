@@ -1,53 +1,45 @@
 [Desktop Entry]
-Name=Gnome-Terminal & Tmux
-Comment=Use the command line
-Keywords=shell;prompt;command;commandline;cmd;
-Exec=ttmux
-Icon=/usr/share/icons/Foralyse/tmux.svg
+Version=1.0
+Name=Xfce Terminal Tmux
+Comment=Terminal Emulator Tmux
+GenericName=Terminal Emulator Tmux
+Exec=xfce4-terminal -e "tmux a"
+Icon=tmux.svg
+Terminal=false
 Type=Application
-Categories=GNOME;GTK;System;TerminalEmulator;
+Categories=GTK;System;TerminalEmulator;
 StartupNotify=true
-X-GNOME-SingleWindow=false
-OnlyShowIn=GNOME;Unity;
-Actions=new-window;preferences;Ssh;Separator;SshcDev;Sshc;SshcLxd;Separator;Nautilus;NautilusComputer;NautilusNetwork;
-X-Ubuntu-Gettext-Domain=ttmux
-
-[Desktop Action new-window]
-Name=New Window
-Exec=gnome-terminal --window
+Actions=preferences;Separator;SshDev;SshS;SshNode1;SshLxd;Separator;Thunar;ThunarNode1;
 
 [Desktop Action preferences]
-Name=Preferences
-Exec=gnome-terminal --preferences
+Name=Terminal Preferences
+Exec=xfce4-terminal --preferences
 
 [Desktop Action Separator]
 Name=−−−−−−−−−−
 Exec=
 
-[Desktop Action Ssh]
-Name=sshc
-Exec=gnome-terminal --window
+[Desktop Action SshDev]
+Name=ssh dev
+Exec=xfce4-terminal --tab --tab --title=node1 -x ssh-server node1
 
-[Desktop Action Sshc]
-Name=sshc
-Exec=gnome-terminal -e ssh-server
+[Desktop Action SshS]
+Name=ssh server
+Exec=xfce4-terminal --title=server -x ssh-server
 
-[Desktop Action SshcDev]
-Name=sshc dev
-Exec=gnome-terminal --tab --tab-with-profile node1
+[Desktop Action SshNode1]
+Name=ssh node1
+Exec=xfce4-terminal --tab --title=node1 -x ssh-server node1
 
-[Desktop Action SshcLxd]
-Name=sshca
-Exec=gnome-terminal -e /home/shared/repo/bs/ssh-lxd
+[Desktop Action SshLxd]
+Name=ssh lxd
+Exec=xfce4-terminal --tab --title=LXD -x ssh-server ssh-lxd
 
-[Desktop Action Nautilus]
-Name=Nautilus
-Exec=nautilus --new-window
+[Desktop Action Thunar]
+Name=Thunar
+Exec=thunar
 
-[Desktop Action NautilusComputer]
-Name=Nautilus Computer
-Exec=nautilus --new-window computer:///
+[Desktop Action ThunarNode1]
+Name=Thunar node1
+Exec=thunar_newtabs /usr/local/bs sftp://root@node1/
 
-[Desktop Action NautilusNetwork]
-Name=Nautilus Network
-Exec=nautilus --new-window network:///
