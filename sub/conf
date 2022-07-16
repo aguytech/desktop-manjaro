@@ -2,8 +2,6 @@
 #
 # write by Aguy
 
-grep -q "^# ${_PART}" "${_FILE_CONF}" || echo -e "# ${_PART}" >> "${_FILE_CONF}"
-
 ########################  MAIN
 
 _echot "------- grub"
