@@ -1,10 +1,6 @@
 #!/bin/bash
 
-_echot "------- root user"
-_ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
-
-_echot "------- timeshift"
-type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
+########################  SYSTEM
 
 _echot "------- update grub"
 if [ "${_BTRFS}" ];then
@@ -18,6 +14,19 @@ _evalr pacman-mirrors --country-list
 _echot "------- permissions ${_PATH_LOG}"
 _evalr chown ${USER}:root ${_PATH_LOG}
 _evalr chmod g+rw ${_PATH_LOG}
+
+if ! [ -d home/shared/repo/bs ]; then
+	_echot "------- rsync ${_PATH_BS}"
+	_evalr rsync -rlt ${_PATH_BASE}/bs/ ${_PATH_BS}/
+fi
+
+_echot "------- timeshift"
+type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
+
+########################  USER
+
+_echot "------- root user"
+_ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
 
 _echot "------- user paths"
 paths="${HOME}/.local/bin ${HOME}/.local/share/icons ${HOME}/.local/share/applications"
@@ -48,9 +57,9 @@ grep -q ". \${HOME}/.bash_aliases" ${file} || echo "
 # bash_aliases
 [ -f \${HOME}/.bash_aliases ] && . \${HOME}/.bash_aliases"  >> ${file}
 
+_echot "------- .bashrc source"
 . ${file}
 
-if ! [ -d home/shared/repo/bs ]; then
-	_echot "------- rsync ${_PATH_BS}"
-	_evalr rsync -rlt ${_PATH_BASE}/bs/ ${_PATH_BS}/
-fi
+_echot "------- profile"
+[ -f "${HOME}/.profile" ] && . ${HOME}/.profile
+

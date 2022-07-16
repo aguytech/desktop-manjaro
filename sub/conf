@@ -34,25 +34,6 @@ export PATH=\${PATH}:${_PATH_BS}
 # QT
 export QT_QPA_PLATFORMTHEME=qt5ct' > /etc/profile.d/desktop.sh"
 
-_echot "------- numlockx in tty"
-file=/etc/lightdm/lightdm-gtk-greeter.conf
-# ally-states
-if grep -q "^a11y-states *=" ${file}; then
-	sudo sed -i "s|\(^a11y-states.*\)$|\1;+keyboard|" ${file}
-else
-	sudo sh -c "echo 'a11y-states = +keyboard' >> ${file}"
-fi
-
-_echot "------- numlockx in ldm"
-file=/etc/lightdm/lightdm-gtk-greeter.conf
-cmd="/usr/bin/numlockx on"
-# keyboard
-if grep -q "^keyboard *=" ${file}; then
-	sudo sed -i "s|\(^keyboard *=\)|\1 ${cmd}|" ${file}
-else
-	sudo sh -c "echo 'keyboard = ${cmd}' >> ${file}"
-fi
-
 _echot "------- bash-completion"
 _evalr "cp -a ${_PATH_BASE}/xtra/bash-completion/* /usr/share/bash-completion/completions/"
 
@@ -86,6 +67,25 @@ _echot "------- wp"
 path=/usr/share/backgrounds/xfce
 _evalr cp ${_PATH_BASE}/xtra/wp/* ${path}/
 _evalr chmod 644 ${path}/*
+
+_echot "------- numlockx in tty"
+file=/etc/lightdm/lightdm-gtk-greeter.conf
+# ally-states
+if grep -q "^a11y-states *=" ${file}; then
+	sudo sed -i "s|\(^a11y-states.*\)$|\1;+keyboard|" ${file}
+else
+	sudo sh -c "echo 'a11y-states = +keyboard' >> ${file}"
+fi
+
+_echot "------- numlockx in ldm"
+file=/etc/lightdm/lightdm-gtk-greeter.conf
+cmd="/usr/bin/numlockx on"
+# keyboard
+if grep -q "^keyboard *=" ${file}; then
+	sudo sed -i "s|\(^keyboard *=\)|\1 ${cmd}|" ${file}
+else
+	sudo sh -c "echo 'keyboard = ${cmd}' >> ${file}"
+fi
 
 ########################  USER
 
@@ -159,25 +159,3 @@ cp ${_PATH_BASE}/xtra/plank.desktop ${path}/
 _echoA "After validation, adjust plank preferences and close plank window"
 _askno "Validate to continue"
 plank --preferences &
-
-# _echot "------- numlock tty service"
-# file=/usr/local/bin/numlock
-# echo '#!/bin/bash
-# for tty in /dev/tty{1..6}
-# do
-# 	/usr/bin/setleds -D +num < "$tty";
-# done' | sudo tee ${file}
-# sudo chmod +x ${file}
-
-# file_service=/etc/systemd/system/numlock.service
-# sudo sh -c "echo '[Unit]
-# Description=numlock
-
-# [Service]
-# ExecStart=${file}
-# StandardInput=tty
-# RemainAfterExit=yes
-
-# [Install]
-# WantedBy=multi-user.target' > ${file_service}"
-# _service enable numlock
