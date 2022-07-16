@@ -11,13 +11,13 @@ _CMD="sudo pacman --noconfirm"
 _CMD_INS="sudo pacman --noconfirm -S"
 _CMD_AUR="yay -S --noconfirm --needed"
 
+# inc
 file=${_PATH_BASE}/bs/inc
-! [ -f ${file} ] && echo "Unable to find file: ${file}" && exit 1
-! . ${file} && echo "Errors while importing ${file}" && exit 1
+! [ -f "${file}" ] && echo "Unable to find file: ${file}" && exit 1
+! . ${file} && echo "Errors while sourcing file: ${file}" && exit 1
 
 ########################  DATA
 
-# btrfs
 if [ -z ${_BTRFS+x} ]; then
 	_askyn "BTRFS are used for system?"
 	_BTRFS=${_ANSWER/n/}
@@ -25,7 +25,6 @@ if [ -z ${_BTRFS+x} ]; then
 fi
 [ "${_BTRFS}" ] && part_fs="btrfs" || part_fs="nobtrfs"
 
-# halt
 if [ -z ${_HALT+x} ]; then
 	_askyn "Enable halt between each parts?"
 	_HALT=${_ANSWER/n/}
