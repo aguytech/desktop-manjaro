@@ -2,7 +2,7 @@
 #
 # write by Aguy
 
-########################  MAIN
+########################  SYSTEM
 
 _echot "------- grub"
 file=/etc/default/grub
@@ -63,7 +63,7 @@ for file in /usr/bin/edit /usr/bin/editor; do
 done
 
 _echot "------- vim colors"
-sudo cp ${_PATH_BASE}/conf/vim/* /usr/share/vim/vim*/colors/
+_evalr cp ${_PATH_BASE}/conf/vim/* /usr/share/vim/vim*/colors/
 
 _echot "------- vim conf"
 file=/etc/vimrc
@@ -75,25 +75,25 @@ for opt in ${opts}; do
 done
 
 _echot "------- meld style"
-_evalr cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/meld-dark.xml
+_evalr cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/
 
 _echot "------- icons"
 path=/usr/share/icons/Foralyse
 [ -d "${path}" ] || sudo mkdir -p ${path}
-sudo cp ${_PATH_BASE}/icons/* ${path}/
+_evalr cp ${_PATH_BASE}/icons/* ${path}/
 
 _echot "------- wp"
-_evalr cp -a ${_PATH_BASE}/xtra/wp/* /usr/share/backgrounds/xfce/
-_evalr chmod 644 /usr/share/backgrounds/xfce/*
+path=/usr/share/backgrounds/xfce
+_evalr cp ${_PATH_BASE}/xtra/wp/* ${path}/
+_evalr chmod 644 ${path}/*
 
 ########################  USER
 
-_echot "------- /usr/local/bs/conf links"
+_echot "------- user conf"
 for file in .nanorc .tmux.conf .vimrc; do
-	path_from="${_PATH_BS}/conf/${file}"
 	path=${HOME}/${file}
 	_keepmv "${path}"
-	ln -s "${path_from}" "${path}"
+	_eval ln -s "${_PATH_BS}/conf/${file}" "${path}"
 done
 
 _echot "------- gtk styles"
@@ -115,6 +115,7 @@ path=gtksourceview-4
 [ -e "${path}" ] || ln -sv gtksourceview-3.0 ${path}
 
 _echot "------- tmux"
+_keepmv .tmux
 tar xzf ${_PATH_BASE}/conf/user.tmux.tar.gz -C ${HOME}/
 _eval cp ${_PATH_BASE}/xtra/org.gnome.Terminal-tmux.desktop ${HOME}/.local/share/applications/
 
@@ -149,7 +150,15 @@ _eval cp ${_PATH_BASE}/conf/aegisub-config.json ${path}
 
 _echot "------- user icons"
 path=${HOME}/.local/share/icons
-cp ${_PATH_BASE}/icons/* ${path}/
+_eval cp ${_PATH_BASE}/icons/* ${path}/
+
+_echot "------- plank"
+path=${HOME}/.config/autostart
+[ -d "${path}" ] || mkdir -p ${path}
+cp ${_PATH_BASE}/xtra/plank.desktop ${path}/
+_echoA "After validation, adjust plank preferences and close plank window"
+_askno "Validate to continue"
+plank --preferences &
 
 # _echot "------- numlock tty service"
 # file=/usr/local/bin/numlock

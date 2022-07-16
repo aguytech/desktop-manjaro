@@ -1,8 +1,4 @@
 #!/bin/bash
-#
-# write by Aguy
-
-########################  MAIN
 
 _echot "------- root user"
 _ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
@@ -23,7 +19,7 @@ _echot "------- permissions ${_PATH_LOG}"
 _evalr chown ${USER}:root ${_PATH_LOG}
 _evalr chmod g+rw ${_PATH_LOG}
 
-_echot "------- create user paths"
+_echot "------- user paths"
 paths="${HOME}/.local/bin ${HOME}/.local/share/icons ${HOME}/.local/share/applications"
 for path in ${paths}; do
 	[ -d "${path}" ] || mkdir -p ${path}
@@ -38,8 +34,8 @@ _eval ln -s ${file_from} ${file}
 _echot "------- .bashrc"
 file=${HOME}/.bashrc
 _keepcp ${file}
-_eval "sed -i 's|^\(HISTSIZE\)=.*$|\1=20000|' ${file}"
-_eval "sed -i 's|^\(HISTFILESIZE\)=.*$|\1=20000|' ${file}"
+_eval "sed -i 's|^\(HISTSIZE\)=.*$|\1=50000|' ${file}"
+_eval "sed -i 's|^\(HISTFILESIZE\)=.*$|\1=50000|' ${file}"
 _eval "sed -i '/^#force_color_prompt/ s|^#||' ${file}"
 
 _echot "------- .bashrc PS1"
