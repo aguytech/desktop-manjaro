@@ -18,13 +18,13 @@ _echot "------- grub os-prober"
 # add identifier to menuentry
 file=/etc/grub.d/30_os-prober
 if ! grep -q 'LONGNAME="${LONGNAME} ${BTRFSsubvol/#subvol=/}"' ${file}; then
-	_keepcp ${file} && sudo chmod -x ${file}.keep
+	_keepcp ${file} && _evalr chmod -x ${file}.keep
 	sudo sed -i "/LONGNAME=\"\${LABEL}\"/ a\  else\n    LONGNAME=\"\${LONGNAME} \${BTRFSsubvol/#subvol=/}\"" ${file}
 fi
 _echot "------- reduce swapiness"
-sudo swapoff -av
+_evalr swapoff -av
 sudo sh -c 'echo vm.swappiness=40 > /etc/sysctl.d/99-swappiness.conf' # limit swap
-sudo swapon -v
+_evalr swapon -v
 
 _echot "------- profile"
 export PATH="${PATH}:${_PATH_BS}"
@@ -56,12 +56,30 @@ for opt in ${opts}; do
 	sudo sed -i "s|^\"\(set ${opt}.*\)$|\1|" ${file}
 done
 
+_echot "------- nano"
+for str in conf install; do
+	_evalr cp -a /usr/share/nano/sh.nanorc /usr/share/nano/${str}.nanorc
+	sudo sed -i 's|^\(syntax \).*|\1"'${str}'" "\.'${str}'$"|' /usr/share/nano/${str}.nanorc
+done
+file=/etc/nanorc
+_keepcp ${file}
+sudo sed -i 's|^.*\(set tabsize\).*|\1 4|' ${file}
+sudo sed -i 's|^\(set cut.*\)$|# \1|' ${file}
+sudo sed -i 's|^\(set linenumbers.*\)$|# \1|' ${file}
+sudo sed -i '/^# *include/ s/^# //' ${file}
+# uncomment
+opts="constantshow historylog matchbrackets multibuffer nohelp softwrap " # various
+opts+="errorcolor functioncolor keycolor numbercolor selectedcolor statuscolor stripecolor titlecolor" # color
+for opt in ${opts}; do
+	sudo sed -i "s|^.*\(set $opt .*\)$|\1|"  ${file}
+done
+
 _echot "------- meld style"
 _evalr cp ${_PATH_BASE}/conf/meld-dark.xml /usr/share/meld/styles/
 
 _echot "------- icons"
 path=/usr/share/icons/Foralyse
-[ -d "${path}" ] || sudo mkdir -p ${path}
+[ -d "${path}" ] || _evalr mkdir -p ${path}
 _evalr cp ${_PATH_BASE}/icons/* ${path}/
 
 _echot "------- wp"
@@ -102,25 +120,25 @@ for file in .nanorc .tmux.conf .vimrc; do
 done
 
 _echot "------- thunar-volman"
-xfconf-query -c thunar-volman -p /autobrowse/enabled -s false
-xfconf-query -c thunar-volman -p /automount-drives/enabled -s false
-xfconf-query -c thunar-volman -p /automount-media/enabled -s false
+_eval xfconf-query -c thunar-volman -p /autobrowse/enabled -s false
+_eval xfconf-query -c thunar-volman -p /automount-drives/enabled -s false
+_eval xfconf-query -c thunar-volman -p /automount-media/enabled -s false
 
 _echot "------- gtk styles"
 path=${HOME}/.local/share/gtksourceview-3.0/styles
 # link or copy
 path_repo=/home/shared/.local/share/gtksourceview-3.0/styles
 if [ -d "${path_repo}" ]; then
-	[ -d "${path}" ] && rm -fR ${path}
-	ln -sv "${path_repo}" ${path}
+	[ -d "${path}" ] && _eval rm -fR ${path}
+	_eval ln -s "${path_repo}" ${path}
 else
-	[ -d "${path}" ] || mkdir -p ${path}
+	[ -d "${path}" ] || _eval mkdir -p ${path}
 	_eval cp ${_PATH_BASE}/conf/styles/* ${path}/
 fi
 # gtk 4
 cd ${HOME}/.local/share
 path=gtksourceview-4
-[ -e "${path}" ] || ln -sv gtksourceview-3.0 ${path}
+[ -e "${path}" ] || _eval ln -s gtksourceview-3.0 ${path}
 
 _echot "------- user conf"
 paths=".tmux"
@@ -128,40 +146,16 @@ for path in ${paths}; do
 	_keepmv ${path}
 done
 for file in ${_PATH_BASE}/conf/user.tmux.tar.gz; do
-	tar xzf ${file} -C ${HOME}/
+	_eval tar xzf ${file} -C ${HOME}/
 done
-
-_echot "------- tmux desktop"
-_eval cp ${_PATH_BASE}/xtra/xfce4-terminal-tmux.desktop ${HOME}/.local/share/applications/
-
-_echot "------- nano"
-for str in conf install; do
-	_evalr cp -a /usr/share/nano/sh.nanorc /usr/share/nano/${str}.nanorc
-	sudo sed -i 's|^\(syntax \).*|\1"'${str}'" "\.'${str}'$"|' /usr/share/nano/${str}.nanorc
-done
-file=/etc/nanorc
-_keepcp ${file}
-sudo sed -i 's|^.*\(set tabsize\).*|\1 4|' ${file}
-sudo sed -i 's|^\(set cut.*\)$|# \1|' ${file}
-sudo sed -i 's|^\(set linenumbers.*\)$|# \1|' ${file}
-sudo sed -i '/^# *include/ s/^# //' ${file}
-# uncomment
-opts="constantshow historylog matchbrackets multibuffer nohelp softwrap " # various
-opts+="errorcolor functioncolor keycolor numbercolor selectedcolor statuscolor stripecolor titlecolor" # color
-for opt in ${opts}; do
-	sudo sed -i "s|^.*\(set $opt .*\)$|\1|"  ${file}
-done
-
-_echot "------- language-specs conf"
-_evalr cp ${_PATH_BASE}/conf/gtk/*.lang /usr/share/gtksourceview-3.0/language-specs/
 
 _echot "------- aegisub"
 path=${HOME}/.aegisub/
-[ -d "${path}" ] || mkdir -p ${path}
+[ -d "${path}" ] || _eval mkdir -p ${path}
 _eval cp ${_PATH_BASE}/conf/aegisub-config.json ${path}
 
-#_echot "------- dvd"
-#sudo dpkg-reconfigure libdvd-pkg
+_echot "------- tmux desktop"
+_eval cp ${_PATH_BASE}/xtra/xfce4-terminal-tmux.desktop ${HOME}/.local/share/applications/
 
 _echot "------- QT5"
 _echoA "After validation, adjust settings for qt5 and close qt5ct window"
@@ -170,8 +164,8 @@ qt5ct 2>/dev/null
 
 _echot "------- plank"
 path=${HOME}/.config/autostart
-[ -d "${path}" ] || mkdir -p ${path}
-cp ${_PATH_BASE}/xtra/plank.desktop ${path}/
+[ -d "${path}" ] || _eval mkdir -p ${path}
+_eval cp ${_PATH_BASE}/xtra/plank.desktop ${path}/
 _echoA "After validation, adjust plank preferences and close plank window"
 _askno "Validate to continue"
 plank --preferences &
