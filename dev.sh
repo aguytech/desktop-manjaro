@@ -25,11 +25,11 @@ if [ -z ${_HALT+x} ]; then
 	_confset _HALT "${_HALT}"
 fi
 
-########################  MANDATORY
+########################  SUB
 
-_PARTS_MAN="global python"
+_PARTS_SUB="global python"
 
-for _PART in ${_PARTS_MAN}; do
+for _PART in ${_PARTS_SUB}; do
 	_source_sub "${_PART}"
 done
 

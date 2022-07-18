@@ -15,11 +15,11 @@ file=${_PATH_BASE}/bs/inc
 ! [ -f "${file}" ] && echo "Unable to find file: ${file}" && exit 1
 ! . ${file} && echo "Errors while sourcing file: ${file}" && exit 1
 
-########################  MANDATORY
+########################  SUB
 
-_PARTS_MAN="data ${part_fs} init ssh upgrade global conf root end"
+_PARTS_SUB="data ${part_fs} init ssh upgrade global conf root end"
 
-for _PART in ${_PARTS_MAN}; do
+for _PART in ${_PARTS_SUB}; do
 	_source_sub "${_PART}"
 done
 
