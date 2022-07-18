@@ -27,21 +27,21 @@ fi
 
 ########################  SUB
 
-_PARTS_SUB="global python"
+parts_sub="global python"
 
-for _PART in ${_PARTS_SUB}; do
+for _PART in ${parts_sub}; do
 	_source_sub "${_PART}"
 done
 
 ########################  MENU
 
-_PARTS_ALL=$( ls ${_PATH_BASE}/dev -I ${_PARTS_MAN// / -I } )
+parts_install=$( ls ${_PATH_BASE}/dev -I ${_PARTS_MAN// / -I } )
 
 while [ "${_PART}" != "quit" ]; do
 	_SDATE=$(date +%s) # renew _SDATE
 	parts_made=" $( cat "${_FILE_DONE}" | xargs ) "
 	parts2do=" "
-	for part in ${_PARTS_ALL}; do
+	for part in ${parts_install}; do
 		[ "${parts_made/ ${part} }" = "${parts_made}" ] && parts2do+="$part "
 	done
 
