@@ -17,21 +17,21 @@ file=${_PATH_BASE}/bs/inc
 
 ########################  SUB
 
-_PARTS_SUB="data ${part_fs} init ssh upgrade global conf root end"
+parts_sub="data ${part_fs} init ssh upgrade global conf root end"
 
-for _PART in ${_PARTS_SUB}; do
+for _PART in ${parts_sub}; do
 	_source_sub "${_PART}"
 done
 
 ########################  MENU
 
-_PARTS_ALL=$( ls ${_PATH_BASE}/install )
+parts_install=$( ls ${_PATH_BASE}/install )
 
 while [ "${_PART}" != "quit" ]; do
 	_SDATE=$(date +%s) # renew _SDATE
 	parts_made=" $( cat "${_FILE_DONE}" | xargs ) "
 	parts2do=" "
-	for part in ${_PARTS_ALL}; do
+	for part in ${parts_install}; do
 		[ "${parts_made/ ${part} }" = "${parts_made}" ] && parts2do+="$part "
 	done
 
