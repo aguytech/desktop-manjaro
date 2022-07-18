@@ -1,7 +1,5 @@
 #!/bin/bash
 
-########################  MAIN
-
 _echot "------- upgrade"
 _eval upgrade
 
