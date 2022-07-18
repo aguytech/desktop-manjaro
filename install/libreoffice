@@ -1,6 +1,4 @@
 #!/bin/bash
-#
-# write by Aguy
 
 _echot "------- libreoffice"
 packages="libreoffice-extension-texmaths libreoffice-extension-writer2latex"

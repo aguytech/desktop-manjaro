@@ -1,6 +1,4 @@
 #!/bin/bash
-#
-# write by Aguy
 
 _echot "------- python"
 packages="python python-pip"

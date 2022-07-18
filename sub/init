@@ -2,6 +2,9 @@
 
 ########################  SYSTEM
 
+_echot "------- root user"
+_ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
+
 _echot "------- update grub"
 if [ "${_BTRFS}" ];then
 	_evalr grub-install ${_DEVICE_GRUB}
@@ -25,9 +28,6 @@ type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift
 
 ########################  USER
 
-_echot "------- root user"
-_ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
-
 _echot "------- user paths"
 paths="${HOME}/.local/bin ${HOME}/.local/share/icons ${HOME}/.local/share/applications"
 for path in ${paths}; do
@@ -36,9 +36,8 @@ done
 
 _echot "------- .bash_aliases"
 file=${HOME}/.bash_aliases
-file_from=${_PATH_BS}/conf/.bash_aliases
 _keepmv ${file}
-_eval ln -s ${file_from} ${file}
+_eval ln -s ${_PATH_BS}/conf/.bash_aliases ${file}
 
 _echot "------- .bashrc"
 file=${HOME}/.bashrc
