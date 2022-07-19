@@ -2,33 +2,91 @@
 
 ########################  DATA
 
-if [ -z ${_QEMU_SHARE+x} ]; then
-	anstmp=/hostshare
-	_askno "Name of qemu share (${anstmp})"
-	_QEMU_SHARE=${_ANSWER:-${anstmp}}
-	_confset _QEMU_SHARE "${_QEMU_SHARE}"
+if [ -z "${_PATH_SHARE}" ]; then
+	anstmp=/vms/share
+	_askno "Give the shared path from the Host (${anstmp})"
+	_PATH_SHARE=${_ANSWER:-${anstmp}}
+	_confset _PATH_SHARE "${_PATH_SHARE}"
 fi
 
-if [ -z ${_GUEST_SHARE+x} ]; then
-	anstmp=/share
-	_askno "Name of guest share (${anstmp})"
-	_GUEST_SHARE=${_ANSWER:-${anstmp}}
-	_confset _GUEST_SHARE "${_GUEST_SHARE}"
+if [ -z "${_PATH_NBD}" ]; then
+	anstmp=/vms/nbd
+	_askno "Give the path to mount device files (${anstmp})"
+	_PATH_NBD=${_ANSWER:-${anstmp}}
+	_confset _PATH_NBD "${_PATH_NBD}"
 fi
 
-_echot "------- fstab"
-grep -q "^${_QEMU_SHARE}" /etc/fstab || sudo sh -c "echo '
-# qemu share
-${_QEMU_SHARE}                                ${_GUEST_SHARE}        9p     trans=virtio,version=9p2000.L,rw,umask=002    0 0' >> /etc/fstab"
+########################  MAIN
 
-_echot "------- mod 9p"
-sudo modprobe 9p
-[ -d "${_GUEST_SHARE}" ] || sudo mkdir "${_GUEST_SHARE}"
-grep -q "^${_QEMU_SHARE}" /proc/mounts || sudo mount "${_GUEST_SHARE}"
+_echot "------- install"
+packages="qemu virt-install virt-manager virt-viewer"
+packages+=" bridge-utils dnsmasq libguestfs openbsd-netcat vde2"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------- autoload 9p"
-file=/etc/modprobe.d/9p
-sudo sh -c "echo '# qemu share 
-9p
-9pnet
-9pnet_virtio' > ${file}"
+########################  CONF
+
+_echot "------- libvirt-qemu"
+_evalr usermod -G libvirt-qemu -a ${USER}
+
+########################  SHARE
+
+_echot "------- path"
+[ -d "${_PATH_SHARE}" ] || _evalr mkdir -p "${_PATH_SHARE}"
+
+_echot "------- permissions"
+_evalr setfacl -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
+_evalr setfacl -d -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
+_evalr setfacl -Rm g:libvirt-qemu:rwx ${_PATH_SHARE}
+_evalr setfacl -d -Rm g:libvirt-qemu:rwx ${_PATH_SHARE}
+
+_echoA "Configure your guest in virt-manager to share path with this parameters: "
+echo "Source path: ${_PATH_SHARE}"
+echo "Target path: /hostshare"
+_echoA "\nAnd add fmode and dmode by modifying XML settings options in virt-manager:"
+echo -e 'filesystem type="mount" accessmode="mapped" '${blue}'fmode="0664" dmode="0775"'${cclear}'>
+  <source dir="/vms/share"/>
+  <target dir="/hostshare"/>
+  <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
+</filesystem>'
+
+########################  NBD
+
+_echot "------- path"
+path="${_PATH_NBD}"
+[ -d "${path}" ] || _evalr mkdir -p ${path}
+
+_echot "------- install"
+packages="qemu-utils"
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------- script"
+file=${_PATH_BASE}/bs/scripts/nbd.sh
+file2=/usr/local/bin/nbd
+! [ -f "${file}" ] && _exite "Unable to find file: ${file}"
+_evalr cp ${file} ${file2}
+_evalr chmod +x ${file2}
+sudo sed -i "/^_PATH_NBD=/ s|=.*$|=${_PATH_NBD}|" ${file2}
+
+_echot "------- bookmarks"
+file=~/.config/Thunar/uca.xml
+file=${HOME}/.config/gtk-3.0/bookmarks
+grep -q "file://${_PATH_NBD}" ${file} || echo "file://${_PATH_NBD}" >> ${file}
+
+_echot "------- CA"
+file=~/.config/Thunar/uca.xml
+[ -d ~/.config/Thunar ] || mkdir -p ~/.config/Thunar
+if [ -f "${file}" ]; then
+	[ -f ${file}.keep ] || cp -a ${file} ${file}.keep
+else
+	echo -e '<?xml version="1.0" encoding="UTF-8"?>\n<actions>\n</actions>' > ${file}
+fi
+# not already made
+if ! grep -q 1655620394868230-1 ${file}; then
+	sed -i '$,1d' ${file}
+	cat ${file} ${_PATH_BASE}/conf/ca.xml > ${file}.tmp
+	_eval mv ${file}.tmp ${file}
+fi
+
+_echoA "logout/login from your computer to apply changes"
