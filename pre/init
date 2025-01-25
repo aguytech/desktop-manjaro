@@ -18,7 +18,7 @@ _echot "------- permissions ${_PATH_LOG}"
 _evalr chown ${USER}:root ${_PATH_LOG}
 _evalr chmod g+rw ${_PATH_LOG}
 
-if ! [ -d home/shared/repo/bs ]; then
+if ! [ -d /home/shared/repo/bs ]; then
 	_echot "------- rsync ${_PATH_BS}"
 	_evalr rsync -rlt ${_PATH_BASE}/bs/ ${_PATH_BS}/
 fi
@@ -60,5 +60,6 @@ _echot "------- .bashrc source"
 . ${file}
 
 _echot "------- profile"
-[ -f "${HOME}/.profile" ] && . ${HOME}/.profile
+[ -f "${HOME}/.profile" ] || _evalr cp -a /root/.profile ${HOME}/
+. ${HOME}/.profile
 

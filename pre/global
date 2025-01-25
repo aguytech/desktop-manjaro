@@ -3,15 +3,15 @@
 ########################  MAIN
 
 _echot "------- system"
-packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree yay"
+packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree vim yay"
 packages+=" gzip p7zip zip unzip unrar"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- tools"
-packages="dconf-editor galculator gtk2fontsel meld qt5ct thunderbird termdown"
-packages+=" thunar-media-tags-plugin tumbler-plugins-extra"
-packages+=" jre-openjdk"
+packages="dconf-editor galculator meld plank qt6ct thunderbird termdown"
+packages+=" thunar-volman thunar-media-tags-plugin jre-openjdk"
+# gtk2fontsel
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
@@ -26,20 +26,22 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- audio"
-packages="audacity easytag pulseaudio-equalizer soundconverter sound-juicer yt-dlp"
+packages="audacity easytag easyeffects soundconverter sound-juicer"
+# yt-dlp
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- video"
-packages="cheese handbrake kdenlive libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv simplescreenrecorder"
+packages="cheese handbrake libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv"
+# kdenlive
 packages+=" aegisub boost-libs"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- aur"
-packages="duf gmusicbrowser qarte"
-# webcamoid
-packages+=" radiotray-ng zuki-themes"
+packages="duf gmusicbrowser obs-studio"
+# qarte simplescreenrecorder radiotray-ng webcamoid
+packages+=" zuki-themes"
 for package in ${packages}; do
 	if ! yay -Qe ${package} >/dev/null 2>&1; then
 		_echot "install ${package}"

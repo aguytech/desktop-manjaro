@@ -9,4 +9,4 @@ _echot "------- upgrade"
 ${_CMD} -Su
 
 _echot "------- clean orphans"
-${_CMD} -R $(pacman -Qdtq)
+[ "$(pacman -Qdtq)" ] && ${_CMD} -R $(pacman -Qdtq) || true

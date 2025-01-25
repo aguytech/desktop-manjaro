@@ -56,7 +56,7 @@ fi
 ########################  MAIN
 
 _echot "------- --------"
-cat "${_FILE_CONF}"
+cat "${S_FILE_INSTALL_CONF}"
 _echot "------- --------"
 _askyn "Confirm installation" && [ "${_ANSWER}" == n ] && _exit 1
 
@@ -65,7 +65,7 @@ _askyn "Confirm installation" && [ "${_ANSWER}" == n ] && _exit 1
 _echot "------- device sys"
 if ! grep -q "${_DEVICE_SYS}" /proc/mounts; then
 	path=/mnt_sys
-	[ -d "${path}" ] || _evalr mkdir -p${path}
+	[ -d "${path}" ] || _evalr mkdir -p "${path}"
 	_evalr mount ${_DEVICE_SYS} ${path} || _exite "Unable to mount ${_DEVICE_SYS} in ${path}"
 fi
 path_sys=$( grep "${_DEVICE_SYS}" /proc/mounts | cut -d' ' -f2 )
@@ -75,7 +75,7 @@ _echot "------- device home"
 if [ "${_DEVICE_HOME}" ]; then
 	if ! grep -q "${_DEVICE_HOME}" /proc/mounts; then
 		path=/mnt_home
-		[ -d "${path}" ] || _evalr mkdir -p${path}
+		[ -d "${path}" ] || _evalr mkdir -p "${path}"
 		_evalr mount ${_DEVICE_HOME} ${path} || _exite "Unable to mount ${_DEVICE_HOME} in ${path}"
 	fi
 	path_home=$( grep "${_DEVICE_HOME}" /proc/mounts | cut -d' ' -f2 )
@@ -86,9 +86,9 @@ fi
 
 _echot "------- user"
 user_uid=$( grep ^${_USERNAME} ${path_sys}/etc/passwd | cut -d: -f3 )
-[ -z "${user_uid}" ] && _exite "Unable to find ${_USERNAME} in /etc/passwd"
+[ -z "${user_uid}" ] && user_uid=1000 && _echo "user_uid set to 1000" 
 user_gid=$( grep ^${_USERNAME} ${path_sys}/etc/group | cut -d: -f3 )
-[ -z "${user_gid}" ] && _exite "Unable to find ${_USERNAME} in /etc/group"
+[ -z "${user_gid}" ] && user_gid=1000 && _echo "user_gid set to 1000" 
 
 _echot "------- create paths"
 for path in ${path_sys}/save ${path_sys}/ext ${path_sys}/vm; do
@@ -106,7 +106,7 @@ _keepcp ${file}
 
 if [ "${_MEM}" ]; then
 	_echot "------- fstab tmpfs"
-	if grep -q '^tmp.*\/tmp' /etc/fstab; then
+	if grep -q '^tmp.*/tmp' /etc/fstab; then
 		sudo sed -i "/tmpfs/ s|mode=1777|mode=1777,size=${_MEM}|" ${file}
 	else
 		sudo sh -c "echo '
@@ -135,14 +135,17 @@ path=${path_sys}${_PATH_BS}
 _keepmv "${path}"
 if [ -d "${path_home}/shared/repo/bs" ]; then
 	[ -d "${path}" ] || _evalr mkdir -p "${path}"
-	sudo sh -c "echo '
-# bind
-/home/shared/repo/bs   ${_PATH_BS}    none    bind                    0    0' >> ${file}"
+else
+	[ -d "${path_home}/shared/repo" ] || _evalr mkdir -p "${path_home}/shared/repo"
+	_evalr cp -a  "${_PATH_BASE}/bs" "${path_home}/shared/repo" 
 fi
+sudo sh -c "echo '
+# bind
+/home/shared/repo/bs   ${_PATH_BS}    none    defaults,bind                    0    0' >> ${file}"
 
 ########################  END
 
-_partadd "${_PART}" "${_FILE_DONE}"
+_partadd "${_PART}" "${S_FILE_INSTALL_DONE}"
 
 ########################  EXPORT
 
@@ -151,14 +154,14 @@ if [ "${path_sys}" != / ]; then
 	_echot "------- copy config"
 	path="${path_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
 	_keepmv ${path}
-	[ -d "${path}" ] || _evalr mkdir -p ${path}
+	[ -d "${path}" ] || _evalr mkdir -p "${path}"
 	_evalr cp -r ${_PATH_CONF}/* ${path}/
 	_evalr chown ${user_uid}:${user_gid} -R ${path_home}/${_USERNAME}
 
 	_echot "------- copy log"
 	[ -d ${path_sys}/var/log ] && path="${path_sys}/var/log/desktop-install"
 	_keepmv ${path}
-	[ -d "${path}" ] || _evalr mkdir -p ${path}
+	[ -d "${path}" ] || _evalr mkdir -p "${path}"
 	_evalr cp -a /var/log/desktop-install/* ${path}/
 	_evalr chown ${user_uid}:0 -R ${path}
 	_evalr chmod 664 ${path}/*

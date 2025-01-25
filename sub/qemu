@@ -19,8 +19,9 @@ fi
 ########################  MAIN
 
 _echot "------- install"
-packages="qemu virt-install virt-manager virt-viewer"
+packages="qemu-base virt-install virt-manager virt-viewer"
 packages+=" bridge-utils dnsmasq libguestfs openbsd-netcat vde2"
+qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat dmidecode
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 

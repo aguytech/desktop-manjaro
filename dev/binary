@@ -3,13 +3,23 @@
 ########################  MAIN
 
 _echot "------- install"
-packages="bless ghex wxhexeditor"
-packages+=" lnav mkisofs net-tools pv xsysinfo"
+packages="bless ghex lnav net-tools pv"
 # sysstat
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
-_echot "------- bless"
+_echot "------- aur"
+packages="wxhexeditor"
+for package in ${packages}; do
+	if ! yay -Qe ${package} >/dev/null 2>&1; then
+		_echot "install ${package}"
+		${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
+	else
+		_echot "already installed ${package}"
+	fi
+done
+
+_echot "------- conf bless"
 path=${HOME}/.config/bless/layouts/
 [ -d "${path}" ] || mkdir -p ${path}
 cp ${_PATH_BASE}/conf/bless/* ${path}/

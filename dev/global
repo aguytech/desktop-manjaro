@@ -1,12 +1,10 @@
 #!/bin/bash
 
-########################  MAIN
+########################  GLOBAL
 
 _echot "------- install"
-packages="geany git gitg gitk gtkhash openssh-server"
-packages+=" lnav mkisofs pv squashfs-tools xsysinfo"
-packages+=" jre-openjdk"
-# sysstat
+packages="geany git gitg openssh lnav pv squashfs-tools jre-openjdk"
+# gitk 
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
@@ -14,3 +12,15 @@ _echot "------- geany"
 path=${HOME}/.config/geany/colorschemes
 [ -d "${path}" ] || mkdir -p ${path}
 cp ${_PATH_BASE}/conf/geany/* ${path}/
+
+_echot "------- aur"
+packages="gtkhash xsysinfo"
+for package in ${packages}; do
+	if ! yay -Qe ${package} >/dev/null 2>&1; then
+		_echot "install ${package}"
+		${_CMD_AUR} ${package} || _exite "Unable to install: ${package}"
+	else
+		_echot "already installed ${package}"
+	fi
+done
+

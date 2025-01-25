@@ -8,7 +8,8 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- aur"
-packages="gimp-extras gimp-fourier gimp-paint-studio gimp-plugin-bimp gimp-plugin-pandora gimp-plugin-refocusit gimp-plugin-resynthesizer-git gimp-plugin-saveforweb"
+packages="gimp-extras gimp-fourier gimp-paint-studio gimp-plugin-bimp gimp-plugin-pandora gimp-plugin-refocusit gimp-plugin-saveforweb"
+# too big: gimp-plugin-resynthesizer-git
 # wait for good version:  gimp-plugin-beautify gimp-plugin-texturize
 for package in ${packages}; do
     if ! yay -Qe ${package} >/dev/null 2>&1; then

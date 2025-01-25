@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ######################## CONF
+
 _TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
 _PATH_CONF=${HOME}/.config/desktop-install
@@ -9,12 +10,12 @@ _CMD="sudo pacman --noconfirm"
 _CMD_INS="sudo pacman --noconfirm -S"
 _CMD_AUR="yay -S --noconfirm --needed"
 
-_FILE_CONF=${HOME}/.config/desktop-install/dev.conf
-_FILE_DONE=${HOME}/.config/desktop-install/dev.done
+S_FILE_INSTALL_CONF=${HOME}/.config/desktop-install/dev.conf
+S_FILE_INSTALL_DONE=${HOME}/.config/desktop-install/dev.done
 
 file=${_PATH_BASE}/bs/inc
-! [ -f ${file} ] && echo "Unable to find file: ${file}" && exit 1
-! . ${file} && echo "Errors while importing ${file}" && exit 1
+! [ -f "${file}" ] && echo "Unable to find file: ${file}" && exit 1
+! . ${file} && echo "Errors while sourcing file: ${file}" && exit 1
 
 ########################  DATA
 
@@ -30,7 +31,7 @@ fi
 parts_sub="global python"
 
 for _PART in ${parts_sub}; do
-	_source_sub "${_PART}"
+	_source_sub "${_PART}" dev
 done
 
 ########################  MENU
@@ -39,7 +40,7 @@ parts_install=$( ls ${_PATH_BASE}/dev -I ${_PARTS_MAN// / -I } )
 
 while [ "${_PART}" != "quit" ]; do
 	_SDATE=$(date +%s) # renew _SDATE
-	parts_made=" $( cat "${_FILE_DONE}" | xargs ) "
+	parts_made=" $( cat "${S_FILE_INSTALL_DONE}" | xargs ) "
 	parts2do=" "
 	for part in ${parts_install}; do
 		[ "${parts_made/ ${part} }" = "${parts_made}" ] && parts2do+="$part "

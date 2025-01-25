@@ -5,7 +5,7 @@ _eval ${_PATH_BASE}/bs/upgrade
 
 ########################  END
 
-_partadd "${_PART}" "${_FILE_DONE}"
+_partadd "${_PART}" "${S_FILE_INSTALL_DONE}"
 
 ########################  RESTART
 
