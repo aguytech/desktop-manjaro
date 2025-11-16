@@ -2,7 +2,7 @@
 
 ######################## CONF
 
-_TRACE=debug
+S_TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
 _PATH_CONF=${HOME}/.config/desktop-install
 _PATH_LOG=/var/log/desktop-install
