@@ -1,5 +1,25 @@
 #!/bin/bash
 
+_echoa "This part is to use shared path in GUEST"
+_echoe "Do not use this part in HOST"
+_askyn "Types 'y' to continue or anything else to exit"
+[ "${_ANSWER}" != "y" ] && _exit
+
+########################  REQUIRE
+
+_echot "------- required files"
+file_script_nbd=${_PATH_BASE}/bs/scripts/nbd.sh
+file_conf_ca=${_PATH_BASE}/conf/ca.xml
+
+_require ${file_script_nbd} ${file_conf_ca}
+
+########################  CHECK
+
+_echoA "Read the following lines and confirm the virtualzation is activated from BIOS"
+_eval LC_ALL=C lscpu | grep -i virtual
+_askyn "Confirm by typing 'y'"
+[ "${_ANSWER}" != "n" ] && _exit
+
 ########################  DATA
 
 if [ -z "${_PATH_SHARE}" ]; then
@@ -12,23 +32,32 @@ fi
 if [ -z "${_PATH_NBD}" ]; then
 	anstmp=/vms/nbd
 	_askno "Give the path to mount device files (${anstmp})"
-	_PATH_NBD=${_ANSWER:-${anstmp}}
+	_PATH_NBD=${_ANSWER:-$anstmp}
 	_confset _PATH_NBD "${_PATH_NBD}"
 fi
 
 ########################  MAIN
 
 _echot "------- install"
-packages="qemu-base virt-install virt-manager virt-viewer"
-packages+=" bridge-utils dnsmasq libguestfs openbsd-netcat vde2"
-qemu virt-manager virt-viewer dnsmasq vde2 bridge-utils openbsd-netcat dmidecode
+packages="edk2-ovmf libvirt qemu-desktop virt-manager virt-viewer"
+packages+=" bridge-utils dnsmasq iptables-nft"
+# packages+="  libguestfs openbsd-netcat vde2 "
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
+_echot "------- tpm support"
+packages="--asdeps swtpm"
+# virtualbox-guest-iso
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
+_echot "------- service"
+_service enable libvirtd
+
 ########################  CONF
 
-_echot "------- libvirt-qemu"
-_evalr usermod -G libvirt-qemu -a ${USER}
+_echot "------- user libvirt-qemu"
+_evalr usermod -G libvirt,libvirt-qemu,kvm -a ${USER}
 
 ########################  SHARE
 
@@ -58,20 +87,17 @@ path="${_PATH_NBD}"
 [ -d "${path}" ] || _evalr mkdir -p ${path}
 
 _echot "------- install"
-packages="qemu-utils"
+packages="qemu-img"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- script"
-file=${_PATH_BASE}/bs/scripts/nbd.sh
-file2=/usr/local/bin/nbd
-! [ -f "${file}" ] && _exite "Unable to find file: ${file}"
-_evalr cp ${file} ${file2}
-_evalr chmod +x ${file2}
-sudo sed -i "/^_PATH_NBD=/ s|=.*$|=${_PATH_NBD}|" ${file2}
+file=/usr/local/bin/nbd
+_evalr cp ${file_script_nbd} ${file}
+_evalr chmod +x ${file}
+sudo sed -i "/^_PATH_NBD=/ s|=.*$|=\"${_PATH_NBD}\"|" ${file}
 
 _echot "------- bookmarks"
-file=~/.config/Thunar/uca.xml
 file=${HOME}/.config/gtk-3.0/bookmarks
 grep -q "file://${_PATH_NBD}" ${file} || echo "file://${_PATH_NBD}" >> ${file}
 
@@ -79,15 +105,21 @@ _echot "------- CA"
 file=~/.config/Thunar/uca.xml
 [ -d ~/.config/Thunar ] || mkdir -p ~/.config/Thunar
 if [ -f "${file}" ]; then
-	[ -f ${file}.keep ] || cp -a ${file} ${file}.keep
+	_keepcpts ${file}
 else
 	echo -e '<?xml version="1.0" encoding="UTF-8"?>\n<actions>\n</actions>' > ${file}
 fi
 # not already made
 if ! grep -q 1655620394868230-1 ${file}; then
 	sed -i '$,1d' ${file}
-	cat ${file} ${_PATH_BASE}/conf/ca.xml > ${file}.tmp
+	cat ${file} ${file_conf_ca} > ${file}.tmp
 	_eval mv ${file}.tmp ${file}
 fi
 
-_echoA "logout/login from your computer to apply changes"
+########################  REBOOT
+
+_echot "------- soft-reboot"
+_echoA "Be careful, close others softwares the system will soft-reboot"
+_echoA "This session will be closed"
+_askno "Validate to continue"
+_evalr systemctl soft-reboot 

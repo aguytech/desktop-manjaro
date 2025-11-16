@@ -1,5 +1,38 @@
 #!/bin/bash
 
+########################  9P
+
+if ! lsmod | grep -q 9p; then
+	_echot "------- initramfs 9p"
+	file=/etc/mkinitcpio.conf
+	_keepcpts ${file}
+	modules="9p 9pnet_virtio intel_agp i915"
+	sudo sed -i "/^MODULES=/ s|=(\(.*\))$|(\1 ${modules})|" ${file}
+	_evalr mkinitcpio -P
+	if ! sudo lsinitcpio -l /boot/initramfs-*.img | grep -q 9p; then
+		_echoa "Find used initramfs*.img in path /boot/"
+		_echoa "And this followin command:"
+		_echoa "sudo lsinitcpio -l /boot/initramfs-*.img | grep -q 9p"
+		_askyn "If the result is ok, types 'y' to continue or anything else to exit"
+		[ "${_ANSWER}" != "y" ] && _exit
+	fi
+
+fi
+
+_echot "------- mod 9p"
+_evalr sudo modprobe 9p
+[ -d "${_GUEST_SHARE}" ] || sudo mkdir "${_GUEST_SHARE}"
+grep -q "^${_QEMU_SHARE}" /proc/mounts || sudo mount "${_GUEST_SHARE}"
+
+_echot "------- autoload 9p"
+file=/etc/initramfs-tools/modules
+grep -q ^9p ${file} || sudo sh -c "echo '
+# qemu share 
+9p
+9pnet
+9pnet_virtio' >> ${file}"
+sudo update-initramfs -u
+
 ########################  DATA
 
 if [ -z ${_QEMU_SHARE+x} ]; then
@@ -21,16 +54,3 @@ grep -q "^${_QEMU_SHARE}" /etc/fstab || sudo sh -c "echo '
 # qemu share
 ${_QEMU_SHARE}                                ${_GUEST_SHARE}        9p     trans=virtio,version=9p2000.L,rw,umask=002    0 0' >> /etc/fstab"
 
-_echot "------- mod 9p"
-sudo modprobe 9p
-[ -d "${_GUEST_SHARE}" ] || sudo mkdir "${_GUEST_SHARE}"
-grep -q "^${_QEMU_SHARE}" /proc/mounts || sudo mount "${_GUEST_SHARE}"
-
-_echot "------- autoload 9p"
-file=/etc/initramfs-tools/modules
-grep -q ^9p ${file} || sudo sh -c "echo '
-# qemu share 
-9p
-9pnet
-9pnet_virtio' >> ${file}"
-sudo update-initramfs -u
