@@ -7,7 +7,7 @@ _PATH_BASE=$( readlink -f ${0%/*} )
 _PATH_CONF=${HOME}/.config/desktop-install
 _PATH_LOG=/var/log/desktop-install
 _CMD="sudo pacman --noconfirm"
-_CMD_INS="sudo pacman --noconfirm -S"
+_CMD_INS="sudo pacman --noconfirm --needed -S"
 _CMD_AUR="yay -S --noconfirm --needed"
 
 # inc
