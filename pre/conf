@@ -165,7 +165,7 @@ _eval cp ${_PATH_BASE}/conf/aegisub-config.json ${path}
 _echot "------- tmux desktop"
 _eval cp ${_PATH_BASE}/xtra/xfce4-terminal-tmux.desktop ${HOME}/.local/share/applications/
 
-_echot "------- QT6"
+_echot "------- QT"
 _echoA "After validation, adjust settings for qt6 and close qt6ct window"
 _askno "Validate to continue"
 qt6ct 2>/dev/null
