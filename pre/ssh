@@ -16,5 +16,5 @@ file=/etc/ssh/sshd_config
 if [ -f "${file}" ]; then
 	sudo [ -f "${file}" ] && sudo cp -a "${file}" "${file}.keep$(date +%s)"
 	! grep -q "UseDNS" ${file} && echo "UseDNS no" | sudo tee -a $file
-	sudo systemctl restart sshd.service
+	_service restart sshd
 fi
