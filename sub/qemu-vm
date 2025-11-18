@@ -22,7 +22,14 @@ _askyn "Confirm by typing 'y'"
 
 ########################  DATA
 
-if [ -z "${_PATH_SHARE}" ]; then
+if [ -z "${_PATH_VIRT}" ]; then
+	anstmp=/vms/virt
+	_askno "Give the path for virt (${anstmp})"
+	_PATH_VIRT=${_ANSWER:-${anstmp}}
+	_confset _PATH_VIRT "${_PATH_VIRT}"
+fi
+
+f [ -z "${_PATH_SHARE}" ]; then
 	anstmp=/vms/share
 	_askno "Give the shared path from the Host (${anstmp})"
 	_PATH_SHARE=${_ANSWER:-${anstmp}}
@@ -40,8 +47,8 @@ fi
 
 _echot "------- install"
 packages="edk2-ovmf libvirt qemu-desktop virt-manager virt-viewer"
-packages+=" bridge-utils dnsmasq iptables-nft"
-# packages+="  libguestfs openbsd-netcat vde2 "
+packages+=" bridge-utils dnsmasq iptables-nft libguestfs"
+# packages+="  openbsd-netcat vde2 "
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
@@ -56,15 +63,27 @@ _service enable libvirtd
 
 ########################  CONF
 
-_echot "------- user libvirt-qemu"
-_evalr usermod -G libvirt,libvirt-qemu,kvm -a ${USER}
+_echot "------- ${_PATH_VIRT}"
+path="${_PATH_VIRT}"
+[ -d "${path}" ] || _evalr mkdir -p ${path}
+_evalr chown libvirt-qemu:libvirt-qemu ${path}
+
+_echot "------- ${USER} in libvirt,libvirt-qemu,kvm"
+_evalr usermod -aG libvirt, libvirt-qemu, kvm ${USER}
+
+########################  ISO
+
+_echot "------- /vms/iso"
+path=/vms/iso
+[ -d "${path}" ] || _evalr mkdir -p "${path}"
+_evalr chown ${USER}:${USER} ${path}
 
 ########################  SHARE
 
-_echot "------- path"
-[ -d "${_PATH_SHARE}" ] || _evalr mkdir -p "${_PATH_SHARE}"
-
-_echot "------- permissions"
+_echot "------- ${_PATH_SHARE}"
+path="${_PATH_SHARE}"
+[ -d "${path}" ] || _evalr mkdir -p "${path}"
+_evalr chown ${USER}:${USER} ${_PATH_SHARE}
 _evalr setfacl -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
 _evalr setfacl -d -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
 _evalr setfacl -Rm g:libvirt-qemu:rwx ${_PATH_SHARE}
@@ -82,9 +101,10 @@ echo -e 'filesystem type="mount" accessmode="mapped" '${blue}'fmode="0664" dmode
 
 ########################  NBD
 
-_echot "------- path"
+_echot "------- ${_PATH_NBD}"
 path="${_PATH_NBD}"
 [ -d "${path}" ] || _evalr mkdir -p ${path}
+_evalr chown ${USER}:${USER} ${path}
 
 _echot "------- install"
 packages="qemu-img"
