@@ -216,11 +216,6 @@ fi
 # ssd
 [ "${_SSD_SYS}" ] && sudo sed -i "/^UUID=${uuidsys}.*\sbtrfs\s/ s|noatime,|noatime,ssd,|" ${file}
 
-# bs
-[ -d "/home/shared/repo/bs" ] && sudo sh -c "echo '
-# bind
-/home/shared/repo/bs   ${_PATH_BS}    none    defaults,bind                    0    0' >> ${file}"
-
 _echot "------- ${file}"
 echo
 cat ${file}
@@ -234,6 +229,12 @@ file=${_SYSNAME}/etc/default/grub
 _keepcp "${file}"
 grep -q '^GRUB_CMDLINE_LINUX=.*biosdevname' ${file} \
 	|| sudo sed -i '/^GRUB_CMDLINE_LINUX=/ s|"$| biosdevname=0"|' ${file}
+
+_echot "------- bs"
+pth=${_SYSNAME}/usr/local/bs
+[ -d ${pth} ] && _keepmvts ${pth}
+_evalr git clone ${_PATH_BASE}/bs ${pth} 
+_evalr chown -R ${USER}:${USER} ${pth} 
 
 _echot "------- umount ${path_sys}"
 cd
