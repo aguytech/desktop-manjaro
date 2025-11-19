@@ -64,44 +64,44 @@ _askyn "Confirm installation" && [ "${_ANSWER}" == n ] && _exit 1
 
 _echot "------- device sys"
 if ! grep -q "${_DEVICE_SYS}" /proc/mounts; then
-	path=/mnt_sys
-	[ -d "${path}" ] || _evalr mkdir -p "${path}"
-	_evalr mount ${_DEVICE_SYS} ${path} || _exite "Unable to mount ${_DEVICE_SYS} in ${path}"
+	pth=/mnt_sys
+	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+	_evalr mount ${_DEVICE_SYS} ${pth} || _exite "Unable to mount ${_DEVICE_SYS} in ${pth}"
 fi
-path_sys=$( grep "${_DEVICE_SYS}" /proc/mounts | cut -d' ' -f2 )
-[ -z "${path_sys}" ] && _exite "${path_sys} not mounted ?"
+pth_sys=$( grep "${_DEVICE_SYS}" /proc/mounts | cut -d' ' -f2 )
+[ -z "${pth_sys}" ] && _exite "${pth_sys} not mounted ?"
 
 _echot "------- device home"
 if [ "${_DEVICE_HOME}" ]; then
 	if ! grep -q "${_DEVICE_HOME}" /proc/mounts; then
-		path=/mnt_home
-		[ -d "${path}" ] || _evalr mkdir -p "${path}"
-		_evalr mount ${_DEVICE_HOME} ${path} || _exite "Unable to mount ${_DEVICE_HOME} in ${path}"
+		pth=/mnt_home
+		[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+		_evalr mount ${_DEVICE_HOME} ${pth} || _exite "Unable to mount ${_DEVICE_HOME} in ${pth}"
 	fi
-	path_home=$( grep "${_DEVICE_HOME}" /proc/mounts | cut -d' ' -f2 )
-	[ -z "${path_home}" ] && _exite "${path_home} not mounted ?"
+	pth_home=$( grep "${_DEVICE_HOME}" /proc/mounts | cut -d' ' -f2 )
+	[ -z "${pth_home}" ] && _exite "${pth_home} not mounted ?"
 else
-	path_home=${path_sys}/home
+	pth_home=${pth_sys}/home
 fi
 
 _echot "------- user"
-user_uid=$( grep ^${_USERNAME} ${path_sys}/etc/passwd | cut -d: -f3 )
+user_uid=$( grep ^${_USERNAME} ${pth_sys}/etc/passwd | cut -d: -f3 )
 [ -z "${user_uid}" ] && user_uid=1000 && _echo "user_uid set to 1000" 
-user_gid=$( grep ^${_USERNAME} ${path_sys}/etc/group | cut -d: -f3 )
+user_gid=$( grep ^${_USERNAME} ${pth_sys}/etc/group | cut -d: -f3 )
 [ -z "${user_gid}" ] && user_gid=1000 && _echo "user_gid set to 1000" 
 
 _echot "------- create paths"
-for path in ${path_sys}/save ${path_sys}/ext ${path_sys}/vm; do
-	[ -d "${path}" ] || _evalr mkdir -p "${path}"
-	_evalr chown ${user_uid}:${user_gid} "${path}"
+for pth in ${pth_sys}/save ${pth_sys}/ext ${pth_sys}/vm; do
+	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+	_evalr chown ${user_uid}:${user_gid} "${pth}"
 done
-_evalr chown 0:${user_gid} "${path_sys}/vm"
-_evalr chmod g+rw "${path_sys}/vm"
+_evalr chown 0:${user_gid} "${pth_sys}/vm"
+_evalr chmod g+rw "${pth_sys}/vm"
 
 ########################  FSTAB
 
 _echot "------- fstab"
-file=${path_sys}/etc/fstab
+file=${pth_sys}/etc/fstab
 _keepcp ${file}
 
 if [ "${_MEM}" ]; then
@@ -131,13 +131,13 @@ if [ "${_DEVICE_EXT}" ]; then
 fi
 
 _echot "------- fstab bs"
-path=${path_sys}${_PATH_BS}
-_keepmv "${path}"
-if [ -d "${path_home}/shared/repo/bs" ]; then
-	[ -d "${path}" ] || _evalr mkdir -p "${path}"
+pth=${pth_sys}${_PATH_BS}
+_keepmv "${pth}"
+if [ -d "${pth_home}/shared/repo/bs" ]; then
+	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
 else
-	[ -d "${path_home}/shared/repo" ] || _evalr mkdir -p "${path_home}/shared/repo"
-	_evalr cp -a  "${_PATH_BASE}/bs" "${path_home}/shared/repo" 
+	[ -d "${pth_home}/shared/repo" ] || _evalr mkdir -p "${pth_home}/shared/repo"
+	_evalr cp -a  "${_PATH_BASE}/bs" "${pth_home}/shared/repo" 
 fi
 sudo sh -c "echo '
 # bind
@@ -150,21 +150,21 @@ _partadd "${_PART}" "${S_FILE_INSTALL_DONE}"
 ########################  EXPORT
 
 # installation system
-if [ "${path_sys}" != / ]; then
+if [ "${pth_sys}" != / ]; then
 	_echot "------- copy config"
-	path="${path_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
-	_keepmv ${path}
-	[ -d "${path}" ] || _evalr mkdir -p "${path}"
-	_evalr cp -r ${_PATH_CONF}/* ${path}/
-	_evalr chown ${user_uid}:${user_gid} -R ${path_home}/${_USERNAME}
+	pth="${pth_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
+	_keepmv ${pth}
+	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+	_evalr cp -r ${_PATH_CONF}/* ${pth}/
+	_evalr chown ${user_uid}:${user_gid} -R ${pth_home}/${_USERNAME}
 
 	_echot "------- copy log"
-	[ -d ${path_sys}/var/log ] && path="${path_sys}/var/log/desktop-install"
-	_keepmv ${path}
-	[ -d "${path}" ] || _evalr mkdir -p "${path}"
-	_evalr cp -a /var/log/desktop-install/* ${path}/
-	_evalr chown ${user_uid}:0 -R ${path}
-	_evalr chmod 664 ${path}/*
+	[ -d ${pth_sys}/var/log ] && pth="${pth_sys}/var/log/desktop-install"
+	_keepmv ${pth}
+	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+	_evalr cp -a /var/log/desktop-install/* ${pth}/
+	_evalr chown ${user_uid}:0 -R ${pth}
+	_evalr chmod 664 ${pth}/*
 fi
 
 _echot "------- reboot ${_DEVICE_SYS}"

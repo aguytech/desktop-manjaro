@@ -84,14 +84,14 @@ _keepmv ${file}
 _evalr cp ${_PATH_BASE}/conf/meld-dark.style-scheme.xml ${file}
 
 _echot "------- icons"
-path=/usr/share/icons/Foralyse
-[ -d "${path}" ] || _evalr mkdir -p ${path}
-_evalr cp ${_PATH_BASE}/icons/* ${path}/
+pth=/usr/share/icons/Foralyse
+[ -d "${pth}" ] || _evalr mkdir -p ${pth}
+_evalr cp ${_PATH_BASE}/icons/* ${pth}/
 
 _echot "------- wp"
-path=/usr/share/backgrounds/xfce
-_evalr cp ${_PATH_BASE}/xtra/wp/* ${path}/
-_evalr chmod 644 ${path}/*
+pth=/usr/share/backgrounds/xfce
+_evalr cp ${_PATH_BASE}/xtra/wp/* ${pth}/
+_evalr chmod 644 ${pth}/*
 
 _echot "------- numlockx in tty"
 file=/etc/lightdm/lightdm-gtk-greeter.conf
@@ -115,14 +115,14 @@ fi
 ########################  USER
 
 _echot "------- user icons"
-path=${HOME}/.local/share/icons
-_eval cp ${_PATH_BASE}/icons/* ${path}/
+pth=${HOME}/.local/share/icons
+_eval cp ${_PATH_BASE}/icons/* ${pth}/
 
 _echot "------- user conf"
 for file in .nanorc .tmux.conf .vimrc; do
-	path=${HOME}/${file}
-	_keepmv "${path}"
-	_eval ln -s "${_PATH_BS}/conf/${file}" "${path}"
+	pth=${HOME}/${file}
+	_keepmv "${pth}"
+	_eval ln -s "${_PATH_BS}/conf/${file}" "${pth}"
 done
 
 _echot "------- thunar-volman"
@@ -131,36 +131,36 @@ _eval xfconf-query -c thunar-volman -n -p /automount-drives/enabled -t bool -s f
 _eval xfconf-query -c thunar-volman -n -p /automount-media/enabled -t bool -s false
 
 _echot "------- gtk styles"
-path_gtk=${HOME}/.local/share/gtksourceview-3.0
-path=${path_gtk}/styles
+pth_gtk=${HOME}/.local/share/gtksourceview-3.0
+pth=${pth_gtk}/styles
 # link or copy
-path_repo=/home/shared/.local/share/gtksourceview-3.0/styles
-if [ -d "${path_repo}" ]; then
-	[ -d "${path}" ] && _eval rm -fR ${path}
-	[ -d "${path_gtk}" ] || _eval mkdir ${path_gtk}
-	_eval ln -s "${path_repo}" ${path}
+pth_repo=/home/shared/.local/share/gtksourceview-3.0/styles
+if [ -d "${pth_repo}" ]; then
+	[ -d "${pth}" ] && _eval rm -fR ${pth}
+	[ -d "${pth_gtk}" ] || _eval mkdir ${pth_gtk}
+	_eval ln -s "${pth_repo}" ${pth}
 else
-	[ -d "${path}" ] || _eval mkdir -p ${path}
-	_eval cp ${_PATH_BASE}/conf/styles/* ${path}/
+	[ -d "${pth}" ] || _eval mkdir -p ${pth}
+	_eval cp ${_PATH_BASE}/conf/styles/* ${pth}/
 fi
 # gtk 4
 cd ${HOME}/.local/share
-path=gtksourceview-4
-[ -e "${path}" ] || _eval ln -s gtksourceview-3.0 ${path}
+pth=gtksourceview-4
+[ -e "${pth}" ] || _eval ln -s gtksourceview-3.0 ${pth}
 
 _echot "------- user conf"
-paths=".tmux"
-for path in ${paths}; do
-	_keepmv ${path}
+pths=".tmux"
+for pth in ${pths}; do
+	_keepmv ${pth}
 done
 for file in ${_PATH_BASE}/conf/user.tmux.tar.gz; do
 	_eval tar xzf ${file} -C ${HOME}/
 done
 
 _echot "------- aegisub"
-path=${HOME}/.aegisub/
-[ -d "${path}" ] || _eval mkdir -p ${path}
-_eval cp ${_PATH_BASE}/conf/aegisub-config.json ${path}
+pth=${HOME}/.aegisub/
+[ -d "${pth}" ] || _eval mkdir -p ${pth}
+_eval cp ${_PATH_BASE}/conf/aegisub-config.json ${pth}
 
 _echot "------- tmux desktop"
 _eval cp ${_PATH_BASE}/xtra/xfce4-terminal-tmux.desktop ${HOME}/.local/share/applications/
@@ -171,9 +171,9 @@ _askno "Validate to continue"
 qt6ct 2>/dev/null
 
 _echot "------- plank"
-path=${HOME}/.config/autostart
-[ -d "${path}" ] || _eval mkdir -p ${path}
-_eval cp ${_PATH_BASE}/xtra/plank.desktop ${path}/
+pth=${HOME}/.config/autostart
+[ -d "${pth}" ] || _eval mkdir -p ${pth}
+_eval cp ${_PATH_BASE}/xtra/plank.desktop ${pth}/
 _echoA "After validation, adjust plank preferences and close plank window"
 _askno "Validate to continue"
 plank --preferences &

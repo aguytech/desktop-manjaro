@@ -64,9 +64,9 @@ _service enable libvirtd
 ########################  CONF
 
 _echot "------- ${_PATH_VIRT}"
-path="${_PATH_VIRT}"
-[ -d "${path}" ] || _evalr mkdir -p ${path}
-_evalr chown libvirt-qemu:libvirt-qemu ${path}
+pth="${_PATH_VIRT}"
+[ -d "${pth}" ] || _evalr mkdir -p ${pth}
+_evalr chown libvirt-qemu:libvirt-qemu ${pth}
 
 _echot "------- ${USER} in libvirt,libvirt-qemu,kvm"
 _evalr usermod -aG libvirt, libvirt-qemu, kvm ${USER}
@@ -74,15 +74,15 @@ _evalr usermod -aG libvirt, libvirt-qemu, kvm ${USER}
 ########################  ISO
 
 _echot "------- /vms/iso"
-path=/vms/iso
-[ -d "${path}" ] || _evalr mkdir -p "${path}"
-_evalr chown ${USER}:${USER} ${path}
+pth=/vms/iso
+[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+_evalr chown ${USER}:${USER} ${pth}
 
 ########################  SHARE
 
 _echot "------- ${_PATH_SHARE}"
-path="${_PATH_SHARE}"
-[ -d "${path}" ] || _evalr mkdir -p "${path}"
+pth="${_PATH_SHARE}"
+[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
 _evalr chown ${USER}:${USER} ${_PATH_SHARE}
 _evalr setfacl -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
 _evalr setfacl -d -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
@@ -102,9 +102,9 @@ echo -e 'filesystem type="mount" accessmode="mapped" '${blue}'fmode="0664" dmode
 ########################  NBD
 
 _echot "------- ${_PATH_NBD}"
-path="${_PATH_NBD}"
-[ -d "${path}" ] || _evalr mkdir -p ${path}
-_evalr chown ${USER}:${USER} ${path}
+pth="${_PATH_NBD}"
+[ -d "${pth}" ] || _evalr mkdir -p ${pth}
+_evalr chown ${USER}:${USER} ${pth}
 
 _echot "------- install"
 packages="qemu-img"

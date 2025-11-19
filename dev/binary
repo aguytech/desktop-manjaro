@@ -13,6 +13,6 @@ packages="wxhexeditor"
 _install_aur ${packages}
 
 _echot "------- conf bless"
-path=${HOME}/.config/bless/layouts/
-[ -d "${path}" ] || mkdir -p ${path}
-cp ${_PATH_BASE}/conf/bless/* ${path}/
+pth=${HOME}/.config/bless/layouts/
+[ -d "${pth}" ] || mkdir -p ${pth}
+cp ${_PATH_BASE}/conf/bless/* ${pth}/

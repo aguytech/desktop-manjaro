@@ -4,20 +4,20 @@
 
 _haconf()
 {
-    local path_enabled="/etc/haproxy/conf-enabled"
-    local path_available="/etc/haproxy/conf-available"
+    local pth_enabled="/etc/haproxy/conf-enabled"
+    local pth_available="/etc/haproxy/conf-available"
 
     __disabled() {
         local confs conf notused
-        confs="$(ls "${path_available}")"
+        confs="$(ls "${pth_available}")"
         for conf in ${confs}; do
-            ! [ -h "${path_enabled}/${conf}" ] && notused="${notused} ${conf}"
+            ! [ -h "${pth_enabled}/${conf}" ] && notused="${notused} ${conf}"
         done
         echo ${notused}
     }
 
     __enabled() {
-        ls ${path_enabled}
+        ls ${pth_enabled}
     }
 
     COMPREPLY=()
