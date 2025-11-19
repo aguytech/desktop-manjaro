@@ -1,5 +1,13 @@
 #!/bin/bash
 
+########################  REQUIRED
+
+file_meld_conf=${_PATH_BASE}/conf/soft/meld-perso-dark.style-scheme.xml
+_require ${file_meld_conf}
+
+pth_gtk=${_PATH_BASE}/conf/gtk
+_requirep ${pth_gtk}
+
 ########################  SYSTEM
 
 _echot "------- grub"
@@ -130,23 +138,14 @@ _eval xfconf-query -c thunar-volman -n -p /autobrowse/enabled -t bool -s false
 _eval xfconf-query -c thunar-volman -n -p /automount-drives/enabled -t bool -s false
 _eval xfconf-query -c thunar-volman -n -p /automount-media/enabled -t bool -s false
 
-_echot "------- gtk styles"
-pth_gtk=${HOME}/.local/share/gtksourceview-3.0
-pth=${pth_gtk}/styles
-# link or copy
-pth_repo=/home/shared/.local/share/gtksourceview-3.0/styles
-if [ -d "${pth_repo}" ]; then
-	[ -d "${pth}" ] && _eval rm -fR ${pth}
-	[ -d "${pth_gtk}" ] || _eval mkdir ${pth_gtk}
-	_eval ln -s "${pth_repo}" ${pth}
-else
-	[ -d "${pth}" ] || _eval mkdir -p ${pth}
-	_eval cp ${_PATH_BASE}/conf/styles/* ${pth}/
-fi
-# gtk 4
-cd ${HOME}/.local/share
-pth=gtksourceview-4
-[ -e "${pth}" ] || _eval ln -s gtksourceview-3.0 ${pth}
+_echot "------- gtk4"
+pth_to="${HOME}/.local/share/gtksourceview-4"
+[ -d "${pth_to}" ] && _keepmvts "${pth_to}"
+_eval cp -a ${pth_gtk} ${pth_to}
+
+_echot "------- gtk3"
+cd "${HOME}/.local/share"
+[ -e "gtksourceview-4" ] || _eval ln -s gtksourceview-4 gtksourceview-3.0
 
 _echot "------- user conf"
 pths=".tmux"
