@@ -67,6 +67,10 @@ if [ -z ${_USERNAME+x} ]; then
 	_confset _USERNAME "${_USERNAME}"
 fi
 
+anstmp="main"
+_askno "Use main or dev branch for installer (${anstmp})"
+_GIT_BR=${_ANSWER:-${anstmp}}
+
 ########################  MAIN
 
 _echo "------- --------"
@@ -240,22 +244,19 @@ grep -q '^GRUB_CMDLINE_LINUX=.*biosdevname' ${file} \
 
 ########################  REPO
 
-_echot "------- repo"
+_echot "------- repo - ${_GIT_BR}"
 pth=${_SYSNAME}/usr/local/install
 [ -d ${pth} ] && _keepmvts ${pth}
-_evalr git clone ${_PATH_BASE} ${pth}
+url=https://github.com/aguytech/desktop-manjaro
+_evalr git clone -b ${_GIT_BR} ${url} ${pth}
 _evalr chown -R ${USER}:${USER} ${pth}
-cd ${pth} && git remote remove origin
 
-pth_from="${_PATH_BASE%/*}/bs-desktop"
-if [ -d "${pth_from}" ]; then
-	_echot "------- bs"
-	pth=${_SYSNAME}/usr/local/bs
-	[ -d ${pth} ] && _keepmvts ${pth}
-	_evalr git clone ${pth_from} ${pth}
-	_evalr chown -R ${USER}:${USER} ${pth}
-	cd ${pth} && git remote remove origin
-fi
+_echot "------- bs - ${_GIT_BR}"
+pth=${_SYSNAME}/usr/local/bs
+[ -d ${pth} ] && _keepmvts ${pth}
+url=https://github.com/aguytech/bs-desktop
+_evalr git clone -b ${_GIT_BR} ${pth_from} ${pth}
+_evalr chown -R ${USER}:${USER} ${pth}
 
 ###########  UMOUNT _DEVICE_SYS pth_sys
 
