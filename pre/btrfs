@@ -143,7 +143,7 @@ for pth in ${pths}; do
 	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
 done
 
-pths="${_SYSNAME}/save ${_SYSNAME}/ext ${_SYSNAME}${_PATH_BS}"
+pths="${_SYSNAME}/save ${_SYSNAME}/ext"
 _echot "------- rights: ${pths}"
 for pth in ${pths}; do
 	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
@@ -193,22 +193,22 @@ sudo sed -i '/^UUID=.* btrfs .*/ s|^|#|' ${file}
 
 sudo sh -c "echo '
 # btrfs sys
-UUID=${uuidsys}	/		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/${_SYSNAME}		0	1
-UUID=${uuidsys}	/home		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/home		0	2
-UUID=${uuidsys}	/home/${_USERNAME}	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/user-${_SYSNAME}		0	2
-UUID=${uuidsys}	/btrfs/save		btrfs	defaults,noauto,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/save		0	2' >> ${file}"
+UUID=${uuidsys}	/		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/${_SYSNAME}		0 1
+UUID=${uuidsys}	/home		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/home		0 2
+UUID=${uuidsys}	/home/${_USERNAME}	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/user-${_SYSNAME}		0 2
+UUID=${uuidsys}	/btrfs/save	btrfs	defaults,noauto,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/save	0 2' >> ${file}"
 
 # ext
 [ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/ext		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/ext		0	2' >> ${file}"
 
 #sys
 sudo sh -c "echo '
-UUID=${uuidsys}	/btrfs/sys		btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd			0	2' >> ${file}"
+UUID=${uuidsys}	/btrfs/sys	btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd			0 2' >> ${file}"
 
 # ext
 [ "${_DEVICE_EXT}" ] && sudo sh -c "echo '# btrfs ext
-UUID=${uuidext}	/ext	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0	2
-UUID=${uuidext}	/btrfs/ext	btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0	2' >> ${file}"
+UUID=${uuidext}	/ext	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0 2
+UUID=${uuidext}	/btrfs/ext	btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0 2' >> ${file}"
 
 # tmpfs
 if [ "${_MEM}" ]; then
@@ -217,7 +217,7 @@ if [ "${_MEM}" ]; then
 		sudo sed -i "/tmpfs/ s|mode=1777|mode=1777,size=${_MEM}|" ${file}
 	else
 		sudo sh -c "echo '
-tmpfs						/tmp		tmpfs	defaults,noatime,mode=1777,size=${_MEM}							0	0' >> ${file}"
+tmpfs						/tmp		tmpfs	defaults,noatime,mode=1777,size=${_MEM}							0 0' >> ${file}"
 	fi
 fi
 
@@ -240,22 +240,19 @@ grep -q '^GRUB_CMDLINE_LINUX=.*biosdevname' ${file} \
 
 ########################  REPO
 
-_echot "------- repo"
+_echot "------- repo - ${_GIT_BR}"
 pth=${_SYSNAME}/usr/local/install
 [ -d ${pth} ] && _keepmvts ${pth}
-_evalr git clone ${_PATH_BASE} ${pth}
+url=https://github.com/aguytech/desktop-manjaro
+_evalr git clone -b ${_GIT_BR} ${url} ${pth}
 _evalr chown -R ${USER}:${USER} ${pth}
-cd ${pth} && git remote remove origin
 
-pth_from="${_PATH_BASE%/*}/bs-desktop"
-if [ -d "${pth_from}" ]; then
-	_echot "------- bs"
-	pth=${_SYSNAME}/usr/local/bs
-	[ -d ${pth} ] && _keepmvts ${pth}
-	_evalr git clone ${pth_from} ${pth}
-	_evalr chown -R ${USER}:${USER} ${pth}
-	cd ${pth} && git remote remove origin
-fi
+_echot "------- bs - ${_GIT_BR}"
+pth=${_SYSNAME}/usr/local/bs
+[ -d ${pth} ] && _keepmvts ${pth}
+url=https://github.com/aguytech/bs-desktop
+_evalr git clone -b ${_GIT_BR} ${url} ${pth}
+_evalr chown -R ${USER}:${USER} ${pth}
 
 ###########  UMOUNT _DEVICE_SYS pth_sys
 
