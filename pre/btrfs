@@ -34,7 +34,7 @@ fi
 if [ -z ${_DEVICE_GRUB+x} ]; then
 	menutmp=$( lsblk -e 11,7|grep '^[a-z][a-z][a-z]'|cut -d' ' -f1|sed 's|^|/dev/|'|xargs )
 	menutmp+=" $( sudo blkid -o device|grep -v '/loop\|/sr'|xargs )"
-	_menu "Select a device for GRUB" ${menutmp}
+	_menu "Select a device for GRUB installation" ${menutmp}
 	_DEVICE_GRUB=${_ANSWER}
 	_confset _DEVICE_GRUB "${_DEVICE_GRUB}"
 fi
@@ -74,35 +74,42 @@ cat "${S_FILE_INSTALL_CONF}"
 _echo "------- --------"
 _askyn "Confirm installation" && [ "${_ANSWER}" == n ] && _exit 1
 
-########################  DEVICES
+########################  SUBVOLUMES
 
-_echot "------- btrfs volumes && dirs"
 cd /
 if grep -q "^${_DEVICE_SYS}" /proc/mounts; then
 	pth_sys=$( grep "^${_DEVICE_SYS}" /proc/mounts | cut -d' ' -f2 )
+	_echot "------- umount ${pth_sys}"
 	_evalr umount ${pth_sys} || _exite "Unable to unmount ${pth_sys}"
 fi
+
+###########  MOUNT _DEVICE_SYS pth_sys
+
+_echot "------- mount ${_DEVICE_SYS} in ${pth_sys}"
 pth_sys=/mnt_sys
 [ -d "${pth_sys}" ] || _evalr mkdir "${pth_sys}"
-_evalr mount "${_DEVICE_SYS}" ${pth_sys} || _exite "Unable to mount ${_DEVICE_SYS} in ${pth_sys}"
+_evalr mount "${_DEVICE_SYS}" "${pth_sys}" || _exite "Unable to mount ${_DEVICE_SYS} in ${pth_sys}"
+
 cd ${pth_sys}
+
+_echot "------- btrfs list"
 _evalr btrfs subvolume list .
 
 _echot "------- user"
 user_uid=$( grep ^${_USERNAME} '@/etc/passwd' | cut -d: -f3 )
-[ -z "${user_uid}" ] && _exite "Unable to find ${_USERNAME} in @/etc/passwd"
+[ -z "${user_uid}" ] && user_uid=1000
 user_gid=$( grep ^${_USERNAME} '@/etc/group' | cut -d: -f3 )
-[ -z "${user_gid}" ] && _exite "Unable to find ${_USERNAME} in @/etc/group"
+[ -z "${user_gid}" ] && user_gid=1000
 
 _echot "------- system"
-[ -d "${_SYSNAME}" ] && ! [ -d "${_SYSNAME}.keep" ] && _evalr mv "${_SYSNAME}" "${_SYSNAME}.keep"
+[ -d "${_SYSNAME}" ] && _evalr mv "${_SYSNAME}" "${_SYSNAME}.${_SDATE}"
 [ -d "${_SYSNAME}" ] && _evalr btrfs subvolume delete "${_SYSNAME}"
 _evalr mv '@' "${_SYSNAME}" || _exite "Unable to move @ to ${_SYSNAME}"
 
 _echot "------- home"
-! [ -d home ] && _evalr btrfs subvolume create home
+[ -d home ] || _evalr btrfs subvolume create home
 # backup & create volume for user-$user
-[ -d "user-${_SYSNAME}" ] && ! [ -d user-${_SYSNAME}.keep ] && _evalr mv user-${_SYSNAME} user-${_SYSNAME}.keep
+[ -d "user-${_SYSNAME}" ] && _evalr mv user-${_SYSNAME} user-${_SYSNAME}.${_SDATE}
 [ -d "user-${_SYSNAME}" ] && _evalr btrfs subvolume delete "user-${_SYSNAME}"
 _evalr btrfs subvolume create user-${_SYSNAME}
 # move data user to user-$user
@@ -112,33 +119,34 @@ sudo sh -c "mv @home/${_USERNAME}/.??* user-${_SYSNAME}/ 2>/dev/null"
 [ -d "home/${_USERNAME}" ] || _evalr mkdir "home/${_USERNAME}"
 _evalr chown ${user_uid}:${user_gid} -R home/${_USERNAME} user-${_SYSNAME}
 
-_echot "------- btrfs/sys"
-pth=btrfs/sys
-[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+pths=
 
-if [ "${_DEVICE_EXT}" ]; then
-	_echot "------- btrfs/ext"
-	pth=btrfs/ext
-	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+_echot "------- btrfs/sys"
+pths+=" ${_SYSNAME}/btrfs/sys"
+pths+=" ${_SYSNAME}/btrfs/save"
+
+_echot "------- btrfs/ext"
+[ "${_DEVICE_EXT}" ] && pths+=" ${_SYSNAME}/btrfs/ext"
+
+_echot "------- ext"
+pths+=" ${_SYSNAME}/ext"
+if ! [ "${_DEVICE_EXT}" ]; then
+	[ -d ext ] || _evalr btrfs subvolume create ext
 fi
 
 _echot "------- save"
+pths+=" ${_SYSNAME}/save"
 [ -d save ] || _evalr btrfs subvolume create save
 
-_echot "------- ext"
-if [ "${_DEVICE_EXT}" ]; then
-	device_ext=${_DEVICE_EXT}
-	pth_ext=
-else
-	device_ext=${_DEVICE_SYS}
-	pth_ext=/ext
-	_evalr btrfs subvolume create ext
-fi
-
-_echot "------- create paths"
-pths="${_SYSNAME}/save ${_SYSNAME}/ext ${_SYSNAME}${_PATH_BS}"
+_echot "------- create: ${pths}"
 for pth in ${pths}; do
-	[ -d "${pth}" ] || _evalr mkdir "${pth}"
+	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+done
+
+pths="${_SYSNAME}/save ${_SYSNAME}/ext ${_SYSNAME}${_PATH_BS}"
+_echot "------- rights: ${pths}"
+for pth in ${pths}; do
+	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
 	_evalr chown ${USER}:${USER} ${pth}
 done
 
@@ -178,38 +186,38 @@ fi
 
 _echot "------- fstab"
 file=${_SYSNAME}/etc/fstab
-_keepcp ${file}
+_keepcpts ${file}
 sudo sed -i "\|/var/cache |d" ${file}
 sudo sed -i "\|/var/log |d" ${file}
 sudo sed -i '/^UUID=.* btrfs .*/ s|^|#|' ${file}
 
 sudo sh -c "echo '
 # btrfs sys
-UUID=${uuidsys}   /                 btrfs   defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/${_SYSNAME}      0    1
-UUID=${uuidsys}   /home             btrfs   defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/home       0    2
-UUID=${uuidsys}   /home/${_USERNAME}      btrfs   defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/user-${_SYSNAME} 0    2
-UUID=${uuidsys}   /save             btrfs   defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/save       0    2' >> ${file}"
+UUID=${uuidsys}	/		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/${_SYSNAME}		0	1
+UUID=${uuidsys}	/home		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/home		0	2
+UUID=${uuidsys}	/home/${_USERNAME}	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/user-${_SYSNAME}		0	2
+UUID=${uuidsys}	/btrfs/save		btrfs	defaults,noauto,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/save		0	2' >> ${file}"
 
 # ext
-[ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}   /ext              btrfs   defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/ext        0    2' >> ${file}"
+[ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/ext		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/ext		0	2' >> ${file}"
 
 #sys
 sudo sh -c "echo '
-UUID=${uuidsys}   /btrfs/sys        btrfs   noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd            0    2' >> ${file}"
+UUID=${uuidsys}	/btrfs/sys		btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd			0	2' >> ${file}"
 
 # ext
 [ "${_DEVICE_EXT}" ] && sudo sh -c "echo '# btrfs ext
-UUID=${uuidext}      /ext              btrfs   defaults,noatime,space_cache=v2,autodefrag,compress=zstd           0    2
-UUID=${uuidext}      /btrfs/ext        btrfs   noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd               0    2' >> ${file}"
+UUID=${uuidext}	/ext	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0	2
+UUID=${uuidext}	/btrfs/ext	btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0	2' >> ${file}"
 
 # tmpfs
 if [ "${_MEM}" ]; then
 	_echot "------- fstab tmpfs"
-	if grep -q '^tmp.*/tmp' /etc/fstab; then
+	if grep -q '^tmp.*/tmp' ${_SYSNAME}/etc/fstab; then
 		sudo sed -i "/tmpfs/ s|mode=1777|mode=1777,size=${_MEM}|" ${file}
 	else
 		sudo sh -c "echo '
-tmpfs                                       /tmp              tmpfs   defaults,noatime,mode=1777,size=${_MEM}     0 0' >> ${file}"
+tmpfs						/tmp		tmpfs	defaults,noatime,mode=1777,size=${_MEM}							0	0' >> ${file}"
 	fi
 fi
 
@@ -230,17 +238,34 @@ _keepcp "${file}"
 grep -q '^GRUB_CMDLINE_LINUX=.*biosdevname' ${file} \
 	|| sudo sed -i '/^GRUB_CMDLINE_LINUX=/ s|"$| biosdevname=0"|' ${file}
 
-_echot "------- bs"
-pth=${_SYSNAME}/usr/local/bs
+########################  REPO
+
+_echot "------- repo"
+pth=${_SYSNAME}/usr/local/install
 [ -d ${pth} ] && _keepmvts ${pth}
-_evalr git clone ${_PATH_BASE}/bs ${pth} 
-_evalr chown -R ${USER}:${USER} ${pth} 
+_evalr git clone ${_PATH_BASE} ${pth}
+_evalr chown -R ${USER}:${USER} ${pth}
+cd ${pth} && git remote remove origin
+
+pth_from="${_PATH_BASE%/*}/bs-desktop"
+if [ -d "${pth_from}" ]; then
+	_echot "------- bs"
+	pth=${_SYSNAME}/usr/local/bs
+	[ -d ${pth} ] && _keepmvts ${pth}
+	_evalr git clone ${pth_from} ${pth}
+	_evalr chown -R ${USER}:${USER} ${pth}
+	cd ${pth} && git remote remove origin
+fi
+
+###########  UMOUNT _DEVICE_SYS pth_sys
 
 _echot "------- umount ${pth_sys}"
 cd
 _evalr umount ${pth_sys}
 
-############  GRUB
+########################  GRUB
+
+###########  chroot enter
 
 _echot "------- grub mount devices"
 cd /
@@ -254,7 +279,7 @@ done
 
 _echot "------- grub install"
 _echoA "After you are 'chrooted' please enter this line :"
-_echo "grub-install --recheck ${_DEVICE_GRUB}"
+_echo "grub-install --recheck $( [ "${_UEFI}" ] && echo "--efi-directory=/boot/efi" ) ${_DEVICE_GRUB}"
 _echo "update-grub"
 _echo "exit"
 
@@ -269,32 +294,35 @@ for i in run proc sys dev/pts dev; do
 done
 _evalr umount ${pth_sys}
 
+###########  chroot exit
+
 ########################  END
 
 _partadd "${_PART}" "${S_FILE_INSTALL_DONE}"
 
 ########################  EXPORT
 
+###########  MOUNT _DEVICE_SYS pth_sys
+
 _echot "------- mount ${_DEVICE_SYS}"
 _evalr mount "${_DEVICE_SYS}" ${pth_sys} || _exite "Unable to mount ${_DEVICE_SYS} in ${pth_sys}"
 
 _echot "------- copy config"
 pth="${pth_sys}/user-${_SYSNAME}/${_PATH_CONF#/home/*/}"
-_keepmv ${pth}
-[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
-_evalr cp -r ${_PATH_CONF}/* ${pth}/
-_evalr chown ${user_uid}:${user_gid} -R ${pth_sys}/user-${_SYSNAME}
+_keepmvts ${pth}
+_evalr cp -a ${_PATH_CONF} ${pth}/
 
 _echot "------- copy log"
-pth="${pth_sys}/${_SYSNAME}/var/log/desktop-install"
-_keepmv ${pth}
-[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
-_evalr cp -a /var/log/desktop-install/* ${pth}/
-_evalr chown ${user_uid}:0 -R ${pth}
-_evalr chmod 664 ${pth}/*
+pth="${pth_sys}/${_SYSNAME}${_PATH_LOG}"
+_keepmvts ${pth}
+_evalr cp -a ${_PATH_LOG} ${pth}/
+_evalr chown 0:${user_uid} -R ${pth}
+_evalr chmod -R 774 ${pth}
 
 _echot "------- umount ${_DEVICE_SYS}"
 _evalr umount ${pth_sys}
+
+###########  UMOUNT _DEVICE_SYS pth_sys
 
 _echot "------- reboot ${_DEVICE_SYS}"
 _echoA "You have to restart the global installation script after the reboot"
@@ -302,3 +330,7 @@ _echoa "The computer now will reboot"
 _askno "Validate to continue"
 reboot
 exit
+
+# create an iso file '/vms/iso/desktop-install.iso' with virtual paths: /bs-desktop, /desktop-manjaro and /desktop-ubuntu
+# used for vitualized installation like virt-manager, virtualbox, vmware, ..
+# mkisofs -Jr -o /vms/iso/desktop-install.iso -graft-points /bs-desktop=/home/shared/repo/bs-desktop /desktop-manjaro=/home/shared/repo/desktop-manjaro /desktop-ubuntu=/home/shared/repo/desktop-ubuntu
