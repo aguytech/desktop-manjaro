@@ -77,6 +77,8 @@ _echot "------- /vms/iso"
 pth=/vms/iso
 [ -d "${pth}" ] || _evalr mkdir -p "${pth}"
 _evalr chown ${USER}:${USER} ${pth}
+# to give group write modifications for mkisofs and virt-manager
+_evalr setfacl -dm o::rx,g::rwx,o::r ${pth}
 
 ########################  SHARE
 
