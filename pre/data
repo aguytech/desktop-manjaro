@@ -1,10 +1,12 @@
 #!/bin/bash
 
+# _GIT_BR
 anstmp="main"
 _menu "Select 'main' or 'dev' branch to be used by installer (main)" main dev
 _GIT_BR=${_ANSWER}
 _confset _GIT_BR "${_GIT_BR}"
 
+# _BTRFS
 if [ -z ${_BTRFS+x} ]; then
 	_askyn "BTRFS are used for system?"
 	_BTRFS=${_ANSWER/n/}
@@ -12,6 +14,7 @@ if [ -z ${_BTRFS+x} ]; then
 fi
 [ "${_BTRFS}" ] && part_fs="btrfs" || part_fs="nobtrfs"
 
+# _HALT
 if [ -z ${_HALT+x} ]; then
 	_askyn "Enable halt between each parts?"
 	_HALT=${_ANSWER/n/}

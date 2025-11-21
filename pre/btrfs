@@ -305,7 +305,7 @@ _echot "------- mount ${_DEVICE_SYS}"
 _evalr mount "${_DEVICE_SYS}" ${pth_sys} || _exite "Unable to mount ${_DEVICE_SYS} in ${pth_sys}"
 
 _echot "------- copy config"
-pth="${pth_sys}/user-${_SYSNAME}/${_PATH_CONF#/home/*/}"
+pth="${pth_sys}/${_SYSNAME}/${_PATH_CONF}"
 _keepmvts ${pth}
 _evalr cp -a ${_PATH_CONF} ${pth}/
 
@@ -313,7 +313,7 @@ _echot "------- copy log"
 pth="${pth_sys}/${_SYSNAME}${_PATH_LOG}"
 _keepmvts ${pth}
 _evalr cp -a ${_PATH_LOG} ${pth}/
-_evalr chown 0:${user_uid} -R ${pth}
+_evalr chown 0:${UID} -R ${pth}
 _evalr chmod -R 774 ${pth}
 
 _echot "------- umount ${_DEVICE_SYS}"
