@@ -9,7 +9,7 @@
   <!-- FIXME: delete background should be @theme_bg_color; line should be shaded of that -->
   <style name="meld:delete" background="#ffffff" foreground="#a40000" line-background="#cccccc"/>
   <style name="meld:error" background="#fce94f" foreground="#faad3d" line-background="#fdf8cd"/>
-  <style name="meld:inline" background="#00574f"/>
+  <style name="meld:inline" background="#005c4c"/>
   <style name="meld:current-line-highlight" foreground="#eeeeee" background="#rgba(17, 17, 0, 0.4)"/>
   <style name="meld:unknown-text" foreground="#aaaaaa"/>
   <style name="meld:syncpoint-outline" foreground="#bbbbbb"/>
