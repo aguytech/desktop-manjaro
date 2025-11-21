@@ -9,7 +9,7 @@ _askyn "Types 'y' to continue or anything else to exit"
 
 _echot "------- required files"
 file_script_nbd=${_PATH_BASE}/bs/scripts/nbd.sh
-file_conf_ca=${_PATH_BASE}/conf/ca.xml
+file_conf_ca=${_PATH_BASE}/conf/soft/ca.xml
 
 _require ${file_script_nbd} ${file_conf_ca}
 
@@ -123,7 +123,7 @@ _echot "------- bookmarks"
 file=${HOME}/.config/gtk-3.0/bookmarks
 grep -q "file://${_PATH_NBD}" ${file} || echo "file://${_PATH_NBD}" >> ${file}
 
-_echot "------- CA"
+_echot "------- thunar CA"
 file=~/.config/Thunar/uca.xml
 [ -d ~/.config/Thunar ] || mkdir -p ~/.config/Thunar
 if [ -f "${file}" ]; then
