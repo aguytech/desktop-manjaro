@@ -2,6 +2,11 @@
 
 ########################  MAIN
 
+_echot "------- remove"
+packages="manjaro-xfce-minimal-settings kvantum-theme-matcha matcha-gtk-theme"
+_evalr pacman -R ${packages} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
 _echot "------- system"
 packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree vim yay"
 packages+=" gzip p7zip zip unzip unrar"
