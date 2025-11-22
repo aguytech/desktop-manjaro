@@ -4,7 +4,7 @@
 
 _echot "------- remove"
 packages="manjaro-xfce-minimal-settings kvantum-theme-matcha matcha-gtk-theme"
-_evalr pacman -R ${packages} \
+_evalr pacman -R --noconfirm ${packages} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- system"
