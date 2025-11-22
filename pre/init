@@ -54,10 +54,6 @@ _evalr swapon -v
 _echot "------- conf sources"
 _evalr pacman-mirrors --country-list
 
-_echot "------- permissions ${_PATH_LOG}"
-_evalr chown ${USER}:root ${_PATH_LOG}
-_evalr chmod g+rw ${_PATH_LOG}
-
 ########################  USER
 
 _echot "------- user paths"
@@ -107,13 +103,15 @@ HISTFILESIZE=50000
 done
 
 _echot "------- .bashrc"
+color='\[\033[01;34m\]'
+color_root='\[\033[01;31m\]'
 file=~/.bashrc
 	grep -q '# PS1$' ${file} || echo "
 # PS1
-if [[ \${EUID} == 0 ]] ; then
-PS1='${color_root}\\u@\\h \\[\\033[1;37m\\]\\W${color_root}\\$\\[\\033[00m\\] '
+if [[ \${EUID} == 0 ]]; then
+	PS1='${color_root}\\u@\\h \\[\\033[1;37m\\]\\W${color_root}\\$\\[\\033[00m\\] '
 else
-PS1='${color}\\u@\\h\\[\\033[01;37m\\] \\[\\033[1;37m\\]\\W${color}\\$\\[\\033[00m\\] '
+	PS1='${color}\\u@\\h\\[\\033[01;37m\\] \\[\\033[1;37m\\]\\W${color}\\$\\[\\033[00m\\] '
 fi
 " >> ${file}
 
