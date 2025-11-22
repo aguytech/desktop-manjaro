@@ -1,15 +1,55 @@
 #!/bin/bash
 
+########################  REQUIRED
+
+_echot "------- required paths"
+pth_install_bash_completion=${_PATH_BASE}/xtra/bash-completion
+_requirep ${pth_install_bash_completion}
+
+_echot "------- required files"
+file_env=${_PATH_BASE}/bs/conf/.sh_env
+file_sh_aliases=${_PATH_BASE}/bs/conf/.sh_aliases
+file_sh_functions=${_PATH_BASE}/bs/conf/.sh_functions
+_require ${file_env} ${file_sh_aliases} ${file_sh_functions}
+
 ########################  SYSTEM
 
 _echot "------- root user"
-_ask "Give the password for root" && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
+_askno "Give the password for root or leave blank to let unset"
+[ "${_ANSWER}" ] && echo -e "${_ANSWER}\n${_ANSWER}" | sudo passwd root
 
-_echot "------- update grub"
-if [ "${_BTRFS}" ];then
-	_evalr grub-install ${_DEVICE_GRUB}
-	_evalr update-grub
+_echot "------- grub"
+file=/etc/default/grub
+_keepcpts ${file}
+sudo sed -i "s|^.\?\(GRUB_TIMEOUT_STYLE\)=.*|\1=menu|" ${file}
+sudo sed -i "/^GRUB_TIMEOUT=/ s|=.*|=2|" ${file}
+sudo sed -i "/^GRUB_DEFAULT=/ s|=.*|=0|" ${file}
+sudo sed -i "/^GRUB_SAVEDEFAULT=/ s|=.*|=false|" ${file} # manjaro
+
+file=/etc/grub.d/00_header
+_evalr cp -a ${file} ${file}.${_SDATE} && _evalr chmod -x ${file}.${_SDATE}
+sudo sed -i "s|30|2|g" ${file}
+
+_echot "------- grub os-prober"
+# add identifier to menuentry
+file=/etc/grub.d/30_os-prober
+if ! grep -q 'LONGNAME="${LONGNAME} ${BTRFSsubvol/#subvol=/}"' ${file}; then
+	_keepcp ${file} && _evalr chmod -x ${file}.keep
+	sudo sed -i "/LONGNAME=\"\${LABEL}\"/ a\  else\n    LONGNAME=\"\${LONGNAME} \${BTRFSsubvol/#subvol=/}\"" ${file}
 fi
+
+if [ "${_BTRFS}" ];then
+	_echot "------- grub install"
+	_evalr grub-install ${_DEVICE_GRUB}
+fi
+
+_echot "------- grub update"
+_evalr update-grub
+
+_echot "------- reduce swapiness"
+_evalr swapoff -av
+sudo sh -c 'echo vm.swappiness=40 > /etc/sysctl.d/99-swappiness.conf' # limit swap
+_evalr swapon -v
 
 _echot "------- conf sources"
 _evalr pacman-mirrors --country-list
@@ -23,9 +63,6 @@ if ! [ -d /home/shared/repo/bs ]; then
 	_evalr rsync -rlt ${_PATH_BASE}/bs/ ${_PATH_BS}/
 fi
 
-_echot "------- timeshift"
-type timeshift >/dev/null 2>&1 && sudo pacman --noconfirm -R timeshift timeshift-autosnap-manjaro
-
 ########################  USER
 
 _echot "------- user paths"
@@ -34,32 +71,56 @@ for pth in ${pths}; do
 	[ -d "${pth}" ] || mkdir -p ${pth}
 done
 
-_echot "------- .bash_aliases"
-file=${HOME}/.bash_aliases
-_keepmv ${file}
-_eval ln -s ${_PATH_BS}/conf/.bash_aliases ${file}
+_echot "------- global conf"
+file=${S_GLOBAL_CONF}
+[ -f "${file}" ] || touch ${file}
+
+_echot "------- .sh_env"
+file=${HOME}/.sh_env
+_keepmvts ${file}
+_eval cp -a ${file_env} ${file}
+
+_echot "------- .sh_aliases"
+file=~/.sh_aliases
+_keepmvts ${file}
+_eval cp -a ${file_sh_aliases} ${file}
+
+_echot "-------  .sh_functions"
+file=~/.sh_functions
+_keepmvts ${file}
+_eval cp -a ${file_sh_functions} ${file}
+
+_echot "------- common .*hrc"
+for file in ~/.bashrc ~/.zshrc; do
+	_keepcpts ${file}
+	grep -q '####  PERSO' ${file} || echo "
+########################  PERSO
+
+# HISTORY
+HISTSIZE=50000
+HISTFILESIZE=50000
+
+# source global variables
+[ -f ~/.sh_env ] && . ~/.sh_env
+
+# aliases
+[ -f ~/.sh_aliases ] && . ~/.sh_aliases
+
+# functions
+[ -f ~/.sh_functions ] && . ~/.sh_functions
+" >> ${file}
+done
 
 _echot "------- .bashrc"
-file=${HOME}/.bashrc
-_keepcp ${file}
-_eval "sed -i 's|^\(HISTSIZE\)=.*$|\1=50000|' ${file}"
-_eval "sed -i 's|^\(HISTFILESIZE\)=.*$|\1=50000|' ${file}"
-_eval "sed -i '/^#force_color_prompt/ s|^#||' ${file}"
+file=~/.bashrc
+	grep -q '# PS1$' ${file} || echo "
+# PS1
+if [[ \${EUID} == 0 ]] ; then
+PS1='${color_root}\\u@\\h \\[\\033[1;37m\\]\\W${color_root}\\$\\[\\033[00m\\] '
+else
+PS1='${color}\\u@\\h\\[\\033[01;37m\\] \\[\\033[1;37m\\]\\W${color}\\$\\[\\033[00m\\] '
+fi
+" >> ${file}
 
-_echot "------- .bashrc PS1"
-color='\\[\\033[01;34m\\]' # '\\[\\033[01;32m\\]'
-sed -i 's|^\(\s*PS1=\).*32m.*$|\1"'${color}'\\u@\\h\\[\\033[00m\\] \\W'${color}'\\$\\[\\033[00m\\] "|' ${file}
-sed -i "/^\s*PS1=.*01;34m/ s|\"|'|g" ${file}
-
-_echot "------- .bashrc aliases"
-grep -q ". \${HOME}/.bash_aliases" ${file} || echo "
-# bash_aliases
-[ -f \${HOME}/.bash_aliases ] && . \${HOME}/.bash_aliases"  >> ${file}
-
-_echot "------- .bashrc source"
-. ${file}
-
-_echot "------- profile"
-[ -f "${HOME}/.profile" ] || _evalr cp -a /root/.profile ${HOME}/
-. ${HOME}/.profile
-
+_echot "------- bash-completion"
+_evalr "cp -a ${pth_install_bash_completion}/* /usr/share/bash-completion/completions/"
