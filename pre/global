@@ -7,6 +7,12 @@ packages="manjaro-xfce-minimal-settings kvantum-theme-matcha matcha-gtk-theme"
 _evalr pacman -R --noconfirm ${packages} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
+_echot "------- manjaro add"
+# removed by predecessor
+packages="manjaro-base-skel papirus-maia-icon-theme xcursor-breeze xcape"
+_evalr pacman -R --noconfirm ${packages} \
+	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
 _echot "------- system"
 packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree vim yay"
 packages+=" gzip p7zip zip unzip unrar"
