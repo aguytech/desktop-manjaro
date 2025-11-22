@@ -111,6 +111,12 @@ _eval git clone https://github.com/tmux-plugins/tmux-continuum ${pth}
 grep -sq continuum.tmux ${file} || echo "# resurrect continuum
 run-shell ${pth}/continuum.tmux" >> ${HOME}/.tmux.conf
 
+_echot "------- tmux themepack"
+pth=${HOME}/.tmux/themes/tmux-themepack
+_eval git clone https://github.com/jimeh/tmux-themepack.git ${pth}
+grep -sq tmux-themepack ${file} || echo "# source themepack
+source-file ${pth}/powerline/double/cyan.tmuxtheme" >> ${HOME}/.tmux.conf
+
 _echot "------- tmux source"
 _eval tmux new -d
 _eval tmux source-file ${HOME}/.tmux.conf
