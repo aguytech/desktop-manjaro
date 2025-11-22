@@ -99,11 +99,30 @@ _echot "------- user icons"
 pth=${HOME}/.local/share/icons
 _eval cp ${_PATH_BASE}/icons/* ${pth}/
 
-_echot "------- user conf"
+_echot "------- tmux resurrect"
+pth=${HOME}/.tmux/plugins/resurrect
+_eval git clone https://github.com/tmux-plugins/tmux-resurrect ${pth}
+grep -sq resurrect.tmux ${file} || echo "# resurrect plugin
+run-shell ${pth}/resurrect.tmux" >> ${HOME}/.tmux.conf
+
+_echot "------- tmux resurrect"
+pth=${HOME}/.tmux/plugins/continuum
+_eval git clone https://github.com/tmux-plugins/tmux-continuum ${pth}
+grep -sq continuum.tmux ${file} || echo "# resurrect continuum
+run-shell ${pth}/continuum.tmux" >> ${HOME}/.tmux.conf
+
+_echot "------- tmux source"
+_eval tmux new -d
+_eval tmux source-file ${HOME}/.tmux.conf
+
+_echot "------- tmux desktop"
+_eval cp -a ${file_tmux_desktop} ${HOME}/.local/share/applications/
+
+_echot "------- configuration files"
 for file in .nanorc .tmux.conf .vimrc; do
 	pth=${HOME}/${file}
-	_keepmv "${pth}"
-	_eval ln -s "${_PATH_BS}/conf/${file}" "${pth}"
+	_keepmvts "${pth}"
+	_eval cp -a "${_PATH_BS}/conf/${file}" "${pth}"
 done
 
 _echot "------- gtk4"
@@ -115,24 +134,10 @@ _echot "------- gtk3"
 cd "${HOME}/.local/share"
 [ -e "gtksourceview-4" ] || _eval ln -s gtksourceview-4 gtksourceview-3.0
 
-_echot "------- user conf"
-cd ~
-pth=~/.tmux
-_keepmvts ${pth}
-_eval tar xzf ${_PATH_BASE}/conf/user.tmux.tar.gz -C ${HOME}/
-
-_echot "------- tmux desktop"
-_eval cp -a ${file_tmux_desktop} ${HOME}/.local/share/applications/
-
 _echot "------- aegisub"
 pth=${HOME}/.aegisub/
 [ -d "${pth}" ] || _eval mkdir -p ${pth}
 _eval cp -a ${file_aegisub_conf} ${pth}
-
-_echot "------- QT"
-_echoA "After validation, adjust settings for qt6 and close qt6ct window"
-_askno "Validate to continue"
-qt6ct 2>/dev/null
 
 _echot "------- plank"
 pth=${HOME}/.config/autostart
@@ -141,3 +146,9 @@ _eval cp ${_PATH_BASE}/xtra/plank.desktop ${pth}/
 _echoA "After validation, adjust plank preferences and close plank window"
 _askno "Validate to continue"
 plank --preferences &
+
+_echot "------- QT6"
+_echoA "After validation, adjust settings for qt6 and close qt6ct window"
+_askno "Validate to continue"
+qt6ct 2>/dev/null
+
