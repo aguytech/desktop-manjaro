@@ -96,10 +96,10 @@ _echot "------- btrfs list"
 _evalr btrfs subvolume list .
 
 _echot "------- user"
-user_uid=$( grep ^${_USERNAME} '@/etc/passwd' | cut -d: -f3 )
-[ -z "${user_uid}" ] && user_uid=1000
-user_gid=$( grep ^${_USERNAME} '@/etc/group' | cut -d: -f3 )
-[ -z "${user_gid}" ] && user_gid=1000
+uid=$( grep ^${_USERNAME} '@/etc/passwd' | cut -d: -f3 )
+[ -z "${uid}" ] && uid=1000
+gid=$( grep ^${_USERNAME} '@/etc/group' | cut -d: -f3 )
+[ -z "${gid}" ] && gid=1000
 
 _echot "------- system"
 [ -d "${_SYSNAME}" ] && _evalr mv "${_SYSNAME}" "${_SYSNAME}.${_SDATE}"
@@ -117,7 +117,7 @@ sudo sh -c "mv @home/${_USERNAME}/* user-${_SYSNAME}/ 2>/dev/null"
 sudo sh -c "mv @home/${_USERNAME}/.??* user-${_SYSNAME}/ 2>/dev/null"
 # create path for binding user-${user}
 [ -d "home/${_USERNAME}" ] || _evalr mkdir "home/${_USERNAME}"
-_evalr chown ${user_uid}:${user_gid} -R home/${_USERNAME} user-${_SYSNAME}
+_evalr chown ${uid}:${gid} -R home/${_USERNAME} user-${_SYSNAME}
 
 pths=
 
@@ -147,7 +147,7 @@ pths="${_SYSNAME}/save ${_SYSNAME}/ext"
 _echot "------- rights: ${pths}"
 for pth in ${pths}; do
 	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
-	_evalr chown ${USER}:${USER} ${pth}
+	_evalr chown ${uid}:${gid} ${pth}
 done
 
 _echot "------- btrfs delete"
@@ -245,14 +245,14 @@ pth=${_SYSNAME}/usr/local/install
 [ -d ${pth} ] && _keepmvts ${pth}
 url=https://github.com/aguytech/desktop-manjaro
 _evalr git clone -b ${_GIT_BR} ${url} ${pth}
-_evalr chown -R ${USER}:${USER} ${pth}
+_evalr chown -R ${uid}:${gid} ${pth}
 
 _echot "------- bs - ${_GIT_BR}"
 pth=${_SYSNAME}/usr/local/bs
 [ -d ${pth} ] && _keepmvts ${pth}
 url=https://github.com/aguytech/bs-desktop
 _evalr git clone -b ${_GIT_BR} ${url} ${pth}
-_evalr chown -R ${USER}:${USER} ${pth}
+_evalr chown -R ${uid}:${gid} ${pth}
 
 ###########  UMOUNT _DEVICE_SYS pth_sys
 
