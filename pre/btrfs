@@ -102,19 +102,17 @@ gid=$( grep ^${_USERNAME} '@/etc/group' | cut -d: -f3 )
 [ -z "${gid}" ] && gid=1000
 
 _echot "------- system"
-[ -d "${_SYSNAME}" ] && _evalr mv "${_SYSNAME}" "${_SYSNAME}.${_SDATE}"
-[ -d "${_SYSNAME}" ] && _evalr btrfs subvolume delete "${_SYSNAME}"
-_evalr mv '@' "${_SYSNAME}" || _exite "Unable to move @ to ${_SYSNAME}"
+[ -d "${_SYSNAME}" ] && _keepmvts ${_SYSNAME}
+_evalr mv '@' ${_SYSNAME} || _exite "Unable to move @ to ${_SYSNAME}"
 
 _echot "------- home"
 [ -d home ] || _evalr btrfs subvolume create home
 # backup & create volume for user-$user
-[ -d "user-${_SYSNAME}" ] && _evalr mv user-${_SYSNAME} user-${_SYSNAME}.${_SDATE}
-[ -d "user-${_SYSNAME}" ] && _evalr btrfs subvolume delete "user-${_SYSNAME}"
+[ -d "user-${_SYSNAME}" ] && _keepmvts user-${_SYSNAME}
 _evalr btrfs subvolume create user-${_SYSNAME}
 # move data user to user-$user
-sudo sh -c "mv @home/${_USERNAME}/* user-${_SYSNAME}/ 2>/dev/null"
-sudo sh -c "mv @home/${_USERNAME}/.??* user-${_SYSNAME}/ 2>/dev/null"
+_evalr "mv @home/${_USERNAME}/* user-${_SYSNAME}/ 2>/dev/null"
+_evalr "mv @home/${_USERNAME}/.??* user-${_SYSNAME}/ 2>/dev/null"
 # create path for binding user-${user}
 [ -d "home/${_USERNAME}" ] || _evalr mkdir "home/${_USERNAME}"
 _evalr chown ${uid}:${gid} -R home/${_USERNAME} user-${_SYSNAME}
@@ -302,7 +300,7 @@ _echot "------- copy config"
 pth="${pth_sys}/${_SYSNAME}/${_PATH_CONF}"
 _keepmvts ${pth}
 _evalr cp -a ${_PATH_CONF} ${pth}/
-_evalr chmod -R 770${pth}
+_evalr chmod -R 770 ${pth}
 
 _echot "------- copy log"
 pth="${pth_sys}/${_SYSNAME}${_PATH_LOG}"
