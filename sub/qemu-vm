@@ -43,6 +43,36 @@ if [ -z "${_PATH_NBD}" ]; then
 	_confset _PATH_NBD "${_PATH_NBD}"
 fi
 
+########################  PRE
+
+if ! lsmod | grep -q 9p; then
+	_echot "------- initramfs 9p"
+	_menu "Select a file to use for initramfs" $(ls /boot/initramfs*[0-9].img)
+	file_img=${_ANSWER}
+
+	file=/etc/mkinitcpio.conf
+	_keepcpts ${file}
+	modules="9p 9pnet_virtio intel_agp i915"
+	sudo sed -i "/^MODULES=/ s|=(\(.*\))$|(\1 ${modules})|" ${file}
+	_evalr mkinitcpio -P
+	_evalr lsinitcpio -l ${file_img} || _exite "Error:  lsinitcpio -l ${file_img}"
+fi
+
+_echot "------- mod 9p"
+_evalr sudo modprobe 9p
+[ -d "${_GUEST_SHARE}" ] || sudo mkdir "${_GUEST_SHARE}"
+grep -q "^${_QEMU_SHARE}" /proc/mounts || sudo mount "${_GUEST_SHARE}"
+
+_echot "------- autoload 9p"
+file=/etc/initramfs-tools/modules
+grep -q ^9p ${file} || sudo sh -c "echo '
+# qemu share 
+9p
+9pnet
+9pnet_virtio' >> ${file}"
+sudo update-initramfs -u
+
+
 ########################  MAIN
 
 _echot "------- install"
