@@ -1,6 +1,11 @@
 #!/bin/bash
 
-########################  GLOBAL
+########################  REQUIRED
+
+pth_geany_conf=${_PATH_BASE}/conf/geany
+_requirep ${pth_geany_conf}
+
+########################  MAIN
 
 _echot "------- install"
 packages="geany git gitg openssh lnav pv squashfs-tools jq jre-openjdk"
@@ -10,9 +15,9 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 
 _echot "------- geany"
 pth=${HOME}/.config/geany/colorschemes
-[ -d "${pth}" ] || mkdir -p ${pth}
-cp ${_PATH_BASE}/conf/geany/* ${pth}/
+[ -d "${pth}" ] || _eval mkdir -p ${pth}
+_eval cp -a ${pth_geany_conf}/* ${pth}/
 
 _echot "------- aur"
-packages="gtkhash xsysinfo"
+packages="gtkhash mission-center xsysinfo"
 _install_aur ${packages}
