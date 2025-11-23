@@ -55,12 +55,12 @@ fi
 
 ########################  MAIN
 
-_echot "------- --------"
+_echo "------- --------"
 cat "${S_FILE_INSTALL_CONF}"
-_echot "------- --------"
+_echo "------- --------"
 _askyn "Confirm installation" && [ "${_ANSWER}" == n ] && _exit 1
 
-########################  DEVICES
+###########  MOUNT _DEVICE_SYS pth_sys
 
 _echot "------- device sys"
 if ! grep -q "${_DEVICE_SYS}" /proc/mounts; then
@@ -70,6 +70,8 @@ if ! grep -q "${_DEVICE_SYS}" /proc/mounts; then
 fi
 pth_sys=$( grep "${_DEVICE_SYS}" /proc/mounts | cut -d' ' -f2 )
 [ -z "${pth_sys}" ] && _exite "${pth_sys} not mounted ?"
+
+###########  MOUNT _DEVICE_HOME pth_home
 
 _echot "------- device home"
 if [ "${_DEVICE_HOME}" ]; then
@@ -85,24 +87,24 @@ else
 fi
 
 _echot "------- user"
-user_uid=$( grep ^${_USERNAME} ${pth_sys}/etc/passwd | cut -d: -f3 )
-[ -z "${user_uid}" ] && user_uid=1000 && _echo "user_uid set to 1000" 
-user_gid=$( grep ^${_USERNAME} ${pth_sys}/etc/group | cut -d: -f3 )
-[ -z "${user_gid}" ] && user_gid=1000 && _echo "user_gid set to 1000" 
+uid=$( grep ^${_USERNAME} ${pth_sys}/etc/passwd | cut -d: -f3 )
+[ -z "${uid}" ] && uid=1000 && _echo "uid set to 1000" 
+gid=$( grep ^${_USERNAME} ${pth_sys}/etc/group | cut -d: -f3 )
+[ -z "${gid}" ] && gid=1000 && _echo "gid set to 1000" 
 
 _echot "------- create paths"
 for pth in ${pth_sys}/save ${pth_sys}/ext ${pth_sys}/vm; do
 	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
-	_evalr chown ${user_uid}:${user_gid} "${pth}"
+	_evalr chown ${uid}:${gid} "${pth}"
 done
-_evalr chown 0:${user_gid} "${pth_sys}/vm"
+_evalr chown 0:${gid} "${pth_sys}/vm"
 _evalr chmod g+rw "${pth_sys}/vm"
 
 ########################  FSTAB
 
 _echot "------- fstab"
 file=${pth_sys}/etc/fstab
-_keepcp ${file}
+_keepcpts ${file}
 
 if [ "${_MEM}" ]; then
 	_echot "------- fstab tmpfs"
@@ -124,24 +126,37 @@ if [ "${_DEVICE_EXT}" ]; then
 	fi
 
 	sudo sh -c "echo '
-	UUID=${uuidext}      /ext              ext4   errors=remount-ro           0    1' >> ${file}"
+	UUID=${uuidext}		/ext		ext4	errors=remount-ro		0 1' >> ${file}"
 
 	_echot "------- mount /ext"
 	_evalr mount UUID=${uuidext} /ext || _exite "Unable to mount UUID=${uuidext} in /ext"
+	_evalr umount /ext
 fi
 
-_echot "------- fstab bs"
-pth=${pth_sys}${_PATH_BS}
-_keepmv "${pth}"
-if [ -d "${pth_home}/shared/repo/bs" ]; then
-	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
-else
-	[ -d "${pth_home}/shared/repo" ] || _evalr mkdir -p "${pth_home}/shared/repo"
-	_evalr cp -a  "${_PATH_BASE}/bs" "${pth_home}/shared/repo" 
-fi
-sudo sh -c "echo '
-# bind
-/home/shared/repo/bs   ${_PATH_BS}    none    defaults,bind                    0    0' >> ${file}"
+_echot "------- ${file}"
+echo
+cat ${file}
+echo
+_echoA "Check above file: /etc/fstab"
+_askno "Confirm to continue"
+[ "${_ANSWER}" = n ] && exit 1
+
+
+########################  REPO
+
+_echot "------- repo - ${_GIT_BR}"
+pth=${pth_sys}/usr/local/install
+[ -d ${pth} ] && _keepmvts ${pth}
+url=https://github.com/aguytech/desktop-manjaro
+_evalr git clone -b ${_GIT_BR} ${url} ${pth}
+_evalr chown -R ${uid}:${gid} ${pth}
+
+_echot "------- bs - ${_GIT_BR}"
+pth=${pth_sys}/usr/local/bs
+[ -d ${pth} ] && _keepmvts ${pth}
+url=https://github.com/aguytech/bs-desktop
+_evalr git clone -b ${_GIT_BR} ${url} ${pth}
+_evalr chown -R ${uid}:${gid} ${pth}
 
 ########################  END
 
@@ -152,20 +167,29 @@ _partadd "${_PART}" "${S_FILE_INSTALL_DONE}"
 # installation system
 if [ "${pth_sys}" != / ]; then
 	_echot "------- copy config"
-	pth="${pth_home}/${_USERNAME}/${_PATH_CONF#/home/*/}"
-	_keepmv ${pth}
-	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+	pth="${pth_home}/${_USERNAME}/${_PATH_CONF}"
+	_keepmvts ${pth}
 	_evalr cp -r ${_PATH_CONF}/* ${pth}/
-	_evalr chown ${user_uid}:${user_gid} -R ${pth_home}/${_USERNAME}
+	_evalr chown ${uid}:${gid} -R ${pth}
+	_evalr chmod -R 770 ${pth}
 
 	_echot "------- copy log"
-	[ -d ${pth_sys}/var/log ] && pth="${pth_sys}/var/log/desktop-install"
-	_keepmv ${pth}
-	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
-	_evalr cp -a /var/log/desktop-install/* ${pth}/
-	_evalr chown ${user_uid}:0 -R ${pth}
-	_evalr chmod 664 ${pth}/*
+	pth="${pth_sys}${_PATH_LOG}"
+	_keepmvts ${pth}
+	_evalr cp -a ${_PATH_LOG} ${pth}/
+	_evalr chown 0:${gid} -R ${pth}
+	_evalr chmod -R 774 ${pth}
 fi
+
+###########  UMOUNT _DEVICE_SYS pth_sys
+
+_echot "------- umount ${pth_sys}"
+_evalr umount ${pth_sys}
+
+###########  UMOUNT _DEVICE_HOME pth_home
+
+_echot "------- umount ${pth_home}"
+_evalr umount ${pth_home}
 
 _echot "------- reboot ${_DEVICE_SYS}"
 _echoA "You have to restart this installation script after the reboot"
