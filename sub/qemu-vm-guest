@@ -21,7 +21,10 @@ if ! [ -d "${_GUEST_SHARE}" ]; then
 	_evalr mkdir -p ${_GUEST_SHARE}
 fi
 
+########################  MAIN
+
 _echot "------- fstab"
 grep -q "^${_QEMU_SHARE}" /etc/fstab || sudo sh -c "echo '
 # qemu share
 ${_QEMU_SHARE}					${_GUEST_SHARE}		9p	trans=virtio,version=9p2000.L,rw,umask=002						0 0' >> /etc/fstab"
+

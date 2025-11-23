@@ -18,7 +18,7 @@ _require ${file_script_nbd} ${file_conf_ca}
 _echoA "Read the following lines and confirm the virtualzation is activated from BIOS"
 _eval LC_ALL=C lscpu | grep -i virtual
 _askyn "Confirm by typing 'y'"
-[ "${_ANSWER}" != "n" ] && _exit
+[ "${_ANSWER}" != y ] && _exit
 
 ########################  DATA
 
@@ -29,11 +29,18 @@ if [ -z "${_PATH_VIRT}" ]; then
 	_confset _PATH_VIRT "${_PATH_VIRT}"
 fi
 
-f [ -z "${_PATH_SHARE}" ]; then
+if [ -z "${_PATH_SHARE}" ]; then
 	anstmp=/vms/share
 	_askno "Give the shared path from the Host (${anstmp})"
 	_PATH_SHARE=${_ANSWER:-${anstmp}}
 	_confset _PATH_SHARE "${_PATH_SHARE}"
+fi
+
+if [ -z "${_PATH_ISO}" ]; then
+	anstmp=/vms/iso
+	_askno "Give the shared path from the Host (${anstmp})"
+	_PATH_ISO=${_ANSWER:-${anstmp}}
+	_confset _PATH_ISO "${_PATH_ISO}"
 fi
 
 if [ -z "${_PATH_NBD}" ]; then
@@ -43,7 +50,7 @@ if [ -z "${_PATH_NBD}" ]; then
 	_confset _PATH_NBD "${_PATH_NBD}"
 fi
 
-########################  PRE
+########################  9P
 
 if ! lsmod | grep -q 9p; then
 	_echot "------- initramfs 9p"
@@ -93,29 +100,29 @@ _service enable libvirtd
 
 ########################  CONF
 
-_echot "------- ${_PATH_VIRT}"
-pth="${_PATH_VIRT}"
-[ -d "${pth}" ] || _evalr mkdir -p ${pth}
-_evalr chown libvirt-qemu:libvirt-qemu ${pth}
-
 _echot "------- ${USER} in libvirt,libvirt-qemu,kvm"
-_evalr usermod -aG libvirt, libvirt-qemu, kvm ${USER}
+_evalr usermod -aG libvirt,libvirt-qemu,kvm ${USER}
+
+########################  VIRT
+
+_echot "------- ${_PATH_VIRT}"
+[ -d "${_PATH_VIRT}" ] || _evalr mkdir -p ${_PATH_VIRT}
+_evalr chown libvirt-qemu:libvirt-qemu ${_PATH_VIRT}
 
 ########################  ISO
 
-_echot "------- /vms/iso"
-pth=/vms/iso
-[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
-_evalr chown ${USER}:${USER} ${pth}
+_echot "------- ${_PATH_ISO}"
+[ -d "${_PATH_ISO}" ] || _evalr mkdir -p "${_PATH_ISO}"
+_evalr chown ${USER}:${USER} ${_PATH_ISO}
 # to give group write modifications for mkisofs and virt-manager
-_evalr setfacl -dm o::rx,g::rwx,o::r ${pth}
+_evalr setfacl -dm o::rx,g::rwx,o::r ${_PATH_ISO}
 
 ########################  SHARE
 
 _echot "------- ${_PATH_SHARE}"
-pth="${_PATH_SHARE}"
-[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
+[ -d "${_PATH_SHARE}" ] || _evalr mkdir -p "${_PATH_SHARE}"
 _evalr chown ${USER}:${USER} ${_PATH_SHARE}
+_echot "------- ACL permissions"
 _evalr setfacl -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
 _evalr setfacl -d -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
 _evalr setfacl -Rm g:libvirt-qemu:rwx ${_PATH_SHARE}
@@ -134,9 +141,8 @@ echo -e 'filesystem type="mount" accessmode="mapped" '${blue}'fmode="0664" dmode
 ########################  NBD
 
 _echot "------- ${_PATH_NBD}"
-pth="${_PATH_NBD}"
-[ -d "${pth}" ] || _evalr mkdir -p ${pth}
-_evalr chown ${USER}:${USER} ${pth}
+[ -d "${_PATH_NBD}" ] || _evalr mkdir -p ${_PATH_NBD}
+_evalr chown ${USER}:${USER} ${_PATH_NBD}
 
 _echot "------- install"
 packages="qemu-img"
