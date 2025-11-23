@@ -232,12 +232,6 @@ _echoA "Check above file: /etc/fstab"
 _askno "Confirm to continue"
 [ "${_ANSWER}" = n ] && exit 1
 
-_echot "------- grub default"
-file=${_SYSNAME}/etc/default/grub
-_keepcp "${file}"
-grep -q '^GRUB_CMDLINE_LINUX=.*biosdevname' ${file} \
-	|| sudo sed -i '/^GRUB_CMDLINE_LINUX=/ s|"$| biosdevname=0"|' ${file}
-
 ########################  REPO
 
 _echot "------- repo - ${_GIT_BR}"
@@ -301,25 +295,26 @@ _partadd "${_PART}" "${S_FILE_INSTALL_DONE}"
 
 ###########  MOUNT _DEVICE_SYS pth_sys
 
-_echot "------- mount ${_DEVICE_SYS}"
+_echot "------- mount ${_DEVICE_SYS} ${pth_sys}"
 _evalr mount "${_DEVICE_SYS}" ${pth_sys} || _exite "Unable to mount ${_DEVICE_SYS} in ${pth_sys}"
 
 _echot "------- copy config"
 pth="${pth_sys}/${_SYSNAME}/${_PATH_CONF}"
 _keepmvts ${pth}
 _evalr cp -a ${_PATH_CONF} ${pth}/
+_evalr chmod -R 770${pth}
 
 _echot "------- copy log"
 pth="${pth_sys}/${_SYSNAME}${_PATH_LOG}"
 _keepmvts ${pth}
 _evalr cp -a ${_PATH_LOG} ${pth}/
-_evalr chown 0:${UID} -R ${pth}
+_evalr chown 0:${gid} -R ${pth}
 _evalr chmod -R 774 ${pth}
 
-_echot "------- umount ${_DEVICE_SYS}"
-_evalr umount ${pth_sys}
-
 ###########  UMOUNT _DEVICE_SYS pth_sys
+
+_echot "------- umount ${pth_sys}"
+_evalr umount ${pth_sys}
 
 _echot "------- reboot ${_DEVICE_SYS}"
 _echoA "You have to restart the global installation script after the reboot"
