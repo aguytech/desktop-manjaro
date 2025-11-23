@@ -10,8 +10,8 @@ _CMD="sudo pacman --noconfirm"
 _CMD_INS="sudo pacman --noconfirm -S"
 _CMD_AUR="yay -S --noconfirm --needed"
 
-S_FILE_INSTALL_CONF=${HOME}/.config/desktop-install/dev.conf
-S_FILE_INSTALL_DONE=${HOME}/.config/desktop-install/dev.done
+S_FILE_INSTALL_CONF=${_PATH_CONF}/dev.conf
+S_FILE_INSTALL_DONE=${_PATH_CONF}/dev.done
 
 file=${_PATH_BASE}/bs/inc
 ! [ -f "${file}" ] && echo "Unable to find file: ${file}" && exit 1
@@ -36,11 +36,12 @@ done
 
 ########################  MENU
 
-parts_install=$( ls ${_PATH_BASE}/dev -I ${_PARTS_MAN// / -I } )
+subpart=dev
+parts_install=$( ls ${_PATH_BASE}/${subpart} )
 
 while [ "${_PART}" != "quit" ]; do
 	_SDATE=$(date +%s) # renew _SDATE
-	parts_made=" $( cat "${S_FILE_INSTALL_DONE}" | xargs ) "
+	parts_made=" $( grep "^${subpart}_" "${S_FILE_INSTALL_DONE}" | cut -d'_' -f2 | xargs ) "
 	parts2do=" "
 	for part in ${parts_install}; do
 		[ "${parts_made/ ${part} }" = "${parts_made}" ] && parts2do+="$part "
@@ -53,7 +54,7 @@ while [ "${_PART}" != "quit" ]; do
 	PS3="Give your choice: "
 	select _PART in quit ${parts2do}; do
 		if [ "${parts2do/ ${_PART} /}" != "${parts2do}" ] ; then
-			_source "${_PATH_BASE}/dev/${_PART}"
+			_source_sub ${_PART} ${subpart}
 			break
 		elif [ "${_PART}" = quit ]; then
 			break

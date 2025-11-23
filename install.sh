@@ -26,11 +26,12 @@ done
 
 ########################  MENU
 
-parts_install=$( ls ${_PATH_BASE}/sub )
+subpart=sub
+parts_install=$( ls ${_PATH_BASE}/${subpart} )
 
 while [ "${_PART}" != "quit" ]; do
 	_SDATE=$(date +%s) # renew _SDATE
-	parts_made=" $( cat "${S_FILE_INSTALL_DONE}" | cut -d' ' -f1 | xargs ) "
+	parts_made=" $( grep "^${subpart}_" "${S_FILE_INSTALL_DONE}" | cut -d'_' -f2 | xargs ) "
 	parts2do=" "
 	for part in ${parts_install}; do
 		[ "${parts_made/ ${part} }" = "${parts_made}" ] && parts2do+="$part "
@@ -43,7 +44,7 @@ while [ "${_PART}" != "quit" ]; do
 	PS3="Give your choice: "
 	select _PART in quit ${parts2do}; do
 		if [ "${parts2do/ ${_PART} /}" != "${parts2do}" ] ; then
-			_source_sub "${_PART}"
+			_source_sub ${_PART}
 			break
 		elif [ "${_PART}" = quit ]; then
 			break
