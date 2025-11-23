@@ -10,8 +10,9 @@ _evalr pacman -R --noconfirm ${packages} \
 _echot "------- manjaro add"
 # removed by predecessor
 packages="manjaro-base-skel papirus-maia-icon-theme xcursor-breeze xcape"
-_evalr pacman -R --noconfirm ${packages} \
+${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
+
 
 _echot "------- system"
 packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree vim yay"
