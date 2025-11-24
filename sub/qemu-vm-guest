@@ -33,4 +33,4 @@ _evalr mount ${_GUEST_SHARE}
 
 _echot "------- bookmarks"
 file=${HOME}/.config/gtk-3.0/bookmarks
-grep -q "file://${_GUEST_SHARE}" ${file} || echo "file://${_GUEST_SHARE}" >> ${file}
+grep -sq "file://${_GUEST_SHARE}" ${file} || echo "file://${_GUEST_SHARE}" >> ${file}
