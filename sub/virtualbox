@@ -7,4 +7,4 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- virtualbox"
-sudo adduser ${USER} vboxusers
+_evalr adduser ${USER} vboxusers
