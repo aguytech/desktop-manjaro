@@ -75,16 +75,19 @@ _echot "------- .sh_env"
 file=${HOME}/.sh_env
 _keepmvts ${file}
 _eval cp -a ${file_env} ${file}
+_evalr chmod 644 ${file}
 
 _echot "------- .sh_aliases"
 file=~/.sh_aliases
 _keepmvts ${file}
 _eval cp -a ${file_sh_aliases} ${file}
+_evalr chmod 644 ${file}
 
 _echot "-------  .sh_functions"
 file=~/.sh_functions
 _keepmvts ${file}
 _eval cp -a ${file_sh_functions} ${file}
+_evalr chmod 644 ${file}
 
 _echot "------- common .*hrc"
 for file in ~/.bashrc ~/.zshrc; do

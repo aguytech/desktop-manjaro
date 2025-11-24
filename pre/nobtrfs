@@ -171,14 +171,14 @@ if [ "${pth_sys}" != / ]; then
 	_keepmvts ${pth}
 	_evalr cp -r ${_PATH_CONF}/* ${pth}/
 	_evalr chown ${uid}:${gid} -R ${pth}
-	_evalr chmod -R 770 ${pth}
+	_evalr chmod 770 ${pth}
 
 	_echot "------- copy log"
 	pth="${pth_sys}${_PATH_LOG}"
 	_keepmvts ${pth}
 	_evalr cp -a ${_PATH_LOG} ${pth}/
 	_evalr chown 0:${gid} -R ${pth}
-	_evalr chmod -R 774 ${pth}
+	_evalr chmod 774 ${pth}
 fi
 
 ###########  UMOUNT _DEVICE_SYS pth_sys
