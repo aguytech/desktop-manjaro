@@ -117,19 +117,19 @@ _eval git clone https://github.com/jimeh/tmux-themepack.git ${pth}
 grep -sq tmux-themepack ${file} || echo "# source themepack
 source-file ${pth}/powerline/double/cyan.tmuxtheme" >> ${HOME}/.tmux.conf
 
-_echot "------- tmux source"
-_eval tmux new -d
-_eval tmux source-file ${HOME}/.tmux.conf
-
-_echot "------- tmux desktop"
-_eval cp -a ${file_tmux_desktop} ${HOME}/.local/share/applications/
-
 _echot "------- configuration files"
 for file in .nanorc .tmux.conf .vimrc; do
 	pth=${HOME}/${file}
 	_keepmvts "${pth}"
 	_eval cp -a "${_PATH_BS}/conf/${file}" "${pth}"
 done
+
+_echot "------- tmux source"
+_eval tmux new -d
+_eval tmux source-file ${HOME}/.tmux.conf
+
+_echot "------- tmux desktop"
+_eval cp -a ${file_tmux_desktop} ${HOME}/.local/share/applications/
 
 _echot "------- gtk4"
 pth_to="${HOME}/.local/share/gtksourceview-4"
