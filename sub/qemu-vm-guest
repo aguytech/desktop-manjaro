@@ -16,15 +16,21 @@ if [ -z ${_GUEST_SHARE+x} ]; then
 	_confset _GUEST_SHARE "${_GUEST_SHARE}"
 fi
 
+########################  MAIN
+
 if ! [ -d "${_GUEST_SHARE}" ]; then
 	_echot "------- create ${_GUEST_SHARE}"
 	_evalr mkdir -p ${_GUEST_SHARE}
 fi
-
-########################  MAIN
 
 _echot "------- fstab"
 grep -q "^${_QEMU_SHARE}" /etc/fstab || sudo sh -c "echo '
 # qemu share
 ${_QEMU_SHARE}					${_GUEST_SHARE}		9p	trans=virtio,version=9p2000.L,rw,umask=002						0 0' >> /etc/fstab"
 
+_echot "------- mount ${_GUEST_SHARE}"
+_evalr mount ${_GUEST_SHARE}
+
+_echot "------- bookmarks"
+file=${HOME}/.config/gtk-3.0/bookmarks
+grep -q "file://${_GUEST_SHARE}" ${file} || echo "file://${_GUEST_SHARE}" >> ${file}

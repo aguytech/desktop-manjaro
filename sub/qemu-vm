@@ -16,11 +16,25 @@ _require ${file_script_nbd} ${file_conf_ca}
 ########################  CHECK
 
 _echoA "Read the following lines and confirm the virtualzation is activated from BIOS"
-_eval LC_ALL=C lscpu | grep -i virtual
+_eval 'lscpu | grep -i virtual'
 _askyn "Confirm by typing 'y'"
 [ "${_ANSWER}" != y ] && _exit
 
 ########################  DATA
+
+if [ -z ${_QEMU_SHARE+x} ]; then
+	anstmp=/hostshare
+	_askno "Name of qemu share (${anstmp})"
+	_QEMU_SHARE=${_ANSWER:-${anstmp}}
+	_confset _QEMU_SHARE "${_QEMU_SHARE}"
+fi
+
+if [ -z ${_GUEST_SHARE+x} ]; then
+	anstmp=/share
+	_askno "Name of guest share (${anstmp})"
+	_GUEST_SHARE=${_ANSWER:-${anstmp}}
+	_confset _GUEST_SHARE "${_GUEST_SHARE}"
+fi
 
 if [ -z "${_PATH_VIRT}" ]; then
 	anstmp=/vms/virt
@@ -66,26 +80,24 @@ if ! lsmod | grep -q 9p; then
 fi
 
 _echot "------- mod 9p"
-_evalr sudo modprobe 9p
-[ -d "${_GUEST_SHARE}" ] || sudo mkdir "${_GUEST_SHARE}"
-grep -q "^${_QEMU_SHARE}" /proc/mounts || sudo mount "${_GUEST_SHARE}"
+_evalr modprobe 9p
 
-_echot "------- autoload 9p"
-file=/etc/initramfs-tools/modules
-grep -q ^9p ${file} || sudo sh -c "echo '
-# qemu share 
-9p
-9pnet
-9pnet_virtio' >> ${file}"
-sudo update-initramfs -u
+# _echot "------- autoload 9p"
+# file=/etc/initramfs-tools/modules
+# grep -q ^9p ${file} || sudo sh -c "echo '
+# # qemu share 
+# 9p
+# 9pnet
+# 9pnet_virtio' >> ${file}"
+# sudo update-initramfs -u
 
 
 ########################  MAIN
 
 _echot "------- install"
 packages="edk2-ovmf libvirt qemu-desktop virt-manager virt-viewer"
-packages+=" bridge-utils dnsmasq iptables-nft libguestfs"
-# packages+="  openbsd-netcat vde2 "
+packages+=" bridge-utils dnsmasq libguestfs"
+# packages+=" iptables-nft openbsd-netcat vde2 "
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
