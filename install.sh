@@ -44,7 +44,7 @@ while [ "${_PART}" != "quit" ]; do
 	PS3="Give your choice: "
 	select _PART in quit ${parts2do}; do
 		if [ "${parts2do/ ${_PART} /}" != "${parts2do}" ] ; then
-			_source_sub ${_PART}
+			_source_sub ${_PART} ${subpart}
 			break
 		elif [ "${_PART}" = quit ]; then
 			break
