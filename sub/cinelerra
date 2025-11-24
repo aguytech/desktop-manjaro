@@ -1,6 +1,0 @@
-#!/bin/bash
-
-_echot "------- aur"
-packages="cinelerra-gg"
-# cin-appimage cinelerra-cv
-_install_aur ${packages}
