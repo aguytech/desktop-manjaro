@@ -1,12 +1,6 @@
 #!/bin/bash
 
 _echot "------- python"
-packages="python python-pip python-pipx"
+packages="python python-pip"
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
-
-packages="virtualenv yt-dlp"
-for package in ${packages}; do
-	_echot "------- pipx ${package}"
-	_evalr pipx install ${package}
-done
