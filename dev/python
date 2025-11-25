@@ -10,5 +10,5 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 packages="virtualenv"
 for package in ${packages}; do
 	_echot "------- pipx"
-	_evalr pipx install ${package}
+	_eval pipx install ${package}
 done
