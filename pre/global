@@ -53,5 +53,4 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 _echot "------- aur"
 packages="duf gmusicbrowser obs-studio"
 # qarte simplescreenrecorder radiotray-ng webcamoid
-packages+=" zuki-themes"
 _install_aur ${packages}
