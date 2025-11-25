@@ -15,6 +15,15 @@ _requirep ${pth_gtk} ${pth_vim} ${pth_wp}
 
 ########################  SYSTEM
 
+_echot "------- profile desktop.sh"
+export PATH="${PATH}:${_PATH_BS}"
+export QT_QPA_PLATFORMTHEME=qt6ct
+file=/etc/profile.d/desktop.sh
+sudo sh -c "echo '# PATH
+export PATH=\${PATH}:${_PATH_BS}
+# QT6
+export QT_QPA_PLATFORMTHEME=qt6ct' > ${file}"
+
 _echot "------- vim links edit"
 for file in /usr/bin/edit /usr/bin/editor; do
 	[ -e ${file} ] && _evalr rm ${file}
