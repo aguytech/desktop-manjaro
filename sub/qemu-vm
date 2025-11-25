@@ -82,16 +82,6 @@ fi
 _echot "------- mod 9p"
 _evalr modprobe 9p
 
-# _echot "------- autoload 9p"
-# file=/etc/initramfs-tools/modules
-# grep -q ^9p ${file} || sudo sh -c "echo '
-# # qemu share 
-# 9p
-# 9pnet
-# 9pnet_virtio' >> ${file}"
-# sudo update-initramfs -u
-
-
 ########################  MAIN
 
 _echot "------- install"
@@ -144,7 +134,7 @@ _echoA "Configure your guest in virt-manager to share path with this parameters:
 echo "Source path: ${_PATH_SHARE}"
 echo "Target path: /hostshare"
 _echoA "\nAnd add fmode and dmode by modifying XML settings options in virt-manager:"
-echo -e 'filesystem type="mount" accessmode="mapped" '${blue}'fmode="0664" dmode="0775"'${cclear}'>
+echo -e 'filesystem type="mount" accessmode="mapped"'${blue}' fmode="0664" dmode="0775"'${cclear}'>
   <source dir="/vms/share"/>
   <target dir="/hostshare"/>
   <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
