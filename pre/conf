@@ -123,7 +123,7 @@ for file in .nanorc .tmux.conf .vimrc; do
 	pth=${HOME}/${file}
 	_keepmvts "${pth}"
 	_eval cp -a "${_PATH_BS}/conf/${file}" "${pth}"
-	_evalr chmod 644 ${pth}/${file}
+	_evalr chmod 644 ${pth}
 done
 
 _echot "------- tmux source"
