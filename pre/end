@@ -11,4 +11,4 @@ _partadd "pre_${_PART}" "${S_FILE_INSTALL_DONE}"
 
 _echoA "Restart your computer to append configuration"
 _askno "Validate to reboot"
-sudo reboot
+_evalr reboot

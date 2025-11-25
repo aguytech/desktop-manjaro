@@ -89,10 +89,19 @@ _keepmvts ${file}
 _eval cp -a ${file_sh_functions} ${file}
 _evalr chmod 644 ${file}
 
+file=~/.bashrc
+if ! [ -f ${file} ]; then
+	_echot "------- init .bashrc"
+	[ -f /etc/skel/.bashrc ] || _exite "Unable to find file: '/etc/skel/.bashrc'"
+	_evalr cp -a /etc/skel/.bashrc ${HOME}/
+	_evalr chown ${USER}:${USER} ${file}
+	_evalr chmod 644 ${file}
+fi
+
 _echot "------- common .*hrc"
 for file in ~/.bashrc ~/.zshrc; do
 	_keepcpts ${file}
-	grep -q '####  PERSO' ${file} || echo "
+	grep -sq '####  PERSO' ${file} || echo "
 ########################  PERSO
 
 # HISTORY
@@ -108,6 +117,7 @@ HISTFILESIZE=50000
 # functions
 [ -f ~/.sh_functions ] && . ~/.sh_functions
 " >> ${file}
+	_evalr chmod 644 ${file}
 done
 
 _echot "------- .bashrc"
