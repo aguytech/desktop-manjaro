@@ -150,7 +150,7 @@ done
 
 _echot "------- btrfs delete"
 for sub in @home @cache @log; do
-	[ "$( sudo btrfs subvolume show ${sub} 2>/dev/null )" ] && _evalr btrfs subvolume delete ${sub}
+	[ "$( sudo btrfs subvolume show ${sub} 2>/dev/null )" ] && _evalr btrfs subvolume delete -c ${sub}
 done
 
 _echot "------- path delete"
