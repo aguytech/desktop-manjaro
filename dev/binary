@@ -3,13 +3,13 @@
 ########################  MAIN
 
 _echot "------- install"
-packages="bless ghex lnav net-tools pv"
-# sysstat
+packages="bless lnav net-tools pv"
+# sysstat ghex
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- aur"
-packages="wxhexeditor"
+packages="wxhexeditor imhex"
 _install_aur ${packages}
 
 _echot "------- conf bless"
