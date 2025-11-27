@@ -1,5 +1,12 @@
 #!/bin/bash
 
+########################  CHECK
+
+_echoa "This part is to share path and configure qemu/vm in GUEST"
+_echoe "Do not use this part in HOST"
+_askyn "Types 'y' to continue or anything else to exit"
+[ "${_ANSWER}" != "y" ] && _exit
+
 ########################  DATA
 
 if [ -z ${_QEMU_SHARE+x} ]; then

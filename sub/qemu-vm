@@ -1,7 +1,9 @@
 #!/bin/bash
 
-_echoa "This part is to use shared path in GUEST"
-_echoe "Do not use this part in HOST"
+########################  CHECK
+
+_echoa "This part is to install and configure qemu/vm in HOST"
+_echoe "Do not use this part in GUEST"
 _askyn "Types 'y' to continue or anything else to exit"
 [ "${_ANSWER}" != "y" ] && _exit
 
