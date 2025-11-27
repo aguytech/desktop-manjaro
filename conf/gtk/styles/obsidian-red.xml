@@ -22,7 +22,7 @@
 
 -->
 
-<style-scheme id="obisidan-red" _name="Obisidan-red" version="1.0">
+<style-scheme id="obisidan_red" _name="Obisidan-red" version="1.0">
 
   <author>Paolo Borelli</author>
   <_description>Dark color scheme using the Tango color palette</_description>

@@ -22,7 +22,7 @@
 
 -->
 
-<style-scheme id="na-white" _name="NA-white" version="1.0">
+<style-scheme id="na_white" _name="NA-white" version="1.0">
 
   <author>Paolo Borelli</author>
   <_description>Dark color scheme using the Tango color palette</_description>

@@ -21,7 +21,7 @@
  Boston, MA 02111-1307, USA.
 
 -->
-<style-scheme id="classic-markdown" _name="Classic Markdown" version="1.0">
+<style-scheme id="classic_markdown" _name="Classic Markdown" version="1.0">
   <author>GtkSourceView team, Jean-Philippe Fleury</author>
   <_description>Classic color scheme for Markdown</_description>
 

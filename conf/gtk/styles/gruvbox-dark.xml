@@ -23,7 +23,7 @@
 
 -->
 
-<style-scheme id="gruvbox-dark" _name="Gruvbox-Dark" version="1.0">
+<style-scheme id="gruvbox_dark" _name="Gruvbox-Dark" version="1.0">
 
   <author>Jean-Patrick Guerrero</author>
   <_description>Dark color scheme using the Gruvbox color palette</_description>
