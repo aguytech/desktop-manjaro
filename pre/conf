@@ -48,16 +48,16 @@ for str in conf install; do
 	sudo sed -i 's|^\(syntax \).*|\1"'${str}'" "\.'${str}'$"|' /usr/share/nano/${str}.nanorc
 done
 file=/etc/nanorc
-_keepcp ${file}
+_keepcpts ${file}
 sudo sed -i 's|^.*\(set tabsize\).*|\1 4|' ${file}
 sudo sed -i 's|^\(set cut.*\)$|# \1|' ${file}
 sudo sed -i 's|^\(set linenumbers.*\)$|# \1|' ${file}
 sudo sed -i '/^# *include/ s/^# //' ${file}
 # uncomment options
-opts="constantshow historylog matchbrackets multibuffer nohelp softwrap "
-opts+="errorcolor functioncolor keycolor numbercolor selectedcolor statuscolor stripecolor titlecolor"
+opts="constantshow historylog matchbrackets multibuffer nohelp softwrap"
+opts+=" errorcolor functioncolor keycolor numbercolor selectedcolor statuscolor stripecolor titlecolor"
 for opt in ${opts}; do
-	sudo sed -i "s|^.*\(set $opt .*\)$|\1|"  ${file}
+	sudo sed -i "s|^.*\(set ${opt} .*\)$|\1|" ${file}
 done
 
 _echot "------- meld style"
@@ -101,19 +101,22 @@ pth=${HOME}/.local/share/icons
 _eval cp ${_PATH_BASE}/icons/* ${pth}/
 
 _echot "------- tmux resurrect"
-pth=${HOME}/.tmux/plugins/resurrect
+pth=${HOME}/.tmux/plugins/tmux-resurrect
+_keepmvts ${pth}
 _eval git clone https://github.com/tmux-plugins/tmux-resurrect ${pth}
 grep -sq resurrect.tmux ${file} || echo "# resurrect plugin
 run-shell ${pth}/resurrect.tmux" >> ${HOME}/.tmux.conf
 
-_echot "------- tmux resurrect"
-pth=${HOME}/.tmux/plugins/continuum
+_echot "------- tmux continuum"
+pth=${HOME}/.tmux/plugins/tmux-continuum
+_keepmvts ${pth}
 _eval git clone https://github.com/tmux-plugins/tmux-continuum ${pth}
 grep -sq continuum.tmux ${file} || echo "# resurrect continuum
 run-shell ${pth}/continuum.tmux" >> ${HOME}/.tmux.conf
 
 _echot "------- tmux themepack"
 pth=${HOME}/.tmux/themes/tmux-themepack
+_keepmvts ${pth}
 _eval git clone https://github.com/jimeh/tmux-themepack.git ${pth}
 grep -sq tmux-themepack ${file} || echo "# source themepack
 source-file ${pth}/powerline/double/cyan.tmuxtheme" >> ${HOME}/.tmux.conf
