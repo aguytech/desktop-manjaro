@@ -127,9 +127,9 @@ file=~/.bashrc
 	grep -q '# PS1$' ${file} || echo "
 # PS1
 if [[ \${EUID} == 0 ]]; then
-	PS1='${color_root}\\u@\\h \\[\\033[1;37m\\]\\W${color_root}\\$\\[\\033[00m\\] '
+	PS1='${color_root}\\u@\\h \\[\\033[1;37m\\]\\w${color_root}\\$\\[\\033[00m\\] '
 else
-	PS1='${color}\\u@\\h\\[\\033[01;37m\\] \\[\\033[1;37m\\]\\W${color}\\$\\[\\033[00m\\] '
+	PS1='${color}\\u@\\h\\[\\033[01;37m\\] \\[\\033[1;37m\\]\\w${color}\\$\\[\\033[00m\\] '
 fi
 " >> ${file}
 
