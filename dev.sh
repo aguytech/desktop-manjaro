@@ -15,6 +15,10 @@ file=${_PATH_BASE}/bs/inc
 ! [ -f "${file}" ] && echo "Unable to find file: ${file}" && exit 1
 ! . ${file} && echo "Errors while sourcing file: ${file}" && exit 1
 
+########################  WWW
+
+sudo ping -c1 google.com >/dev/null || _exite "Installation needs internet connection"
+
 ########################  SUB
 
 _SPATH=dev
