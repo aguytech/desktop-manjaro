@@ -242,7 +242,7 @@ _evalr chown -R ${uid}:${gid} ${pth}
 _echot "------- bs - ${_GIT_BR}"
 pth=${_SYSNAME}/usr/local/bs
 [ -d ${pth} ] && _keepmvts ${pth}
-url=https://github.com/aguytech/bs-desktop
+url=https://github.com/aguytech/bs
 _evalr git clone -b ${_GIT_BR} ${url} ${pth}
 _evalr chown -R ${uid}:${gid} ${pth}
 
