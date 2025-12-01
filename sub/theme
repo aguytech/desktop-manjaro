@@ -1,0 +1,107 @@
+#!/bin/bash
+
+#############  DATA
+
+anstmp=~/.themes/.origin
+_askno "Give the path to install themes (${anstmp})"
+pth_origin=${_ANSWER:-${anstmp}}
+
+#############  MAIN
+
+[ -d ${pth_origin} ] || _eval mkdir -p ${pth_origin}
+cd ${pth_origin}
+
+#############  ORCHIS
+
+id=Orchis-theme
+_echot "------- install ${id}"
+if ! [ -d ${id} ]; then
+	file=$(ls -1 | grep "^${id}_.*\.tgz" | head -n1)
+	[ "${file}" ] && _eval tar xzf ${file}
+fi
+[ -d "${id}" ] || _eval git clone https://github.com/vinceliuice/${id} ${id}
+_eval git -C ${id} pull
+_eval ${id}/install.sh -d ~/.themes -c dark -s compact -l
+_eval ${id}/install.sh -d ~/.themes -c dark -s compact -l --shell --round 8px
+_eval ${id}/install.sh -d ~/.themes -c dark -s compact -l --shell --round 8px -t teal
+_eval ${id}/install.sh -d ~/.themes -c dark -s compact -l --shell --round 8px -t orange
+[ "${file}" ] && _eval rm ${file}
+tar czf ${id}_$(date "+%Y%m%d").tgz ${id}
+
+theme=Orchis-Orange-Dark-Compact
+
+#############  GRAPHITE
+
+id=Graphite-gtk-theme
+_echot "------- install ${id}"
+if ! [ -d ${id} ]; then
+	file=$(ls -1 | grep "^${id}_.*\.tgz" | head -n1)
+	[ "${file}" ] && _eval tar xzf ${file}
+fi
+[ -d "${id}" ] || _eval git clone https://github.com/vinceliuice/${id} ${id}
+_eval git -C ${id} pull
+_eval ${pth}/install.sh -d ~/.themes -c dark -s compact -l
+_eval ${pth}/install.sh -d ~/.themes -c dark -s compact -l --round 8px
+_eval ${pth}/install.sh -d ~/.themes -c dark -s compact -l --round 8px -t teal
+_eval ${pth}/install.sh -d ~/.themes -c dark -s compact -l --round 8px -t orange
+[ "${file}" ] && _eval rm ${file}
+tar czf ${id}_$(date "+%Y%m%d").tgz ${id}
+
+theme=WhiteSur-Dark
+
+#############  WHITE-SUR
+
+id=WhiteSur-gtk-theme
+_echot "------- install ${id}"
+if ! [ -d ${id} ]; then
+	file=$(ls -1 | grep "^${id}_.*\.tgz" | head -n1)
+	[ "${file}" ] && _eval tar xzf ${file}
+fi
+[ -d "${id}" ] || _eval git clone https://github.com/vinceliuice/${id} ${id}
+_eval git -C ${id} pull
+_eval ${pth}/install.sh -d ~/.themes -c dark -s nord -l
+_eval ${pth}/install.sh -d ~/.themes -c dark -s nord -l --round
+_eval ${pth}/install.sh -d ~/.themes -c dark -s nord -l --round -t pink
+_eval ${pth}/install.sh -d ~/.themes -c dark -s nord -l --round -t orange
+[ "${file}" ] && _eval rm ${file}
+tar czf ${id}_$(date "+%Y%m%d").tgz ${id}
+
+theme=WhiteSur-Dark-orange-nord
+
+###########  FLUENT
+
+id=Fluent-gtk-theme
+_echot "------- install ${id}"
+if ! [ -d ${id} ]; then
+	file=$(ls -1 | grep "^${id}_.*\.tgz" | head -n1)
+	[ "${file}" ] && _eval tar xzf ${file}
+fi
+[ -d "${id}" ] || _eval git clone https://github.com/vinceliuice/${id} ${id}
+_eval git -C ${id} pull
+_eval ${pth}/install.sh -d ~/.themes -c dark -s compact -l
+_eval ${pth}/install.sh -d ~/.themes -c dark -s compact -t teal -l
+_eval ${pth}/install.sh -d ~/.themes -c dark -t orange -l
+_eval ${pth}install.sh -d ~/.themes -c dark -s compact -t orange -l
+_eval ${pth}/install.sh -d ~/.themes -c dark -s compact -t orange --tweaks round -l
+[ "${file}" ] && _eval rm ${file}
+tar czf ${id}_$(date "+%Y%m%d").tgz ${id}
+
+theme=Fluent-orange-Dark-compact
+
+########################  DATA
+
+_askyn "Apply themes '${theme}'' to desktop"
+if [ "${_ANSWER}" = y ]; then
+	gsettings set org.gnome.desktop.interface gtk-theme "${theme}"
+	gsettings set org.gnome.desktop.wm.preferences theme "${theme}"
+	gsettings set org.gnome.desktop.interface icon-theme "${theme}"
+fi
+
+_echoA "You can change the theme from 'gnome-tweaks'"
+_askno "Validate to continue"
+
+########################  BACKUP
+
+for i in $(ls); do
+	tar czf ${i}_$(date "+%Y%m%d").tgz $i
+done
