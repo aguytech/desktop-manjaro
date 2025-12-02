@@ -47,7 +47,7 @@ if [ "${_DEVICE_EXT}" ]; then
 fi
 
 if [ -z ${_DEVICE_VMS+x} ]; then
-	_menu "Select a dedicated device for /ext or none" none ${devices}
+	_menu "Select a dedicated device for /vms or none" none ${devices}
 	_DEVICE_VMS=${_ANSWER/none/}
 	_confset _DEVICE_VMS "${_DEVICE_VMS}"
 fi
@@ -150,13 +150,13 @@ pths_btrfs+=" ${_SYSNAME}/btrfs/save"
 
 _echot "------- ext"
 pths_btrfs+=" ${_SYSNAME}/ext"
-! [ "${_DEVICE_EXT}" ]; then
+if ! [ "${_DEVICE_EXT}" ]; then
 	[ -d ext ] || _evalr btrfs subvolume create ext
 fi
 
 _echot "------- vms"
 pths_btrfs+=" ${_SYSNAME}/vms"
-! [ "${_DEVICE_VMS}" ]; then
+if ! [ "${_DEVICE_VMS}" ]; then
 	[ -d vms ] || _evalr btrfs subvolume create vms
 fi
 
@@ -231,11 +231,11 @@ UUID=${uuidsys}	/		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compre
 UUID=${uuidsys}	/home		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/home		0 2
 UUID=${uuidsys}	/home/${_USERNAME}	btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/user-${_SYSNAME}		0 2' >> ${file}"
 # /ext
-[ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/ext		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/ext		0	2' >> ${file}"
+[ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/ext		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/ext		0 2' >> ${file}"
 # /vms
-[ "${_DEVICE_VMS}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/vms		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/vms		0	2' >> ${file}"
+[ "${_DEVICE_VMS}" ] || sudo sh -c "echo '#UUID=${uuidsys}	/vms		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/vms		0 2' >> ${file}"
 # btrfs/sys
-sudo sh -c "echo '/btrfs
+sudo sh -c "echo '# /btrfs/
 UUID=${uuidsys}	/btrfs/sys	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd			0 2
 UUID=${uuidsys}	/btrfs/save	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/save	0 2' >> ${file}"
 
@@ -277,9 +277,9 @@ _askno "Confirm to continue"
 
 if ! which git; then
 _echot "------- update"
-_CMD update
+${_CMD} update
 _echot "------- git install"
-_CMD_INS git
+${_CMD_INS} git
 fi
 
 _echot "------- repo - ${_GIT_BR}"
