@@ -9,6 +9,7 @@ _PATH_LOG=/var/log/desktop-install
 _CMD="_evalr pacman --noconfirm"
 _CMD_INS="_evalr pacman --noconfirm --needed -S"
 _CMD_AUR="yay -S --noconfirm --needed"
+_VER_NAME=manjaro
 
 # inc
 file=${_PATH_BASE}/bs/inc
@@ -24,7 +25,7 @@ sudo ping -c1 google.com >/dev/null || _exite "Installation needs internet conne
 _SPATH=pre
 _source_sub "data" ${_SPATH}
 
-parts_sub="data ${part_fs} init ssh upgrade global conf end"
+parts_sub="${part_fs} init ssh upgrade global conf end"
 for _PART in ${parts_sub}; do
 	_source_sub "${_PART}" ${_SPATH}
 done
