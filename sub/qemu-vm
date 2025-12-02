@@ -141,6 +141,7 @@ echo -e 'filesystem type="mount" accessmode="mapped"'${blue}' fmode="0664" dmode
   <target dir="/hostshare"/>
   <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
 </filesystem>'
+_askno "Validate to continue"
 
 ########################  NBD
 
@@ -177,6 +178,10 @@ if ! grep -q 1655620394868230-1 ${file}; then
 	cat ${file} ${file_conf_ca} > ${file}.tmp
 	_eval mv ${file}.tmp ${file}
 fi
+
+########################  END
+
+_partadd "${_SPATH}_${_PART}" "${S_FILE_INSTALL_DONE}"
 
 ########################  REBOOT
 
