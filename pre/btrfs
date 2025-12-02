@@ -250,7 +250,7 @@ UUID=${uuidext}	/btrfs/ext	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,au
 [ "${_SSD_VMS}" ] && ssd="ssd," || ssd=
 [ "${_DEVICE_VMS}" ] && sudo sh -c "echo '
 # vms ${_DEVICE_VMS}
-UUID=${uuidvms}	/vms	btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd		0 2
+UUID=${uuidvms}	/vms	btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/vms			0 2
 UUID=${uuidvms}	/btrfs/vms	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd		0 2' >> ${file}"
 
 # tmpfs
