@@ -66,36 +66,18 @@ if [ -z "${_PATH_NBD}" ]; then
 	_confset _PATH_NBD "${_PATH_NBD}"
 fi
 
-########################  9P
-
-if ! lsmod | grep -q 9p; then
-	_echot "------- initramfs 9p"
-	_menu "Select a file to use for initramfs" $(ls /boot/initramfs*[0-9].img)
-	file_img=${_ANSWER}
-
-	file=/etc/mkinitcpio.conf
-	_keepcpts ${file}
-	modules="9p 9pnet_virtio intel_agp i915"
-	sudo sed -i "/^MODULES=/ s|=(\(.*\))$|(\1 ${modules})|" ${file}
-	_evalr mkinitcpio -P
-	_evalr lsinitcpio -l ${file_img} || _exite "Error:  lsinitcpio -l ${file_img}"
-fi
-
-_echot "------- mod 9p"
-_evalr modprobe 9p
-
 ########################  MAIN
 
 _echot "------- install"
-packages="edk2-ovmf libvirt qemu-desktop virt-manager virt-viewer"
+packages="edk2-ovmf libvirt qemu-desktop virt-manager virt-viewer virtiofsd"
 packages+=" bridge-utils dnsmasq libguestfs"
 # packages+=" iptables-nft openbsd-netcat vde2 "
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- tpm support"
+# for windows 11 guest
 packages="--asdeps swtpm"
-# virtualbox-guest-iso
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
@@ -132,15 +114,11 @@ _evalr setfacl -d -Rm u:libvirt-qemu:rwx ${_PATH_SHARE}
 _evalr setfacl -Rm g:libvirt-qemu:rwx ${_PATH_SHARE}
 _evalr setfacl -d -Rm g:libvirt-qemu:rwx ${_PATH_SHARE}
 
-_echoA "Configure your guest in virt-manager to share path with this parameters: "
-echo "Source path: ${_PATH_SHARE}"
-echo "Target path: /hostshare"
-_echoA "\nAnd add fmode and dmode by modifying XML settings options in virt-manager:"
-echo -e 'filesystem type="mount" accessmode="mapped"'${blue}' fmode="0664" dmode="0775"'${cclear}'>
-  <source dir="/vms/share"/>
-  <target dir="/hostshare"/>
-  <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
-</filesystem>'
+_echoA "To enbale sharing folder, in your Host domain, you have to:"
+_echoA "1 - enable 'shared memory' in the host domain"
+_echoA "2 - configure your filesystem withthis parameters: "
+_echo "		Source path: ${_PATH_SHARE}"
+_echo "		Target path: /hostshare"
 _askno "Validate to continue"
 
 _echot "------- bookmarks"
