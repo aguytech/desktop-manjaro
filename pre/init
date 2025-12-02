@@ -84,7 +84,7 @@ _keepmvts ${file}
 _eval cp -a ${file_sh_aliases} ${file}
 _evalr chmod 644 ${file}
 
-_echot "-------  .sh_functions"
+_echot "------- .sh_functions"
 file=~/.sh_functions
 _keepmvts ${file}
 _eval cp -a ${file_sh_functions} ${file}
