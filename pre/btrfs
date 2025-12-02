@@ -8,7 +8,7 @@ echo
 sudo blkid|grep -v /loop
 echo
 
-devices=$( sudo blkid -o device|grep -v '/loop\|/sr' )
+devices=" $( sudo blkid -o device | grep -v '/loop\|/sr' | xargs) "
 
 if [ -z ${_UEFI+x} ]; then
 	menutmp=$( sudo blkid|grep -i 'TYPE="vfat"'|cut -d':' -f1|sort|xargs )
@@ -16,19 +16,48 @@ if [ -z ${_UEFI+x} ]; then
 	_UEFI=${_ANSWER/none/}
 	_confset _UEFI "${_UEFI}"
 fi
-[ "${_UEFI}" ] && devices=$( sudo blkid -o device|grep -v '/loop\|/sr'|grep -v "${_UEFI}" )
+[ "${_UEFI}" ] && devices=${devices/ ${_UEFI} / }
 
 if [ -z ${_DEVICE_SYS+x} ]; then
 	_menu "Select a device for SYSTEM" ${devices}
 	_DEVICE_SYS=${_ANSWER}
 	_confset _DEVICE_SYS "${_DEVICE_SYS}"
 fi
-[ "${_DEVICE_SYS}" ] && devices=$( echo "${devices}"|grep -v "${_DEVICE_SYS}" )
+if [ "${_DEVICE_SYS}" ]; then
+	${devices/ ${_DEVICE_SYS} / }
+	if [ -z ${_SSD_SYS+x} ]; then
+		_askyn "The SYSTEM device '${_DEVICE_SYS}' are they a SSD disk ?"
+		_SSD_SYS=${_ANSWER/n/}
+		_confset _SSD_SYS "${_SSD_SYS}"
+	fi
+fi
 
 if [ -z ${_DEVICE_EXT+x} ]; then
 	_menu "Select a dedicated device for /ext or none" none ${devices}
 	_DEVICE_EXT=${_ANSWER/none/}
 	_confset _DEVICE_EXT "${_DEVICE_EXT}"
+fi
+if [ "${_DEVICE_EXT}" ]; then
+	${devices/ ${_DEVICE_EXT} / }
+	if [ -z ${_SSD_EXT+x} ]; then
+		_askyn "The SYSTEM device '${_DEVICE_EXT}' are they a SSD disk ?"
+		_SSD_EXT=${_ANSWER/n/}
+		_confset _SSD_EXT "${_SSD_EXT}"
+	fi
+fi
+
+if [ -z ${_DEVICE_VMS+x} ]; then
+	_menu "Select a dedicated device for /ext or none" none ${devices}
+	_DEVICE_VMS=${_ANSWER/none/}
+	_confset _DEVICE_VMS "${_DEVICE_VMS}"
+fi
+if [ "${_DEVICE_VMS}" ]; then
+	${devices/ ${_DEVICE_VMS} / }
+	if [ -z ${_SSD_VMS+x} ]; then
+		_askyn "The SYSTEM device '${_DEVICE_VMS}' are they a SSD disk ?"
+		_SSD_VMS=${_ANSWER/n/}
+		_confset _SSD_VMS "${_SSD_VMS}"
+	fi
 fi
 
 if [ -z ${_DEVICE_GRUB+x} ]; then
@@ -39,17 +68,18 @@ if [ -z ${_DEVICE_GRUB+x} ]; then
 	_confset _DEVICE_GRUB "${_DEVICE_GRUB}"
 fi
 
-if [ -z ${_SSD_SYS+x} ]; then
-	_askyn "The SYSTEM device '${_DEVICE_SYS}' are they a SSD disk ?"
-	_SSD_SYS=${_ANSWER/n/}
-	_confset _SSD_SYS "${_SSD_SYS}"
-fi
-
 if [ -z ${_SYSNAME+x} ]; then
 	anstmp=$( sed -n 's|^DISTRIB_CODENAME=\(.*\)$|\1|p' /etc/lsb-release|sed 's/.*/\L&/g' )
 	_askno "Give a NAME for system btrfs volume: ${_DEVICE_SYS} (${anstmp})"
 	_SYSNAME=${_ANSWER:-${anstmp}}
 	_confset _SYSNAME "${_SYSNAME}"
+fi
+
+if [ -z ${_USERNAME+x} ]; then
+	anstmp="nikita"
+	_askno "Give the user name (${anstmp})"
+	_USERNAME=${_ANSWER:-${anstmp}}
+	_confset _USERNAME "${_USERNAME}"
 fi
 
 if [ -z ${_MEM+x} ]; then
@@ -58,13 +88,6 @@ if [ -z ${_MEM+x} ]; then
 	_MEM=${_ANSWER:-${anstmp}}
 	_MEM=${_MEM%%0*}
 	_confset _MEM "${_MEM}"
-fi
-
-if [ -z ${_USERNAME+x} ]; then
-	anstmp="nikita"
-	_askno "Give the user name (${anstmp})"
-	_USERNAME=${_ANSWER:-${anstmp}}
-	_confset _USERNAME "${_USERNAME}"
 fi
 
 ########################  MAIN
@@ -117,68 +140,80 @@ _evalr "mv @home/${_USERNAME}/.??* user-${_SYSNAME}/ 2>/dev/null"
 [ -d "home/${_USERNAME}" ] || _evalr mkdir "home/${_USERNAME}"
 _evalr chown ${uid}:${gid} -R home/${_USERNAME} user-${_SYSNAME}
 
-pths=
+pths_btrfs=
 
-_echot "------- btrfs/sys"
-pths+=" ${_SYSNAME}/btrfs/sys"
-pths+=" ${_SYSNAME}/btrfs/save"
-
-_echot "------- btrfs/ext"
-[ "${_DEVICE_EXT}" ] && pths+=" ${_SYSNAME}/btrfs/ext"
+_echot "------- btrfs/*"
+pths_btrfs+=" ${_SYSNAME}/btrfs/sys"
+pths_btrfs+=" ${_SYSNAME}/btrfs/save"
+[ "${_DEVICE_EXT}" ] && pths_btrfs+=" ${_SYSNAME}/btrfs/ext"
+[ "${_DEVICE_VMS}" ] && pths_btrfs+=" ${_SYSNAME}/btrfs/vms"
 
 _echot "------- ext"
-pths+=" ${_SYSNAME}/ext"
-if ! [ "${_DEVICE_EXT}" ]; then
+pths_btrfs+=" ${_SYSNAME}/ext"
+! [ "${_DEVICE_EXT}" ]; then
 	[ -d ext ] || _evalr btrfs subvolume create ext
 fi
 
+_echot "------- vms"
+pths_btrfs+=" ${_SYSNAME}/vms"
+! [ "${_DEVICE_VMS}" ]; then
+	[ -d vms ] || _evalr btrfs subvolume create vms
+fi
+
 _echot "------- save"
-pths+=" ${_SYSNAME}/save"
+pths_btrfs+=" ${_SYSNAME}/save"
 [ -d save ] || _evalr btrfs subvolume create save
 
-_echot "------- create: ${pths}"
-for pth in ${pths}; do
+_echot "------- create: ${pths_btrfs}"
+for pth in ${pths_btrfs}; do
 	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
 done
 
-pths="${_SYSNAME}/save ${_SYSNAME}/ext"
+pths="${_SYSNAME}/save ${_SYSNAME}/ext ${_SYSNAME}/vms"
 _echot "------- rights: ${pths}"
 for pth in ${pths}; do
 	[ -d "${pth}" ] || _evalr mkdir -p "${pth}"
 	_evalr chown ${uid}:${gid} ${pth}
 done
 
-_echot "------- btrfs delete"
+_echot "------- btrfs delete installation paths"
 for sub in @home @cache @log; do
 	[ "$( sudo btrfs subvolume show ${sub} 2>/dev/null )" ] && _evalr btrfs subvolume delete -c ${sub}
 done
 
 _echot "------- path delete"
-pths="create ubiquity-apt-clone var"
+pths="create ubiquity-apt-clone var installation paths"
 for pth in ${pths}; do
 	[ -e "${pth}" ] && _evalr rm -fR "${pth}"
 done
 
 _echot "------- btrfs subvolume list ${PWD}"
-_evalr btrfs subvolume list .
+_evalr btrfs subvolume list -t .
 
 ########################  FSTAB
 
 _echot "------- device sys"
-uuidsys=$( sudo blkid |grep ${_DEVICE_SYS} |sed 's|.* UUID="\([^"]\+\)" .*|\1|' )
+uuidsys=$(sudo blkid ${_DEVICE_SYS} -o value | sed -n '2p')
 if [ -z "${uuidsys}" ]; then
 	_ask "Please give the UUID for sys"
 	uuidsys=${_ANSWER}
-	_echO "uuidsys=${uuidsys}"
 fi
 
 if [ "${_DEVICE_EXT}" ]; then
 	_echot "------- device ext"
-	uuidext=$( sudo blkid |grep ${_DEVICE_EXT} |sed 's|.* UUID="\([^"]\+\)" .*|\1|' )
+	uuidext=$(sudo blkid ${_DEVICE_EXT} -o value | sed -n '2p')
 	if [ -z "${uuidext}" ]; then
 		_ask "Please give the UUID for ext"
 		uuidext=${_ANSWER}
-		_echO "uuidext=${uuidext}"
+	fi
+fi
+
+if [ "${_DEVICE_VMS}" ]; then
+	_echot "------- device ext"
+	uuidvms=$(sudo blkid ${_DEVICE_VMS} -o value | sed -n '2p')
+	if [ -z "${uuidvms}" ]; then
+		_ask "Please give the UUID for vms"
+		uuidvms=${_ANSWER}
 	fi
 fi
 
@@ -189,24 +224,34 @@ sudo sed -i "\|/var/cache |d" ${file}
 sudo sed -i "\|/var/log |d" ${file}
 sudo sed -i '/^UUID=.* btrfs .*/ s|^|#|' ${file}
 
+[ "${_SSD_SYS}" ] && ssd="ssd," || ssd=
 sudo sh -c "echo '
-# btrfs sys
-UUID=${uuidsys}	/		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/${_SYSNAME}		0 1
-UUID=${uuidsys}	/home		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/home		0 2
-UUID=${uuidsys}	/home/${_USERNAME}	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/user-${_SYSNAME}		0 2
-UUID=${uuidsys}	/btrfs/save	btrfs	defaults,noauto,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/save	0 2' >> ${file}"
+# sys ${_DEVICE_SYS}
+UUID=${uuidsys}	/		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/${_SYSNAME}		0 1
+UUID=${uuidsys}	/home		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/home		0 2
+UUID=${uuidsys}	/home/${_USERNAME}	btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/user-${_SYSNAME}		0 2' >> ${file}"
+# /ext
+[ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/ext		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/ext		0	2' >> ${file}"
+# /vms
+[ "${_DEVICE_VMS}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/vms		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/vms		0	2' >> ${file}"
+# btrfs/sys
+sudo sh -c "echo '/btrfs
+UUID=${uuidsys}	/btrfs/sys	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd			0 2
+UUID=${uuidsys}	/btrfs/save	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/save	0 2' >> ${file}"
 
 # ext
-[ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/ext		btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd,subvol=/ext		0	2' >> ${file}"
+[ "${_SSD_EXT}" ] && ssd="ssd," || ssd=
+[ "${_DEVICE_EXT}" ] && sudo sh -c "echo '
+# ext ${_DEVICE_EXT}
+UUID=${uuidext}	/ext	btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd		0 2
+UUID=${uuidext}	/btrfs/ext	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd		0 2' >> ${file}"
 
-#sys
-sudo sh -c "echo '
-UUID=${uuidsys}	/btrfs/sys	btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd			0 2' >> ${file}"
-
-# ext
-[ "${_DEVICE_EXT}" ] && sudo sh -c "echo '# btrfs ext
-UUID=${uuidext}	/ext	btrfs	defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0 2
-UUID=${uuidext}	/btrfs/ext	btrfs	noauto,defaults,noatime,space_cache=v2,autodefrag,compress=zstd		0 2' >> ${file}"
+# vms
+[ "${_SSD_VMS}" ] && ssd="ssd," || ssd=
+[ "${_DEVICE_VMS}" ] && sudo sh -c "echo '
+# vms ${_DEVICE_VMS}
+UUID=${uuidvms}	/vms	btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd		0 2
+UUID=${uuidvms}	/btrfs/vms	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd		0 2' >> ${file}"
 
 # tmpfs
 if [ "${_MEM}" ]; then
@@ -215,12 +260,10 @@ if [ "${_MEM}" ]; then
 		sudo sed -i "/tmpfs/ s|mode=1777|mode=1777,size=${_MEM}|" ${file}
 	else
 		sudo sh -c "echo '
+# tmp tmpfs
 tmpfs						/tmp		tmpfs	defaults,noatime,mode=1777,size=${_MEM}							0 0' >> ${file}"
 	fi
 fi
-
-# ssd
-[ "${_SSD_SYS}" ] && sudo sed -i "/^UUID=${uuidsys}.*\sbtrfs\s/ s|noatime,|noatime,ssd,|" ${file}
 
 _echot "------- ${file}"
 echo
@@ -232,10 +275,17 @@ _askno "Confirm to continue"
 
 ########################  REPO
 
+if ! which git; then
+_echot "------- update"
+_CMD update
+_echot "------- git install"
+_CMD_INS git
+fi
+
 _echot "------- repo - ${_GIT_BR}"
 pth=${_SYSNAME}/usr/local/install
 [ -d ${pth} ] && _keepmvts ${pth}
-url=https://github.com/aguytech/desktop-manjaro
+url=https://github.com/aguytech/desktop-${_VER_NAME}
 _evalr git clone -b ${_GIT_BR} ${url} ${pth}
 _evalr chown -R ${uid}:${gid} ${pth}
 
