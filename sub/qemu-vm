@@ -143,6 +143,10 @@ echo -e 'filesystem type="mount" accessmode="mapped"'${blue}' fmode="0664" dmode
 </filesystem>'
 _askno "Validate to continue"
 
+_echot "------- bookmarks"
+file=${HOME}/.config/gtk-3.0/bookmarks
+grep -q "file:///vms" ${file} || echo "file:///vms" >> ${file}
+
 ########################  NBD
 
 _echot "------- ${_PATH_NBD}"
