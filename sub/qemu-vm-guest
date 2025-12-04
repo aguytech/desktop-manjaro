@@ -33,7 +33,10 @@ fi
 _echot "------- fstab"
 grep -q "^${_QEMU_SHARE}" /etc/fstab || sudo sh -c "echo '
 # qemu share
-${_QEMU_SHARE}					${_GUEST_SHARE}		virtiofs	defaults,nofail								0 0'' >> /etc/fstab"
+${_QEMU_SHARE}					${_GUEST_SHARE}	virtiofs	defaults,nofail									0 0' >> /etc/fstab"
+
+_echot "------- systemctl daemon-reload"
+_evalr systemctl daemon-reload
 
 _echot "------- mount ${_GUEST_SHARE}"
 _evalr mount ${_GUEST_SHARE}
