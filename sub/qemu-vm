@@ -116,7 +116,7 @@ _evalr setfacl -d -Rm g:libvirt-qemu:rwx ${_PATH_SHARE}
 
 _echoA "To enbale sharing folder, in your Host domain, you have to:"
 _echoA "1 - enable 'shared memory' in the host domain"
-_echoA "2 - configure your filesystem withthis parameters: "
+_echoA "2 - configure your filesystem with this parameters: "
 _echo "		Source path: ${_PATH_SHARE}"
 _echo "		Target path: /hostshare"
 _askno "Validate to continue"
