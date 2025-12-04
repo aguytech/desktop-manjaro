@@ -17,6 +17,9 @@ _echot "------- no beep"
 #echo "blacklist pcspkr" | sudo tee -a /etc/modprobe.d/nobeep.conf
 echo 'xset -b' >> ~/.xprofile
 
+_echot "------- show battery percentage"
+_eval "gsettings set org.gnome.desktop.interface show-battery-percentage true"
+
 # try it if standard acpi failed
 #str=" acpi_backlight=vendor" # just try
 #str+=" fbcon=nodefer" # just try
