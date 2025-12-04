@@ -22,7 +22,7 @@ if ! which imhex >/dev/null; then
 	pth=/tmp/${file}
 	url=https://github.com/WerWolv/ImHex/releases/download/v${imhex_version%%-*}/${file}
 	_eval wget -O ${pth} ${url} || _exite "Error while downloading url: ${url}"
-	_evalr pacman -U ${pth} || _exite "Unable to install ${pth}"
+	_evalr pacman -U --noconfirm ${pth} || _exite "Unable to install ${pth}"
 fi
 
 _echot "------- conf bless"
