@@ -222,7 +222,7 @@ fi
 
 if [ "${_DEVICE_EXT}" ]; then
 	_echot "------- device ext"
-	uuidsys=$( sudo blkid -o export ${_DEVICE_EXT} | grep '^UUID=' | cut -d= -f2 )
+	uuidext=$( sudo blkid -o export ${_DEVICE_EXT} | grep '^UUID=' | cut -d= -f2 )
 	if [ -z "${uuidext}" ]; then
 		_ask "Please give the UUID for ext"
 		uuidext=${_ANSWER}
@@ -231,7 +231,7 @@ fi
 
 if [ "${_DEVICE_VMS}" ]; then
 	_echot "------- device ext"
-	uuidsys=$( sudo blkid -o export ${_DEVICE_VMS} | grep '^UUID=' | cut -d= -f2 )
+	uuidvms=$( sudo blkid -o export ${_DEVICE_VMS} | grep '^UUID=' | cut -d= -f2 )
 	if [ -z "${uuidvms}" ]; then
 		_ask "Please give the UUID for vms"
 		uuidvms=${_ANSWER}
