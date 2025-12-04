@@ -14,15 +14,15 @@ _install_aur ${packages}
 
 if ! which imhex >/dev/null; then
 	_echot "------- imhex"
-	pth=/tmp
 	anstmp=1.37.4-2-ArchLinux-x86_64
 	_echoa "url to see available releases: https://github.com/WerWolv/ImHex/tags"
 	_askno "Give the version to download imhex from github (${anstmp})"
 	imhex_version=${_ANSWER:-${anstmp}}
-	file=${pth}/imhex-${imhex_version}.deb
+	file=imhex-${imhex_version}.pkg.tar.zst
+	pth=/tmp/${file}
 	url=https://github.com/WerWolv/ImHex/releases/download/v${imhex_version%%-*}/${file}
-	_eval wget -O ${file} ${url} || _exite "Error while downloading url: ${url}"
-	_evalr pacman -U ${file} || _exite "Unable to install ${file}"
+	_eval wget -O ${pth} ${url} || _exite "Error while downloading url: ${url}"
+	_evalr pacman -U ${pth} || _exite "Unable to install ${pth}"
 fi
 
 _echot "------- conf bless"
