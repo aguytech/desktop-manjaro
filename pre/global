@@ -51,6 +51,6 @@ ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
 
 _echot "------- aur"
-packages="duf gmusicbrowser obs-studio sayonara-player"
+packages="duf gmusicbrowser obs-studio"
 # qarte simplescreenrecorder radiotray-ng webcamoid
 _install_aur ${packages}
