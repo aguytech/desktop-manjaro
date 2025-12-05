@@ -22,7 +22,7 @@ if ! which imhex >/dev/null; then
 	pth=/tmp/${file}
 	if ! [ -f ${pth} ]; then
 		url=https://github.com/WerWolv/ImHex/releases/download/v${imhex_version%%-*}/${file}
-		_eval wget -O ${pth} ${url} || _exite "Error while downloading url: ${url}"
+		_eval wget -qO ${pth} ${url} || _exite "Error while downloading url: ${url}"
 	fi
 
 	_echot "------- install"
