@@ -1,0 +1,18 @@
+#!/bin/bash
+
+########################  REQUIRED
+
+_echot "------- required files"
+file_lepton=${_PATH_BASE}/conf/soft/.leptonrc
+_require ${file_lepton}
+
+########################  MAIN
+
+_echot "------- install"
+packages="lepton-snippet-manager-appimage"
+_install_aur ${packages}
+
+_echot "------- configuration"
+file=~/.leptonrc
+_keepmvts ${file}
+_eval cp -a ${file_lepton} ${file}
