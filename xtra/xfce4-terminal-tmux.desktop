@@ -10,6 +10,8 @@ Type=Application
 Categories=GTK;System;TerminalEmulator;
 StartupNotify=true
 Actions=preferences;Separator;SshDev;SshS;SshNode1;SshLxd;Separator;Thunar;ThunarNode1;
+StartupNotify=true
+StartupWMClass=xfce4-terminal
 
 [Desktop Action preferences]
 Name=Terminal Preferences
