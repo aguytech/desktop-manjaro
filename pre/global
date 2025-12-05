@@ -4,14 +4,12 @@
 
 _echot "------- remove"
 packages="manjaro-xfce-minimal-settings kvantum-theme-matcha matcha-gtk-theme"
-_evalr pacman -R --noconfirm ${packages} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_evalr pacman -R --noconfirm ${packages}
 
 _echot "------- manjaro add"
 # removed by predecessor
 packages="manjaro-base-skel papirus-maia-icon-theme xcursor-breeze xcape"
-_install_pcks ${packages}
-
+_evalr pacman -S --noconfirm ${packages}
 
 _echot "------- system"
 packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree vim yay"
@@ -38,12 +36,12 @@ packages="audacity easytag easyeffects soundconverter sound-juicer"
 _install_pcks ${packages}
 
 _echot "------- video"
-packages="cheese handbrake libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv"
+packages="cheese handbrake libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv obs-studio"
 # kdenlive
 packages+=" aegisub boost-libs"
 _install_pcks ${packages}
 
 _echot "------- aur"
-packages="duf gmusicbrowser obs-studio"
+packages="duff gmusicbrowser simplescreenrecorder"
 # qarte simplescreenrecorder radiotray-ng webcamoid
 _install_aur ${packages}
