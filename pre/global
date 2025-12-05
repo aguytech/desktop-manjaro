@@ -10,45 +10,38 @@ _evalr pacman -R --noconfirm ${packages} \
 _echot "------- manjaro add"
 # removed by predecessor
 packages="manjaro-base-skel papirus-maia-icon-theme xcursor-breeze xcape"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 
 _echot "------- system"
 packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree vim yay"
 packages+=" gzip p7zip zip unzip unrar"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 _echot "------- tools"
 packages="dconf-editor galculator meld plank qt6ct thunderbird termdown"
 packages+=" thunar-volman thunar-media-tags-plugin jre-openjdk"
 # gtk2fontsel
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 _echot "------- libreoffice"
 packages="libreoffice-still"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 _echot "------- graphic"
 packages="inkscape gimp"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 _echot "------- audio"
 packages="audacity easytag easyeffects soundconverter sound-juicer"
 # yt-dlp
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 _echot "------- video"
 packages="cheese handbrake libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv"
 # kdenlive
 packages+=" aegisub boost-libs"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 _echot "------- aur"
 packages="duf gmusicbrowser obs-studio"

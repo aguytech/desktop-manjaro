@@ -3,10 +3,10 @@
 ########################  MAIN
 
 _echot "------- update"
-${_CMD} -Sy
+_evalr pacman --noconfirm -Sy
 
 _echot "------- upgrade"
-${_CMD} -Su
+_evalr pacman --noconfirm -Su
 
 _echot "------- clean orphans"
-[ "$(pacman -Qdtq)" ] && ${_CMD} -R $(pacman -Qdtq) || true
+[ "$(pacman -Qdtq)" ] && _evalr pacman --noconfirm -R $(pacman -Qdtq) || true

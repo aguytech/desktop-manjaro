@@ -4,8 +4,7 @@
 
 _echot "------- install"
 packages="cython python python-pip python-pipx"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
 
 packages="virtualenv grip"
 for package in ${packages}; do

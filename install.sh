@@ -6,9 +6,6 @@ S_TRACE=debug
 _PATH_BASE=$( readlink -f ${0%/*} )
 _PATH_CONF=/usr/local/conf
 _PATH_LOG=/var/log/desktop-install
-_CMD="_evalr pacman --noconfirm"
-_CMD_INS="_evalr pacman --noconfirm --needed -S"
-_CMD_AUR="yay -S --noconfirm --needed"
 _VER_NAME=manjaro
 
 # inc

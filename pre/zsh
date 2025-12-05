@@ -4,5 +4,4 @@
 
 _echot "------- config"
 packages="manjaro-zsh-config"
-${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
-	|| { _echoE "Unable to install: ${packages}"; return 1; }
+_install_pcks ${packages}
