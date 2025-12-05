@@ -3,8 +3,8 @@
 ########################  REQUIRED
 
 _echot "------- required files"
-file_lepton=${_PATH_BASE}/conf/soft/.leptonrc
-_require ${file_lepton}
+file_lepton_conf=${_PATH_BASE}/conf/soft/.leptonrc
+_require ${file_lepton_conf}
 
 ########################  MAIN
 
@@ -15,4 +15,4 @@ _install_aur ${packages}
 _echot "------- configuration"
 file=~/.leptonrc
 _keepmvts ${file}
-_eval cp -a ${file_lepton} ${file}
+_eval cp -a ${file_lepton_conf} ${file}
