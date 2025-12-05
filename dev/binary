@@ -3,7 +3,7 @@
 ########################  MAIN
 
 _echot "------- install"
-packages="bless lnav net-tools pv"
+packages="bless net-tools pv"
 # sysstat ghex
 ${_CMD_INS} ${packages} && _partadd "${packages}" ${_FILE_PCK} \
 	|| { _echoE "Unable to install: ${packages}"; return 1; }
@@ -20,8 +20,12 @@ if ! which imhex >/dev/null; then
 	imhex_version=${_ANSWER:-${anstmp}}
 	file=imhex-${imhex_version}.pkg.tar.zst
 	pth=/tmp/${file}
-	url=https://github.com/WerWolv/ImHex/releases/download/v${imhex_version%%-*}/${file}
-	_eval wget -O ${pth} ${url} || _exite "Error while downloading url: ${url}"
+	if ! [ -f ${pth} ]; then
+		url=https://github.com/WerWolv/ImHex/releases/download/v${imhex_version%%-*}/${file}
+		_eval wget -O ${pth} ${url} || _exite "Error while downloading url: ${url}"
+	fi
+
+	_echot "------- install"
 	_evalr pacman -U --noconfirm ${pth} || _exite "Unable to install ${pth}"
 fi
 
@@ -29,3 +33,4 @@ _echot "------- conf bless"
 pth=${HOME}/.config/bless/layouts/
 [ -d "${pth}" ] || mkdir -p ${pth}
 cp ${_PATH_BASE}/conf/bless/* ${pth}/
+
