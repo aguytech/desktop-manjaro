@@ -254,7 +254,7 @@ UUID=${uuidsys}	/home/${_USERNAME}	btrfs	defaults,noatime,${ssd}space_cache=v2,a
 # /ext
 [ "${_DEVICE_EXT}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/ext		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/ext		0 2' >> ${file}"
 # /vms
-[ "${_DEVICE_VMS}" ] || sudo sh -c "echo '#UUID=${uuidsys}	/vms		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/vms		0 2' >> ${file}"
+[ "${_DEVICE_VMS}" ] || sudo sh -c "echo 'UUID=${uuidsys}	/vms		btrfs	defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd,subvol=/vms		0 2' >> ${file}"
 # btrfs/sys
 sudo sh -c "echo '# /btrfs/
 UUID=${uuidsys}	/btrfs/sys	btrfs	noauto,defaults,noatime,${ssd}space_cache=v2,autodefrag,compress=zstd			0 2
@@ -295,13 +295,6 @@ _askno "Confirm to continue"
 [ "${_ANSWER}" = n ] && _exit
 
 ########################  REPO
-
-if ! which git; then
-_echot "------- update"
-${_CMD} update
-_echot "------- git install"
-${_CMD_INS} git
-fi
 
 _echot "------- repo - ${_GIT_BR}"
 pth=${_SYSNAME}/usr/local/install
