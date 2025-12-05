@@ -104,7 +104,7 @@ _tmux() {
         # The user has not specified a command yet
         COMPREPLY=( ${COMPREPLY[@]:-} $(compgen -W "$(tmux start-server \; list-commands | cut -d' ' -f1)" -- "${cur}") )
     else
-        case ${_CMD_INS} in
+        case ${cmd} in
             attach-session|attach)
             case "$prev" in
                 -t) _tmux_complete_session "${cur}" ;;
@@ -171,7 +171,7 @@ _tmux() {
                 -t) _tmux_complete_window "${cur}" ;;
                 *) options="-t" ;;
             esac ;;
-          esac # case ${_CMD_INS}
+          esac # case ${cmd}
         fi # command specified
       fi # not -f
 
