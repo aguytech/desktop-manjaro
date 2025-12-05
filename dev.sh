@@ -17,7 +17,7 @@ file=${_PATH_BASE}/bs/inc
 
 ########################  WWW
 
-sudo ping -c1 google.com >/dev/null || _exite "Installation needs internet connection"
+sudo ping -c1 google.com >/dev/null 2>&1 || _exite "Installation needs internet connection"
 
 ########################  SUB
 
