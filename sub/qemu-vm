@@ -121,6 +121,7 @@ _askno "Validate to continue"
 
 _echot "------- bookmarks"
 file=${HOME}/.config/gtk-3.0/bookmarks
+[ -f ${file} ] || echo "file:///vms" > ${file}
 grep -q "file:///vms" ${file} || echo "file:///vms" >> ${file}
 
 ########################  NBD
