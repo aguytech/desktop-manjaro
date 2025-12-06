@@ -17,7 +17,7 @@ packages+=" gzip p7zip zip unzip unrar"
 _install_pcks ${packages}
 
 _echot "------- tools"
-packages="dconf-editor galculator meld plank qt6ct thunderbird termdown"
+packages="dconf-editor galculator meld plank qt5ct qt6ct thunderbird termdown"
 packages+=" thunar-volman thunar-media-tags-plugin jre-openjdk"
 # gtk2fontsel
 _install_pcks ${packages}
