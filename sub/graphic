@@ -7,7 +7,9 @@ packages+=" darktable krita"
 _install_pcks ${packages}
 
 _echot "------- aur"
-packages="gimp-extras gimp-fourier gimp-paint-studio gimp-plugin-bimp gimp-plugin-pandora gimp-plugin-refocusit gimp-plugin-saveforweb"
+packages="gimp-fourier gimp-paint-studio gimp-plugin-pandora"
 # too big: gimp-plugin-resynthesizer-git
-# wait for good version:  gimp-plugin-beautify gimp-plugin-texturize
+# not available: gimp-plugin-saveforweb
+# wait for good version:  gimp-plugin-beautify gimp-plugin-texturize gimp-extras gimp-plugin-bimp
+# wait for good version:  gimp-plugin-beautify gimp-plugin-texturize gimp-plugin-refocusit
 _install_aur ${packages}
