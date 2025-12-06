@@ -8,15 +8,16 @@ _requirep ${pth_geany_conf}
 ########################  MAIN
 
 _echot "------- install"
-packages="geany git gitg lnav neovim openssh pv squashfs-tools jq jre-openjdk"
+packages="lnav openssh pv squashfs-tools jq jre-openjdk"
+packages+="geany git gitg mission-center neovim"
 # gitk 
 _install_pcks ${packages}
 
-_echot "------- geany"
+_echot "------- aur"
+packages="gtkhash"
+_install_aur ${packages}
+
+_echot "------- conf geany"
 pth=${HOME}/.config/geany/colorschemes
 [ -d "${pth}" ] || _eval mkdir -p ${pth}
 _eval cp -a ${pth_geany_conf}/* ${pth}/
-
-_echot "------- aur"
-packages="gtkhash mission-center xsysinfo"
-_install_aur ${packages}
