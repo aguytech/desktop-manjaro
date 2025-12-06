@@ -27,7 +27,7 @@ packages="libreoffice-still"
 _install_pcks ${packages}
 
 _echot "------- graphic"
-packages="inkscape gimp"
+packages="inkscape gimp ristretto"
 _install_pcks ${packages}
 
 _echot "------- audio"
