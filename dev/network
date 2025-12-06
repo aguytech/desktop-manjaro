@@ -2,7 +2,7 @@
 
 _echot "------- tools"
 packages="dnsutils openbsd-netcat net-tools traceroute whois"
-packages+=" bmon darkstat hping iftop tcpdump vnstat"
+packages+=" bmon darkstat hping iftop iptraf-ng tcpdump vnstat"
 # vnstat-client
 _install_pcks ${packages}
 
