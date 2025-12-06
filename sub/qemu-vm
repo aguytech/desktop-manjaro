@@ -24,32 +24,11 @@ _askyn "Confirm by typing 'y'"
 
 ########################  DATA
 
-if [ -z ${_QEMU_SHARE+x} ]; then
-	anstmp=/hostshare
-	_askno "Name of qemu share (${anstmp})"
-	_QEMU_SHARE=${_ANSWER:-${anstmp}}
-	_confset _QEMU_SHARE "${_QEMU_SHARE}"
-fi
-
-if [ -z ${_GUEST_SHARE+x} ]; then
-	anstmp=/share
-	_askno "Name of guest share (${anstmp})"
-	_GUEST_SHARE=${_ANSWER:-${anstmp}}
-	_confset _GUEST_SHARE "${_GUEST_SHARE}"
-fi
-
 if [ -z "${_PATH_VIRT}" ]; then
 	anstmp=/vms/virt
 	_askno "Give the path for virt (${anstmp})"
 	_PATH_VIRT=${_ANSWER:-${anstmp}}
 	_confset _PATH_VIRT "${_PATH_VIRT}"
-fi
-
-if [ -z "${_PATH_SHARE}" ]; then
-	anstmp=/vms/share
-	_askno "Give the shared path from the Host (${anstmp})"
-	_PATH_SHARE=${_ANSWER:-${anstmp}}
-	_confset _PATH_SHARE "${_PATH_SHARE}"
 fi
 
 if [ -z "${_PATH_ISO}" ]; then
@@ -64,6 +43,27 @@ if [ -z "${_PATH_NBD}" ]; then
 	_askno "Give the path to mount device files (${anstmp})"
 	_PATH_NBD=${_ANSWER:-$anstmp}
 	_confset _PATH_NBD "${_PATH_NBD}"
+fi
+
+if [ -z ${_QEMU_SHARE+x} ]; then
+	anstmp=/hostshare
+	_askno "Give the name of QEMU shared path (${anstmp})"
+	_QEMU_SHARE=${_ANSWER:-${anstmp}}
+	_confset _QEMU_SHARE "${_QEMU_SHARE}"
+fi
+
+if [ -z "${_PATH_SHARE}" ]; then
+	anstmp=/vms/share
+	_askno "Give the shared path from the Host (${anstmp})"
+	_PATH_SHARE=${_ANSWER:-${anstmp}}
+	_confset _PATH_SHARE "${_PATH_SHARE}"
+fi
+
+if [ -z ${_GUEST_SHARE+x} ]; then
+	anstmp=/host/share
+	_askno "Give the name of shared path from guest (${anstmp})"
+	_GUEST_SHARE=${_ANSWER:-${anstmp}}
+	_confset _GUEST_SHARE "${_GUEST_SHARE}"
 fi
 
 ########################  MAIN
