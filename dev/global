@@ -9,7 +9,7 @@ _requirep ${pth_geany_conf}
 
 _echot "------- install"
 packages="lnav openssh pv squashfs-tools jq jre-openjdk"
-packages+="geany git gitg mission-center neovim"
+packages+=" geany git gitg mission-center neovim"
 # gitk 
 _install_pcks ${packages}
 
