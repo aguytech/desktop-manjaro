@@ -1,0 +1,4 @@
+ 
+ _echot "------- video"
+ packages="libdvdcss libdvdnav libdvdread"
+_install_pcks ${packages}

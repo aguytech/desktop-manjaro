@@ -1,5 +1,9 @@
 #!/bin/bash
 
-_echot "------- libreoffice"
+_echot "------- base still"
+packages="libreoffice-still"
+_install_pcks ${packages}
+
+_echot "------- extra"
 packages="libreoffice-extension-texmaths libreoffice-extension-writer2latex"
 _install_pcks ${packages}

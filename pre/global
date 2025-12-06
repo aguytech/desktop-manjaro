@@ -22,12 +22,12 @@ packages+=" thunar-volman thunar-media-tags-plugin jre-openjdk"
 # gtk2fontsel
 _install_pcks ${packages}
 
-_echot "------- libreoffice"
-packages="libreoffice-still"
-_install_pcks ${packages}
-
 _echot "------- graphic"
 packages="inkscape gimp ristretto"
+_install_pcks ${packages}
+
+_echot "------- media"
+packages=" cheese mpv obs-studio"
 _install_pcks ${packages}
 
 _echot "------- audio"
@@ -36,12 +36,11 @@ packages="audacity easytag easyeffects soundconverter sound-juicer"
 _install_pcks ${packages}
 
 _echot "------- video"
-packages="cheese handbrake libdvdcss libdvdnav libdvdread mkvtoolnix-gui mpv obs-studio"
+packages="handbrake mkvtoolnix-gui aegisub boost-libs"
 # kdenlive
-packages+=" aegisub boost-libs"
 _install_pcks ${packages}
 
 _echot "------- aur"
 packages="duff gmusicbrowser simplescreenrecorder"
-# qarte simplescreenrecorder radiotray-ng webcamoid
+# qarte radiotray-ng webcamoid
 _install_aur ${packages}
