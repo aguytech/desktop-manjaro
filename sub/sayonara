@@ -1,0 +1,4 @@
+#!/bin/bash
+
+_echot "------- sayonara-player"
+_install_aur sayonara-player
