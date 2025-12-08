@@ -87,6 +87,11 @@ _service enable libvirtd
 _echot "------- ${USER} in libvirt,libvirt-qemu,kvm"
 _evalr usermod -aG libvirt,libvirt-qemu,kvm ${USER}
 
+_echot "------- connect uri"
+file=/etc/libvirt/libvirt.conf
+sed -i '/^#uri_default/ s|^#||' ${file}
+#sed -i 's|^#uri_default.*$|uri_default = "qemu:///system"|' ${file}
+
 ########################  VIRT
 
 _echot "------- ${_PATH_VIRT}"
