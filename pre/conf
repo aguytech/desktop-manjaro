@@ -8,10 +8,11 @@ file_tmux_desktop=${_PATH_BASE}/xtra/xfce4-terminal-tmux.desktop
 file_plank_desktop=${_PATH_BASE}/xtra/plank.desktop
 _require ${file_meld_conf} ${file_aegisub_conf} ${file_tmux_desktop} ${file_plank_desktop}
 
+pth_icons=${_PATH_BASE}/icons
 pth_gtk=${_PATH_BASE}/conf/gtk
 pth_vim=${_PATH_BASE}/conf/vim
 pth_wp=${_PATH_BASE}/xtra/wp
-_requirep ${pth_gtk} ${pth_vim} ${pth_wp}
+_requirep ${pth_icons} ${pth_gtk} ${pth_vim} ${pth_wp}
 
 ########################  SYSTEM
 
@@ -98,7 +99,7 @@ _eval xfconf-query -c thunar-volman -n -p /automount-media/enabled -t bool -s fa
 
 _echot "------- user icons"
 pth=${HOME}/.local/share/icons
-_eval cp ${_PATH_BASE}/icons/* ${pth}/
+_eval cp ${pth_icons}/* ${pth}/
 
 _echot "------- tmux resurrect"
 pth=${HOME}/.tmux/plugins/tmux-resurrect
@@ -170,3 +171,4 @@ _echot "------- QT6"
 _echoA "After validation, adjust settings for qt6 and close qt6ct window"
 _askno "Validate to continue"
 qt6ct 2>/dev/null
+
