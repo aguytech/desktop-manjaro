@@ -13,7 +13,7 @@ _evalr pacman -S --noconfirm ${packages}
 
 _echot "------- system"
 packages="base-devel bash-completion cdrtools curl exfatprogs gnupg gparted htop most ncdu multipath-tools numlockx pv testdisk tmux tree vim yay"
-packages+=" pigz pzstd p7zip zip unzip unrar"
+packages+=" pigz p7zip zip unzip unrar zstd"
 _install_pcks ${packages}
 
 _echot "------- tools"
