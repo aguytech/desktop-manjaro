@@ -95,8 +95,11 @@ sed -i '/^#uri_default/ s|^#||' ${file}
 ########################  VIRT
 
 _echot "------- ${_PATH_VIRT}"
-[ -d "${_PATH_VIRT}" ] || _evalr mkdir -p ${_PATH_VIRT}
-_evalr chown libvirt-qemu:libvirt-qemu ${_PATH_VIRT}
+pth=${_PATH_VIRT}/${_VER_NAME:0:3}
+[ -d "${pth}" ] || _evalr mkdir -p ${pth}
+_evalr chown libvirt-qemu:libvirt-qemu ${pth}
+_evalr setfacl -Rm o::rx,g::rwx,o::rx ${_PATH_ISO}
+_evalr setfacl -d -Rm o::rx,g::rwx,o::rx ${_PATH_ISO}
 
 ########################  ISO
 
@@ -104,7 +107,8 @@ _echot "------- ${_PATH_ISO}"
 [ -d "${_PATH_ISO}" ] || _evalr mkdir -p "${_PATH_ISO}"
 _evalr chown ${USER}:${USER} ${_PATH_ISO}
 # to give group write modifications for mkisofs and virt-manager
-_evalr setfacl -dm o::rx,g::rwx,o::r ${_PATH_ISO}
+_evalr setfacl -Rm o::rx,g::rwx,o::rx ${_PATH_ISO}
+_evalr setfacl -d -Rm o::rx,g::rwx,o::rx ${_PATH_ISO}
 
 ########################  SHARE
 
