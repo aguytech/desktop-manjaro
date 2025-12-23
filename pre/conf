@@ -171,4 +171,3 @@ _echot "------- QT6"
 _echoA "After validation, adjust settings for qt6 and close qt6ct window"
 _askno "Validate to continue"
 qt6ct 2>/dev/null
-
