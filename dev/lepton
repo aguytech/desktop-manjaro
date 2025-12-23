@@ -12,6 +12,10 @@ _echot "------- install"
 packages="lepton-snippet-manager-appimage"
 _install_aur ${packages}
 
+_echot "------- local bin"
+file=/usr/bin/lepton-snippet-manager
+[ -f ${file} ] && _eval mv ${file} /usr/local/bin/lepton-snippet-manager
+
 _echot "------- configuration"
 file=~/.leptonrc
 _keepmvts ${file}
