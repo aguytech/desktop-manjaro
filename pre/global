@@ -27,7 +27,7 @@ packages="inkscape gimp ristretto"
 _install_pcks ${packages}
 
 _echot "------- media"
-packages=" cheese mpv obs-studio"
+packages="cheese mpv obs-studio"
 _install_pcks ${packages}
 
 _echot "------- audio"
