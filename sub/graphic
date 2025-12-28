@@ -10,6 +10,6 @@ _echot "------- aur"
 packages="gimp-fourier gimp-paint-studio gimp-plugin-pandora"
 # too big: gimp-plugin-resynthesizer-git
 # not available: gimp-plugin-saveforweb
-# wait for good version:  gimp-plugin-beautify gimp-plugin-texturize gimp-extras gimp-plugin-bimp
-# wait for good version:  gimp-plugin-beautify gimp-plugin-texturize gimp-plugin-refocusit
+# wait for good version:  gimp-extras gimp-plugin-bimp gimp-plugin-beautify
+# wait for good version:  gimp-plugin-texturize gimp-plugin-refocusit
 _install_aur ${packages}
