@@ -13,7 +13,7 @@ _install_aur ${packages}
 
 if ! which imhex >/dev/null; then
 	_echot "------- imhex"
-	anstmp=1.38.0-ArchLinux-x86_64
+	anstmp=1.37.4-ArchLinux-x86_64
 	_echoa "url to see available releases: https://github.com/WerWolv/ImHex/tags"
 	_askno "Give the version to download imhex from github (${anstmp})"
 	imhex_version=${_ANSWER:-${anstmp}}
