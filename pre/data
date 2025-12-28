@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # _GIT_BR
-anstmp="main"
 _menu "Select 'main' or 'dev' branch to be used by installer (main)" main dev
 _GIT_BR=${_ANSWER}
 _confset _GIT_BR "${_GIT_BR}"
@@ -10,6 +9,7 @@ _confset _GIT_BR "${_GIT_BR}"
 if [ -z ${_BTRFS+x} ]; then
 	_askyn "BTRFS are used for system?"
 	_BTRFS=${_ANSWER/n/}
+	[ ${_ANSWER} = y ] && _BTRFS=btrfs || _BTRFS=nobtrfs
 	_confset _BTRFS "${_BTRFS}"
 fi
 [ "${_BTRFS}" ] && part_fs="btrfs" || part_fs="nobtrfs"
