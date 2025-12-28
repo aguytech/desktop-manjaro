@@ -28,6 +28,8 @@ fi
 if ! [ -d "${_GUEST_SHARE}" ]; then
 	_echot "------- create ${_GUEST_SHARE}"
 	_evalr mkdir -p ${_GUEST_SHARE}
+	_evalr chown 0:${USER} ${_GUEST_SHARE}
+	_evalr chmod 775 ${_GUEST_SHARE}
 fi
 
 _echot "------- fstab"
