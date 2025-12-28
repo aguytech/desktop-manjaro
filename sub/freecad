@@ -4,6 +4,3 @@ _echot "------- install"
 packages="freecad"
 _install_pcks ${packages}
 
-_echot "------- aur"
-packages="freecad-a2plus-git freecad-fcgear-git freecad-cadquery-git"
-_install_aur ${packages}
