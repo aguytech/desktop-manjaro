@@ -5,7 +5,7 @@
 file_meld_conf=${_PATH_BASE}/conf/soft/meld-perso-dark.style-scheme.xml
 file_aegisub_conf=${_PATH_BASE}/conf/soft/aegisub-config.json
 file_tmux_desktop=${_PATH_BASE}/xtra/xfce4-terminal-tmux.desktop
-file_plank_desktop=${_PATH_BASE}/xtra/plank.desktop
+file_plank_desktop=/usr/share/applications/plank.desktop
 _require ${file_meld_conf} ${file_aegisub_conf} ${file_tmux_desktop} ${file_plank_desktop}
 
 pth_icons=${_PATH_BASE}/icons
@@ -90,11 +90,6 @@ else
 	sudo sh -c "echo 'keyboard = ${cmd}' >> ${file}"
 fi
 
-_echot "------- thunar-volman"
-_eval xfconf-query -c thunar-volman -n -p /autobrowse/enabled -t bool -s false
-_eval xfconf-query -c thunar-volman -n -p /automount-drives/enabled -t bool -s false
-_eval xfconf-query -c thunar-volman -n -p /automount-media/enabled -t bool -s false
-
 ########################  USER
 
 _echot "------- user icons"
@@ -157,10 +152,11 @@ _echot "------- plank"
 pth=${HOME}/.config/autostart
 [ -d "${pth}" ] || _eval mkdir -p ${pth}
 _eval cp ${file_plank_desktop} ${pth}/
-_evalr chmod 644 ${pth}/${file_plank_desktop##*/}
 _echoA "After validation, adjust plank preferences and close plank window"
 _askno "Validate to continue"
 plank --preferences &
+
+########################  EXTERNAL
 
 _echot "------- QT5"
 _echoA "After validation, adjust settings for qt5 and close qt5ct window"
