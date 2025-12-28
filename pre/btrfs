@@ -388,4 +388,4 @@ exit
 
 # create an iso file '/vms/iso/desktop-install.iso' with virtual paths: /bs-desktop, /desktop-manjaro and /desktop-ubuntu
 # used for vitualized installation like virt-manager, virtualbox, vmware, ..
-# mkisofs -Jr -o /vms/iso/desktop-install.iso -graft-points /bs-desktop=/home/shared/repo/bs-desktop /desktop-manjaro=/home/shared/repo/desktop-manjaro /desktop-ubuntu=/home/shared/repo/desktop-ubuntu
+# mkisofs -Jr -o /vms/iso/desktop-install.iso -graft-points /bs=/home/shared/repo/bs /desktop-manjaro=/home/shared/repo/desktop-manjaro /desktop-ubuntu=/home/shared/repo/desktop-ubuntu /desktop-xubuntu=/home/shared/repo/desktop-xubuntu
