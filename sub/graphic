@@ -3,7 +3,7 @@
 _echot "------- install"
 packages="inkscape gimp gimp-nufraw gimp-plugin-gmic"
 packages+=" darktable krita"
-# darkroom shotwell
+# darkroom shotwell gimp-nufraw
 _install_pcks ${packages}
 
 _echot "------- aur"

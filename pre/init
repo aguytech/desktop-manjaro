@@ -7,9 +7,9 @@ pth_install_bash_completion=${_PATH_BASE}/xtra/bash-completion
 _requirep ${pth_install_bash_completion}
 
 _echot "------- required files"
-file_env=${_PATH_BASE}/bs/conf/.sh_env
-file_sh_aliases=${_PATH_BASE}/bs/conf/.sh_aliases
-file_sh_functions=${_PATH_BASE}/bs/conf/.sh_functions
+file_env=${S_PATH_SCRIPT}/conf/.sh_env
+file_sh_aliases=${S_PATH_SCRIPT}/conf/.sh_aliases
+file_sh_functions=${S_PATH_SCRIPT}/conf/.sh_functions
 _require ${file_env} ${file_sh_aliases} ${file_sh_functions}
 
 ########################  SYSTEM

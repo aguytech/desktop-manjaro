@@ -17,11 +17,11 @@ _requirep ${pth_icons} ${pth_gtk} ${pth_vim} ${pth_wp}
 ########################  SYSTEM
 
 _echot "------- profile desktop.sh"
-export PATH="${PATH}:${_PATH_BS}"
+export PATH="${PATH}:${S_PATH_SCRIPT}"
 export QT_QPA_PLATFORMTHEME=qt6ct
 file=/etc/profile.d/desktop.sh
 sudo sh -c "echo '# PATH
-export PATH=\${PATH}:${_PATH_BS}
+export PATH=\${PATH}:${S_PATH_SCRIPT}
 # QT6
 export QT_QPA_PLATFORMTHEME=qt6ct' > ${file}"
 
@@ -121,7 +121,7 @@ _echot "------- configuration files"
 for file in .nanorc .tmux.conf .vimrc; do
 	pth=${HOME}/${file}
 	_keepmvts "${pth}"
-	_eval cp -a "${_PATH_BS}/conf/${file}" "${pth}"
+	_eval cp -a "${S_PATH_SCRIPT}/conf/${file}" "${pth}"
 	_evalr chmod 644 ${pth}
 done
 

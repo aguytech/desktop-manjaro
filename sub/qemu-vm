@@ -10,7 +10,7 @@ _askyn "Types 'y' to continue or anything else to exit"
 ########################  REQUIRE
 
 _echot "------- required files"
-file_script_nbd=${_PATH_BASE}/bs/scripts/nbd.sh
+file_script_nbd=${S_PATH_SCRIPT}/scripts/nbd.sh
 file_conf_ca=${_PATH_BASE}/conf/soft/ca.xml
 
 _require ${file_script_nbd} ${file_conf_ca}
