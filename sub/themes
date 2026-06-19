@@ -44,6 +44,7 @@ _askno "Validate to continue"
 
 ########################  BACKUP
 
+_echot "------- please wait, backuping ${ls}"
 for i in $(ls); do
 	tar czf ${i}_$(date "+%Y%m%d").tgz $i
 done
