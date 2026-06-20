@@ -3,14 +3,13 @@
 ######################## CONF
 
 S_TRACE=debug
-S_PATH_SCRIPT=/usr/local/bs
 _PATH_BASE=$( readlink -f ${0%/*} )
 _PATH_CONF=/usr/local/conf
 _PATH_LOG=/var/log/desktop-install
 _VER_NAME=manjaro
 
 # inc
-file=${S_PATH_SCRIPT}/inc
+file=${_PATH_BASE}/bs/inc
 ! [ -f "${file}" ] && echo "Unable to find file: ${file}" && exit 1
 ! . ${file} && echo "Errors while sourcing file: ${file}" && exit 1
 

@@ -301,7 +301,7 @@ _echot "------- repo - ${_GIT_BR}"
 pth=${_SYSNAME}/usr/local/install
 [ -d ${pth} ] && _keepmvts ${pth}
 url=https://github.com/aguytech/desktop-${_VER_NAME}
-_evalr git clone -b ${_GIT_BR} ${url} ${pth}
+_evalr git clone --recursive -b ${_GIT_BR} ${url} ${pth}
 _evalr chown -R ${uid}:${gid} ${pth}
 
 _echot "------- bs - ${_GIT_BR}"
