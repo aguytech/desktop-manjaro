@@ -26,6 +26,8 @@ _eval ${id}/install.sh -d ~/.themes -c dark -s compact -l --shell --round 8px
 _eval ${id}/install.sh -d ~/.themes -c dark -s compact -l --shell --round 8px -t teal
 _eval ${id}/install.sh -d ~/.themes -c dark -s compact -l --shell --round 8px -t orange
 [ "${file}" ] && _eval rm ${file}
+
+_echot "------- please wait, backuping ${id}"
 tar czf ${id}_$(date "+%Y%m%d").tgz ${id}
 
 theme=Orchis-Orange-Dark-Compact
@@ -41,10 +43,3 @@ fi
 
 _echoA "You can change the theme from 'gnome-tweaks'"
 _askno "Validate to continue"
-
-########################  BACKUP
-
-_echot "------- please wait, backuping ${ls}"
-for i in $(ls); do
-	tar czf ${i}_$(date "+%Y%m%d").tgz $i
-done
