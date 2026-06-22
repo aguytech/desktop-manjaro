@@ -7,5 +7,6 @@ packages+=" bmon darkstat hping iftop iptraf-ng tcpdump vnstat"
 _install_pcks ${packages}
 
 _echot "------- aur"
-packages="ifstat xinetd"
+packages="ifstat"
+# xinetd
 _install_aur ${packages}
