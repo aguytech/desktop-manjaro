@@ -32,6 +32,6 @@ packages="handbrake mkvtoolnix-gui aegisub boost-libs"
 _install_pcks ${packages}
 
 _echot "------- aur"
-packages="duff gmusicbrowser"
+packages="duff sayonara-player"
 # qarte radiotray-ng webcamoid simplescreenrecorder
 _install_aur ${packages}
