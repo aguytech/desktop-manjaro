@@ -1,7 +1,7 @@
 #!/bin/bash
 
 _echot "------- install"
-packages="inkscape gimp gimp-nufraw gimp-plugin-gmic"
+packages="inkscape gimp gimp-plugin-gmic"
 packages+=" darktable krita"
 # darkroom shotwell gimp-nufraw
 _install_pcks ${packages}
