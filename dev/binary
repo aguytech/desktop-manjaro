@@ -3,15 +3,10 @@
 ########################  MAIN
 
 _echot "------- install"
-packages="bless net-tools pv"
+packages="net-tools pv"
 # sysstat ghex
 _install_pcks ${packages}
 
 _echot "------- aur"
 packages="wxhexeditor"
 _install_aur ${packages}
-
-_echot "------- conf bless"
-pth=${HOME}/.config/bless/layouts/
-[ -d "${pth}" ] || mkdir -p ${pth}
-cp ${_PATH_BASE}/conf/bless/* ${pth}/
