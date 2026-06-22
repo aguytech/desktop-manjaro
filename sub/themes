@@ -41,5 +41,5 @@ if [ "${_ANSWER}" = y ]; then
 	gsettings set org.gnome.desktop.interface icon-theme "${theme}"
 fi
 
-_echoA "You can change the theme from 'gnome-tweaks'"
+_echoA "You can change the theme from 'xfce4-settings-manager'"
 _askno "Validate to continue"
